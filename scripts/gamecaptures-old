@@ -1,0 +1,374 @@
+#!/bin/bash
+
+foo () {
+  local first=$1
+  echo "Would foo with $first."
+}
+
+new-game () {
+
+#not tested
+
+  local game="$1"
+  local platform="$2"
+
+  if [[ ! -d ~/GameCaptures/"$game" ]];then
+    mkdir ~/GameCaptures/"$game"
+    cd ~/GameCaptures/"$game"
+    
+    cp ~/GameCaptures/templates/description_body.txt .
+    cp ~/GameCaptures/templates/thumbnailconfig.txt .
+    
+    if [[ "$platform" == "linux" ]];then
+      cp ~/GameCaptures/templates/liux_game_tags.txt .
+    elif [[ "$platform" == "windows" ]];then
+      cp ~/GameCaptures/templates/windows_game_tags.txt .
+    else
+	echo "platform not recognised"
+    fi
+  fi
+
+  read -p "Full path to thumbnail?" thumbpath
+    cp "$thumbpath" ./thumbnail_w.jpg
+
+  cp ~/GameCaptures/templates/timings.txt .  
+  
+}
+
+checkuploaddir () {
+
+  local game="$1"
+
+  if [ ! -d ~/GameCaptures/To_Upload/"$game" ]
+  then
+    mkdir ~/GameCaptures/To_Upload/"$game"
+    touch ~/GameCaptures/To_Upload/"$game"/category_number.txt
+    echo 20 > ~/GameCaptures/To_Upload/"$game"/category_number.txt
+    echo 1 > ~/GameCaptures/To_Upload/"$game"/next_part.txt
+  fi
+
+}
+
+checkuploadeddir () {
+
+  local game="$1"
+
+  if [ ! -d ~/GameCaptures/"$game"/Uploaded/ ]
+  then
+    mkdir ~/GameCaptures/"$game"/Uploaded/ 
+  fi
+
+}
+
+readgenerictags () {
+
+  cat ~/GameCaptures/tags/generic_tags.txt
+
+}
+
+readgametags () {
+
+  local game=$1
+
+  if [[ ! -f ~/GameCaptures/"$game"/game_tags.txt ]]
+  then
+    echo "Game Specific yt tags not set"
+    exit 1
+  else
+    cat ~/GameCaptures/"$game"/game_tags.txt 
+  fi
+
+}
+
+readvideotags () {
+
+  local game=$1
+  local video=$2
+
+  echo "To read video specific tags"
+  #TODO
+
+}
+
+readgenerictags () {
+
+  #echo "To read generic tags for channel"
+  cat ~/GameCaptures/tags/generic_tags.txt
+}
+
+readdescriptionfooter () {
+
+  cat ~/GameCaptures/generic-description/description_footer.txt
+
+}
+
+readdescriptionbody () {
+
+  local game="$1"
+
+  cat ~/GameCaptures/To_Upload/"$game"/description_body.txt
+
+}
+
+createjsonobject () {
+
+  #create json object to update shouldbe for the newly created video
+
+  local title="$1"
+  local tags="$2"
+  local description="$3"
+  local thumbnail="$4"
+  local category="$5"
+  local game="$6"
+
+  local privacy="private"
+
+  #echo "To create json object for each new video using jq with title, description, tags, a dummy id and a private privacy status" 
+
+  jq -n --arg title "$title" \
+     --arg tags "$tags" \
+     --arg description "$description" \
+     --arg thumbnail "$thumbnail" \
+     --arg privacy "$privacy" \
+     --arg game "$game" \
+     --arg category "$category" \
+     '{game: $game, title: $title, description: $description, tags: [$tags],thumbnail: $thumbnail, privacy: $privacy, category: $category, "ready2publish": false, "published": false, "promoted": false}' 
+
+
+}
+
+splitequal () { 
+
+  local basevideo=$1
+  local segtime=$2   #in minutes
+  local game=$3
+  #local jsonfile=$4
+
+  local jsonfile=~/GameCaptures/fortiesgamer-should-be.json #channel 'should be' json file
+  local channel="UCxocdFJo68AAmfC3NsieKgg" 
+
+#TODO move to function
+
+  checkuploaddir "$game"
+  
+  checkuploadeddir "$game"
+
+#####################
+
+
+  res=$(videdit res $basevideo)
+
+
+#TODO move the setting of the intro and outro to a function
+
+  if [[ "$res" = "1920x1200" ]]; then
+
+    local intro=~/GameCaptures/Intro/newer\ intro\ 1_1920x1200.mp4
+    local outtro=~/GameCaptures/Intro/outtro_1920x1200.mp4
+
+  elif [[ "$res" = "1920x1080" ]]; then
+
+    local intro=~/GameCaptures/Intro/newer\ intro\ 1.mp4
+    local outtro=~/GameCaptures/Intro/outtro.mp4
+
+  else
+
+    echo "Input Video Resolution not supported"
+    exit 1
+
+  fi
+
+#########################################################
+
+#TODO move this to a function
+  
+  if [[ "${basevideo##*.}" != mp4 ]]; then
+
+	  videdit m4conv "$basevideo" "${basevideo%.*}.mp4"
+	  basevideo="${basevideo%.*}.mp4"
+
+  fi
+
+############################
+
+#TODO move this to a function
+
+  videdit addwatermark "$basevideo" ~/GameCaptures/Watermark/IMG_0123_320.png "${basevideo%.*}w.mp4"
+  basevideo="${basevideo%.*}w.mp4"
+
+############################
+
+  videdit split2equalsegments "$basevideo" "$segtime" "${basevideo%.*}"
+  
+  rm "$basevideo"
+
+#TODO move this to a function
+  
+  local fadeduration=1
+  local part=$(cat ~/GameCaptures/To_Upload/"$game"/next_part.txt)
+
+  local str="$game Walk Through"
+
+  for f in ~/GameCaptures/"$game"/*w_[0-9][0-9][0-9].mp4;do
+
+    echo "$f"
+    echo "${f%.*}_i.mp4"
+
+    videdit addintroouttro "$f" "$intro" "$outtro" "${f%.*}_i.mp4"
+    basevideo="${f%.*}_i.mp4"
+
+    videdit normalisevol "$basevideo" "${basevideo%.*}_n.mp4"
+    rm "$basevideo"
+    
+    basevideo="${basevideo%.*}_n.mp4"
+    mv "$basevideo" ~/GameCaptures/To_Upload/"$game"/"$str Part "$part".mp4"
+
+    ((part=part+1))
+
+  done
+
+  echo $part > ~/GameCaptures/To_Upload/"$game"/next_part.txt
+
+#############################
+  
+  #prep 'should be' json file inputs for each video and create video thumbnail, this should be changed so that it's in its own function. this will allow it to be called here and to be called when constructing the should-be json file when updates are needed to videos which have already been uploaded to yt, i.e. an update to the tags or sections of the  description etc
+  
+#TODO move this to a function
+
+  local descriptionfooter=$(readdescriptionfooter)
+  local descriptionbody=$(readdescriptionbody) 
+  local categorynumber=$(cat ~/GameCaptures/To_Upload/"$game"/category_number.txt)
+  local generictags=$(readgenerictags)
+  local gametags=$(readgametags "$game")
+
+
+  for f1 in ~/GameCaptures/To_Upload/"$game"/"$str Part "*[0-9]*".mp4";do
+  #TODO this might now work as added "- New Video" to file name for new video detection function
+
+    num=$(echo "$f1"|sed -r 's/.*Part\ ([0-9]*)\..*/\1/g')
+    #num is not working 
+    echo $num
+
+    local title="$str Part $num"
+    local tags="$game,$title,$gametags,$generictags"
+    local description="$title"$'\n'$'\n'"$descriptionbody"$'\n'$'\n'"$descriptionfooter"
+
+       
+    if [ -f ~/GameCaptures/"$game"/thumbnail_w.jpg ] && [ -f ~/GameCaptures/"$game"/thumbnailconfig.txt ]; then
+
+      echo "Generic Thumbnail for this game title, "$game", exists..."
+      local basepic=~/GameCaptures/"$game"/thumbnail_w.jpg
+      source ~/GameCaptures/"$game"/thumbnailconfig.txt
+
+      #create thumbnailfilename here then of the file exists it still gets passed to createjsonobject
+
+      if [ ! -f ~/GameCaptures/To_Upload/"$game"/"$title".jpg ]; then
+
+        echo "Specific thumbnail for video, "$title", does not exist, creating..."
+	local str1="Part $num"
+	local thumbnailfilename=~/GameCaptures/To_Upload/"$game"/"$title".jpg
+	
+        picedit shadowannotate "$basepic" "$str" "$str1" "$font" "$pointsize" "$gravity" "$strokecolour" "$fillcolour" "$thumbnailfilename"
+
+      else
+     
+	echo "Specific thumbnail for video, "$title", exists."
+      
+      fi
+
+    else
+
+      echo "Generic thumbnail or its config file for this game title, "$game", does not exist. Thumbnail not created"
+    
+    fi
+
+    local jsonobject=$(createjsonobject "$title" "$tags" "$description" "$thumbnailfilename" "$categorynumber" "$game")
+
+    echo $jsonobject|jq '.'
+
+    jsonfun fileappend "$jsonfile" "$jsonobject"
+
+  done
+
+##################
+
+#TODO move this to a function
+
+  youtube manual-upload  "/home/tony/GameCaptures/To_Upload/$game"
+
+##################
+
+ # read -n 1 -s -r -p "Once all videos have uploaded, press any key to continue..."
+
+ # mv ~/GameCaptures/To_Upload/"$game"/*.mp4 ~/GamesCaptures/Uploaded/$game
+
+
+ # read -p 'Update channel now?: ' update
+
+ # if [[ "$update" == "y" ]]; then
+
+#	  echo "manage channel now"
+
+#  fi
+    
+#general - when managing channel a routine for checking if new videos has been updated will have to be coded. New videos to be indicated with "new video" in there filenames, as the file name get used in the title of the video when fist uploading manually to yt
+
+}
+
+splitunequal (){
+
+  echo "To split a baseline video into unequal parts and upload to yt"
+  #TODO before coding this separate sliptequal into indenfied functions so that they can be used here
+
+}
+
+singlevid () {
+
+  echo "To prepare a signle video"  
+  #TODO before coding this separate sliptequal into indenfied functions so that they can be used here
+
+}
+
+##TODO call this videocaptures and use for it for studywithtony too? perhaps manage captures is better
+##TODO add sync audio 
+##TODO add new game #need to call it something else other than game if studywithtony, and potentially other channels, will use this script 
+##TODO set-timings for splitunequal
+##TODO add a set part numbe function
+##TODO create a function to delete unloaded videos
+
+
+############################## Main Command  #############################
+
+subcommand="${1-usage}"
+shift 2>/dev/null
+
+if [ -z "$subcommand" ]; then
+    usage
+    exit 1
+fi
+
+commands () {
+    echo ${commands[@]}
+}
+
+declare -a commands=(foo commands splitequal splitunequal singlevid createjsonobject new-game)
+
+for i in ${commands[@]}; do
+    if [[ "$i" == "$subcommand" ]]; then
+        "$subcommand" "$@"
+        exit 0
+    fi
+done
+
+######################### Tab Completion Context ########################
+
+# remember COMP_LINE is changed by shift
+if [ -n "$COMP_LINE" ]; then
+    for cmd in ${commands[@]}; do 
+        [[ "${cmd:0:${#1}}" == "$1" ]] && echo $cmd
+    done
+    exit 0
+fi
+
+
+##TODO set up auto complate by running 'complete -C ./example ./example'

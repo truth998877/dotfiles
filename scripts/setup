@@ -1,0 +1,14 @@
+#!/bin/bash
+
+complete -C facebook facebook
+complete -C gamecaptures gamecaptures
+complete -C jsonfun jsonfun
+complete -C manageytchannel manageytchannel
+complete -C picedit picedit
+complete -C pinterest pinterest
+complete -C postvids2blog postvids2blog
+complete -C promotevideo promotevideo
+complete -C twitter twitter
+complete -C videdit videdit
+complete -C youtube youtube
+

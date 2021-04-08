@@ -1,0 +1,271 @@
+#!/bin/bash
+
+
+##### ffmpeg commands in here ######
+
+foo () {
+  local first=$1
+  echo "Would foo with $first."
+}
+
+upscale () {
+
+  local input="$1"
+  
+
+  ffmpeg \
+    -i "$1" \
+    -vf "pad=1920:1200:(ow-iw)/2:(oh-ih)/2" \
+    -c:a copy \
+    "${input%.*}_1920x1200.mp4"
+
+}
+
+res () {
+  local path=$1
+
+ffprobe -v error -select_streams v:0 -show_entries stream=width,height -of csv=s=x:p=0 "$path" |awk 'NR==1{print $1}'
+
+}
+
+mp4conv (){
+#TODO output file not working change so that its the file name to the dot plus mp4 and therefore will only take on input
+ local input=$1
+ local ouput=$2
+
+ffmpeg -i "$input" -acodec copy -vcodec copy "$output".mp4
+
+}
+
+addwatermark () {
+
+#TODO if output exists do nothing
+
+  local video=$1
+  local wmark=$2
+  local output=$3
+
+  ffmpeg  -i "$video" \
+        -i "$wmark" \
+        -filter_complex "[0:v][1:v] overlay=25:25" \
+        -pix_fmt yuv420p \
+        -c:v libx264 -preset slow -crf 17 \
+        -c:a copy \
+         "$output"
+
+}
+
+split2equalsegments () {
+
+  local video=$1
+  local period=$2
+  local output=$3
+
+  ffmpeg -i "$video" -c copy -map 0 \
+         -segment_time 00:"$period":00 -f segment \
+        -reset_timestamps 1 \
+        "$output"_%03d.mp4
+
+}
+
+duration () {
+  
+  local file=$1
+
+  ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 "$file"
+
+}
+
+addintroouttro () {
+
+  local file=$1
+  local intro=$2
+  local outtro=$3
+  local output=$4
+
+  local fade_duration=1
+
+  local length=$(duration "$file")
+  local fadeout_start=$(echo "$length-$fade_duration;" | bc)
+  
+  ffmpeg -i "$intro" -i "$file" -i  "$outtro" \
+	  -t 1 -f lavfi \
+	  -i anullsrc=r=48000:cl=stereo \
+	  -filter_complex "[1:v:0]fade=t=in:d=1:st=0,fade=t=out:d=1:st='$fadeout_start'[v1];[1:a:0]afade=t=in:ss=0:d=1,afade=t=out:d=1:st='$fadeout_start'[a1];[0:v:0][0:a:0][v1][a1][2:v:0][3:a:0]concat=n=3:v=1:a=1[outv][outa]" \
+	  -map "[outv]" -map "[outa]" -c:v libx264 \
+	  -preset  slow -crf 17 \
+	  "$output"
+
+}
+
+normalisevol () {
+
+  local video=$1
+  local output=$2
+
+  ffmpeg-normalize "$video" -c:a aac -o "$output"
+
+}
+
+snip () {
+
+  local video=$1
+  local start=$2  #tested MM:SS
+  local end=$3    #tested MM:SS
+  local output=$4
+
+  ffmpeg -i "$video" -ss "$start" -to "$end" -c:v libx264 -preset slow -crf 17 -c:a  copy  "$output"
+
+}
+
+concat () {
+
+  local video1=$1
+  local video2=$2
+  local output=$3
+
+  ffmepg -i "$video1" -i "$video2" \
+	 -filer_complex "[0:v:0][0:a:0][1:v:0][1:a:0]concat=n=2:v=1:a=1[outv][outa]" \
+	 -map "[outv]" -map "[outa]" \
+	 -c:v libx264 -preset slow -crf 17  \
+	 $output 
+
+
+  #TODO does the above ffmpeg reencode
+
+}
+
+recursiveconcat () {
+
+  local basevideo=$1
+  local videolist=$2
+  local output=$3
+
+  while IFS= read line
+  do
+    concat $basevideo $line $output
+    mv $output $basevideo
+    rm $output
+  done <"$videolist"
+
+#TODO will not want to reencode the videos when doing recursive
+
+}
+
+highlights () {
+
+  echo "To make a highlights video, snip a big video into segments using snip, use recursiveconcat"
+  echo "to stitch backtogether, use addwatermark to add a watermark, use addintroouttro to add an"
+  echo "intro and an extro and finish by normalising volumes"
+
+  local basevideo=$1   #the video to edit
+  local times=$2  #a text file containing the times of the sections of baseline video to extract
+  local output=$3 #an output file name #TODO remove filename ext
+  local outputlist=$4  #path to text file in which store the filenames of the video sections, existing file will get overwritten
+
+  local index=0
+  while IFS= read line
+  do
+    
+    starts["$index"]=$(echo $line|awk 'NR==1{print $1}')
+    ends["$index"]=$(echo $line|awk 'NR==1{print $2}')
+    index=$(($index+1))
+  done <$times
+
+  count=1
+  
+  touch $outputlist
+
+  for i in "${starts[@]}"
+  do
+    count_1=$(printf "%03d\n" $count)
+    snip $basevideo "${starts[$count-1]}" "${ends[$count-1]}" "$output-$count_1.mp4"
+
+    echo "$output-$count_1" >> $outputlist
+  done
+
+  recursiveconcat "$output-1.mp4" "$outputlist" "$output-final.mp4"
+
+  #TODO add watermark to -final.mp4
+  #TODO introoutro
+  #TODO normalise volumes
+  #TODO minimise re-encoding
+
+
+}
+
+sync-audio () {
+
+  local filename="$1"
+  local offset="$2"
+
+  if [ $offset gt 0 ];then
+    echo "Audio leads video, delaying audio..."
+    ffmpeg -i "$filename" -itoffset "$offset" -i "$filename" -map 0:v -map 1:a -c "$filename-audio-sync.mp4"
+
+  elif [ "$offset" lt 0 ];then 
+    echo "Video leads Audio, delaying video..."
+    ffmpeg -i "$filename" -itoffset "$offset" -i "$filename" -map 1:v -map 0:a -c coppy "$filename-audio-sync.mp4"
+
+  elif [ "$offset" eq 0 ];then
+    echo "Audio already in-sync with video"
+  fi
+
+}
+
+finalframejpg () {
+
+  local input="$1"
+ 
+  dur=$(duration "$input")
+  pos=$(echo $dur-0.1|bc)
+
+  ffmpeg -i "$input" -ss "$pos" -vframes 1 "${input%.*}_finalframe.jpg"
+
+}
+
+mp4frompic () {
+
+  local pic="$1"
+  local time="$2"
+
+  ffmpeg -loop 1 -i "$pic" -t "$time" "${pic%.*}.mp4" 
+
+}
+
+
+############################## Main Command  #############################
+
+subcommand="${1-usage}"
+shift 2>/dev/null
+
+if [ -z "$subcommand" ]; then
+    usage
+    exit 1
+fi
+
+commands () {
+    echo ${commands[@]}
+}
+
+declare -a commands=(foo commands res mp4conv addwatermark split2equalsegments addintroouttro normalisevol duration snip concat recursiveconcat sync-audio upscale finalframejpg mp4frompic)
+
+for i in ${commands[@]}; do
+    if [[ "$i" == "$subcommand" ]]; then
+        "$subcommand" "$@"
+        exit 0
+    fi
+done
+
+######################### Tab Completion Context ########################
+
+# remember COMP_LINE is changed by shift
+if [ -n "$COMP_LINE" ]; then
+    for cmd in ${commands[@]}; do 
+        [[ "${cmd:0:${#1}}" == "$1" ]] && echo $cmd
+    done
+    exit 0
+fi
+
+
+## set up auto complate by running 'complete -C ./example ./example'

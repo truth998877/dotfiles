@@ -1,0 +1,70 @@
+#!/bin/bash
+
+token=$(fbsecrets accesstoken)
+pageid=$(fbsecrets pageid)
+
+foo () {
+  local first=$1
+  echo "Would foo with $first."
+}
+
+postmessage2page () {
+#TODO handle token and page id better
+
+  local message="$1"
+  local message=${message// /%20}
+
+curl -s -i -X POST \
+ "https://graph.facebook.com/v10.0/$pageid/feed?message="$message"&access_token=$token" > /dev/null
+
+}
+
+
+postlink2page () {
+#TODO handle token and page id better
+
+  local link="$1"
+  local message="$2"
+  local message=${message// /%20}
+
+curl -s -i -X POST \
+ "https://graph.facebook.com/v10.0/$pageid/feed?&access_token="$token"&message="$message"&link="$link"" > /dev/null
+
+}
+
+
+############################## Main Command  #############################
+
+subcommand="${1-usage}"
+shift 2>/dev/null
+
+if [ -z "$subcommand" ]; then
+    usage
+    exit 1
+fi
+
+commands () {
+    echo ${commands[@]}
+}
+
+declare -a commands=(foo commands postmessage2page postlink2page)
+
+for i in ${commands[@]}; do
+    if [[ "$i" == "$subcommand" ]]; then
+        "$subcommand" "$@"
+        exit 0
+    fi
+done
+
+######################### Tab Completion Context ########################
+
+# remember COMP_LINE is changed by shift
+if [ -n "$COMP_LINE" ]; then
+    for cmd in ${commands[@]}; do 
+        [[ "${cmd:0:${#1}}" == "$1" ]] && echo $cmd
+    done
+    exit 0
+fi
+
+
+## set up auto complate by running 'complete -C ./example ./example'

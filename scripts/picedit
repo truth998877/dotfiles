@@ -1,0 +1,196 @@
+#!/bin/bash
+
+foo () {
+  local first=$1
+  echo "Would foo with $first."
+}
+
+
+overlay () {
+
+  local basepic="$1"
+
+  convert "$basepic" -thumbnail '320x240>' -quality 100 -background none -gravity center -extent 320x240 "${basepic%.*}320x240.png"
+
+}
+
+
+fbprofilepic () {
+
+  local basepic="$1"
+
+  convert "$basepic" -thumbnail '180x180>' -quality 100 -background black -gravity center -extent 180x180 "${basepic%.*}180x180.jpg"
+
+}
+
+
+fbbannerpic () {
+
+  local basepic="$1"
+
+ 
+  convert "$basepic" -thumbnail '820x312>' -quality 100 -background black -gravity center -extent 820x312 "${basepic%.*}820x312.jpg"
+
+}
+
+twitchprofilepic () {
+
+  local basepic="$1"
+  
+  convert "$basepic" -thumbnail '800x800>' -quality 100 -background black -gravity center -extent 800x800 "${basepic%.*}800x800.jpg"
+
+}
+
+twitchbannerpic () {
+
+  local basepic="$1"
+
+  convert "$basepic" -thumbnail '1200x480>' -quality 100 -background black -gravity center -extent 1200x480 "${basepic%.*}1200x480.jpg"
+
+}
+
+twitterbannerpic () {
+
+  local basepic="$1"
+ 
+  convert "$basepic" -thumbnail '1500x500>' -quality 100 -background black -gravity center -extent 1500x500 "${basepic%.*}1500x500.jpg"
+
+}
+
+twitterprofilepic () {
+
+  local basepic="$1"
+ 
+  convert "$basepic" -thumbnail '400x400>' -quality 100 -background black -gravity center -extent 400x400 "${basepic%.*}400x400.jpg"
+
+}
+
+ytprofilepic () {
+
+  echo "use twitchprofilepic - 800x800"
+
+
+}
+
+ytbannerpic () { 
+
+  local baspic="$1"
+
+  echo To generate a 2048 x 1152 picture
+
+}
+
+allbanners () {
+
+  local basepic="$1"
+
+  fbprofilepic "$basepic"
+  fbbannerpic "$basepic"
+
+  twitchprofilepic "$basepic"    
+  twitchbannerpic "$basepic"  
+
+  twitterprofilepic "$basepic"
+  twitterbannerpic "$basepic"
+
+}
+
+shadowannotate () {
+
+#shadow annotates two lines
+
+  local basepic="$1"
+  local text="$2"  #line 1
+  local text1="$3"  #line 2
+  local font="$4"   #default BankGothicCOndensedLH-Heavy
+  local pointsize="$5"  #default 108
+  local gravity="$6"
+  local strokecolour="$7"
+  local fillcolour="$8"
+  local output="$9"
+
+  convert "$basepic" -font "$font" -pointsize "$pointsize" -stroke "$strokecolour" -gravity "$gravity" -fill "$strokecolour" -annotate +27+27 "$text" -annotate +27+102 "$text1" -fill "$fillcolour" -annotate +25+25 "$text" -annotate +25+100 "$text1" "$output"
+
+}
+
+bubbletext () { 
+
+  local text=$1
+  local font=$2
+  local pointsize=$3
+  local fillcolour=$4
+  local linecolour=$5
+  local output=$6
+
+convert -size 1000x1000 xc:lightblue -font "$font" -pointsize $pointsize -fill "$fillcolour" \
+           -gravity Center \
+           -stroke "$linecolour" -strokewidth 25 -annotate 0 "$text" \
+           -stroke "$fillcolour" -strokewidth 20 -annotate 0 "$text" \
+           -stroke "$linecolour" -strokewidth 15 -annotate 0 "$text" \
+           -stroke "$fillcolour" -strokewidth 10 -annotate 0 "$text" \
+           -stroke "$linecolour" -strokewidth  5 -annotate 0 "$text" \
+           -stroke none                  -annotate 0 "$text" \
+           $output
+
+}
+
+
+hozappend () {
+
+  local left="$1"
+  local right="$2"
+  local output="$3"
+
+  convert +append "$left" "$right" "$output"
+
+}
+
+vertappend () {
+
+
+  local top="$1"
+  local bottom="$2"
+  local output="$3"
+
+  convert -append "$top" "$bottom" "$output"
+
+}
+
+# more at https://www.skcript.com/svr/useful-imagemagick-commands/
+
+
+############################## Main Command  #############################
+
+subcommand="${1-usage}"
+shift 2>/dev/null
+
+if [ -z "$subcommand" ]; then
+    usage
+    exit 1
+fi
+
+commands () {
+    echo ${commands[@]}
+}
+
+declare -a commands=(foo commands shadowannotate bubbletext hozappend vertappend fbprofilepic fbbannerpic twitchprofilepic twitchbannerpic twitterprofilepic  twitterbannerpic  allbanners overlay)   
+
+for i in ${commands[@]}; do
+    if [[ "$i" == "$subcommand" ]]; then
+        "$subcommand" "$@"
+        exit 0
+    fi
+done
+
+######################### Tab Completion Context ########################
+
+# remember COMP_LINE is changed by shift
+if [ -n "$COMP_LINE" ]; then
+    for cmd in ${commands[@]}; do 
+        [[ "${cmd:0:${#1}}" == "$1" ]] && echo $cmd
+    done
+    exit 0
+fi
+
+
+## set up auto complate by running 'complete -C ./example ./example'
