@@ -1,0 +1,332 @@
+#!/bin/bash
+
+
+foo () {
+  local first=$1
+  echo "Would foo with $first."
+}
+
+tmux () {
+
+ tmux new-session \; \split-window -v \; \split-window -h \; \select-pane -t 0 \; \split-window -h
+
+}
+
+chatoverlay () {
+
+  while true; do 
+    text=$(cat -e /home/tony/.weechat/logs/irc.twitch.\#fortiesgamer.weechatlog|tail -f)
+    echo -e ${text//\$/\\r}| \
+    aosd_cat -l 5 -u 5000 -p 3 -y 0 -x 0  --fore-color yellow 
+  done &
+
+}
+
+timeoverlay () {
+
+  local lines=1
+
+ # while true ; do date ; sleep 1 ; done | aosd_cat -l "$lines" --fore-color yellow -p 0 -y 50 -x 50 -u 1000 &
+ # while true ; do date ; sleep 1 ; done | aosd_cat -l "$lines" --fore-color yellow -p 2 -y 50 -x -50 -u 1000 &
+ # while true ; do date ; sleep 1 ; done | aosd_cat -l "$lines" --fore-color yellow -p 6 -y -50 -x 50 -u 1000 &
+  while true ; do date ; sleep 1 ; done | aosd_cat -l "$lines" --fore-color yellow -p 8 -y -50 -x -50 -u 1000 &
+
+#  while true ; do cat MYFIFO; done | aosd_cat --fore-color yellow -l $lines -u 10000 &
+ 
+}
+
+overlay () {
+
+  weechat &
+
+  chatoverlay
+  timeoverlay
+
+}
+
+killoverlays () {
+
+  killall aosd_cat
+  killall twitch
+
+}
+
+scroll ()  {
+    scroll_by="$1"
+    max_length="$2"
+    line="$3"
+    end_chars="$(printf %"$max_length"s)"
+    # from the string $line take the last $scroll_by chars, then take
+    # only the last max_lenght chars of those.
+    echo -n  "$end_chars" "$line" | tail -c "$scroll_by"  | head -c "$max_length"
+    # if the newline in the command above wouldn't be suppressed it
+    # might be cut away by head, so we add it here afterwards
+    echo ""
+}
+
+plane () {
+
+    #retired  
+
+    # naming the arguments for readability
+    local frame="$1"
+    local width="$2"
+    local height="$3"
+
+    case $(($frame%4)) in
+        0)
+            scroll $frame $width "/----------------------\              ___               "
+            scroll $frame $width "|                      |              \~~\_____/~~\__   "
+            scroll $frame $width "|      Automation      |______________ \______====== )-+"
+            scroll $frame $width "|                      |                       ~~|/~~   "
+            scroll $frame $width "\----------------------/                         ()     "
+            ;;
+        2)
+            scroll $frame $width "/----------------------\              ___               "
+            scroll $frame $width "|                      |              \~~\_____/~~\__  |"
+            scroll $frame $width "|      Automation      |______________ \______====== )-+"
+            scroll $frame $width "|                      |                       ~~|/~~  |"
+            scroll $frame $width "\----------------------/                         ()     "
+            ;;
+        [1,3])
+            scroll $frame $width "/----------------------\              ___               "
+            scroll $frame $width "|                      |              \~~\_____/~~\__  ."
+            scroll $frame $width "|      Automation      |______________ \______====== )-+"
+            scroll $frame $width "|                      |                       ~~|/~~  '"
+            scroll $frame $width "\----------------------/                         ()     "
+            ;;
+    esac
+
+}
+
+
+plane2 () {
+    # naming the arguments for readability
+    local frame="$1"
+    local width="$2"
+    local height="$3"
+    local banner1="$4"
+    local banner2="$5"
+    local banner3="$6"
+    local banner4="$7"
+    local banner5="$8"
+
+    #TODO change this after the global plane variables have been created
+    case $(($frame%4)) in
+        0)
+            scroll $frame $width "${banner1}              ___               "
+            scroll $frame $width "${banner2}              \~~\_____/~~\__   "
+            scroll $frame $width "${banner3}______________ \______====== )-+"
+            scroll $frame $width "${banner4}                       ~~|/~~   "
+            scroll $frame $width "${banner5}                         ()     "
+            ;;
+        2)
+            scroll $frame $width "${banner1}              ___               "
+            scroll $frame $width "${banner2}              \~~\_____/~~\__  |"
+            scroll $frame $width "${banner3}______________ \______====== )-+"
+            scroll $frame $width "${banner4}                       ~~|/~~  |"
+            scroll $frame $width "${banner5}                         ()     "
+            ;;
+        [1,3])
+            scroll $frame $width "${banner1}              ___               "
+            scroll $frame $width "${banner2}              \~~\_____/~~\__  ."
+            scroll $frame $width "${banner3}______________ \______====== )-+"
+            scroll $frame $width "${banner4}                       ~~|/~~  '"
+            scroll $frame $width "${banner5}                         ()     "
+            ;;
+    esac
+
+}
+
+event () {
+#TODO customise for twitch event type, follower, sub, donation etc
+#TODO add an input to plane to allow the event type to be passed to it as text
+#TODO write the text that forms the interior of the banner from variables which extent the length of the banner to accommodate the length of the event type and the user name
+#TODO final number of the sequence in for the for loop will have to be large enough to accommodate the width of the terminal and the width of the plane and the banner, having been adjusted to accommodate the event type and user name
+#TODO output this to a new window in in the twitch tmux
+#TODO work out how to get this to work with aosd_cat to overlay events when gaming full screen
+
+
+  local eventtype="$1"
+  local username="$2"
+  local usernamelen=${#username}
+
+  case "$eventtype" in 
+    follower)
+      local eventstr="New Follower"
+      ;;
+    subscription)
+      local eventstr="New Subscription"
+      ;;
+    donation)
+      local eventstr="New Donation"
+      ;;
+    bits)
+      #TODO add number of bits
+      local eventstr="Bits Sent From"
+      ;;
+    *)
+      exit 1
+      ;;
+  esac
+
+  eventstrlen=${#eventstr} 
+ 
+#TODO make these global and move to top
+    local plane11="              ___               "
+    local plane21="              \~~\_____/~~\__   "
+    local plane31="______________ \______====== )-+"
+    local plane41="                       ~~|/~~   "
+    local plane51="                         ()     "
+            
+       
+    local plane12="              ___               "
+    local plane22="              \~~\_____/~~\__  |"
+    local plane32="______________ \______====== )-+"
+    local plane42="                       ~~|/~~  |"
+    local plane52="                         ()     "
+      
+    local plane13="              ___               "
+    local plane23="              \~~\_____/~~\__  ."
+    local plane33="______________ \______====== )-+"
+    local plane43="                       ~~|/~~  '"
+    local plane53="                         ()     "
+  
+
+  #if $usernamelen -gt 18 and odd
+  local banner1pad=$(($usernamelen+3))
+  local banner5pad=$banner1pad
+  #local banner2pad=$((5+(($usernamelen-18)/2)))
+  local banner2pad=$(((22-$eventstrlen)/2+(($usernamelen-18)/2)))
+  local banner2pad1=$banner2pad
+  local banner4pad=1
+  local banner4pad1=2
+
+  #if $usernamelen -gt 18 and even
+  if [[ $usernamelen%2 -eq 0 ]]; then
+    local banner1pad=$(($usernamelen+4))
+    local banner5pad=$bannerpad1
+    local banner4pad=2
+    local banner4pad1=$banner4pad
+  fi
+
+  #if usernamelen -le 18 and odd
+  if [[ $usernamelen -le 18 ]]; then
+    local banner1pad=22
+    local banner2pad=$(((22-$eventstrlen)/2))
+    local banner2pad1="$banner2pad"
+    local banner4pad=$(((21-$usernamelen)/2))
+    local banner4pad1=$((banner4pad+1))
+
+    #if usernamelen -le 18 and even
+    if [[ $usernamelen%2 -eq 0 ]]; then
+      local banner4pad=$(((22-$usernamelen)/2))
+      local banner4pad1=$banner4pad      
+    fi
+  fi
+ 
+  local banner1a=$(printf "%*s%s" $banner1pad '' '')
+  local banner1="/${banner1a// /-}\\"
+  local banner2="|$(printf "%*s%s" $banner2pad '' "$eventstr")$(printf "%*s%s" $banner2pad1 '' '')|"
+  local banner3="|${banner1a}|"
+  local banner4="|$(printf "%*s%s" $banner4pad '' "$username")$(printf "%*s%s" $banner4pad1 '' '')|"
+  local banner5="\\${banner1a// /-}/"
+
+  if [ -z "$3" ]; then
+  
+    num=$((180+$banner1pad+2+33)) #180 width of terminal, ? width of banner, 33 width of plane
+    
+    clear
+
+    for i in $(seq $num);do
+      plane2 "$i" 180 5 "${banner1}" "${banner2}" "${banner3}" "${banner4}" "${banner5}"
+      sleep 0.06
+      clear
+    done
+    exit 0
+
+  fi
+
+  if [[ "$3" -eq "osd" ]]; then
+    for i in {0..1300..18};do
+      echo -e "$banner1$plane11\r$banner2$plane21\r$banner3$plane31\r$banner4$plane41\r$banner5$plane51" |aosd_cat -u 250 --fore-color yellow -x "$i" -p 0 -y 50 -l 5 -a 2 -n 'mono'
+      #sleep 0.01
+    done &
+  fi
+
+}
+
+eventosd () {
+
+  local eventtype="$1"
+  local username="$2"
+  local usernamelen=${#username}
+
+  case "$eventtype" in 
+    follower)
+      local eventstr="New Follower"
+      ;;
+    subscription)
+      local eventstr="New Subscription"
+      ;;
+    donation)
+      local eventstr="New Donation"
+      ;;
+    bits)
+      #TODO add number of bits
+      local eventstr="Bits Sent From"
+      ;;
+    *)
+      exit 1
+      ;;
+  esac
+
+  eventstrlen=${#eventstr} 
+  
+
+  #TODO $text to be set using variables to accomodate event type and username
+
+  local text="/----------------------\              ___               \r|                      |              \~~\_____/~~\__   \r|      Automation      |______________ \______====== )-+\r|                      |                       ~~|/~~   \r\----------------------/                         ()     "
+
+  for i in {0..1300..18};do
+   echo -e "$text"|aosd_cat -u 250 --fore-color yellow -x "$i" -p 0 -y 50 -l 5 -a 2 -n 'mono'
+   #sleep 0.01
+  done &
+
+}
+
+############################## Main Command  #############################
+
+subcommand="${1-usage}"
+shift 2>/dev/null
+
+if [ -z "$subcommand" ]; then
+    usage
+    exit 1
+fi
+
+commands () {
+    echo ${commands[@]}
+}
+
+declare -a commands=(foo commands tmux overlay timeoverlay chatoverlay killoverlays event eventosd)
+
+for i in ${commands[@]}; do
+    if [[ "$i" == "$subcommand" ]]; then
+        "$subcommand" "$@"
+        exit 0
+    fi
+done
+
+######################### Tab Completion Context ########################
+
+# remember COMP_LINE is changed by shift
+if [ -n "$COMP_LINE" ]; then
+    for cmd in ${commands[@]}; do 
+        [[ "${cmd:0:${#1}}" == "$1" ]] && echo $cmd
+    done
+    exit 0
+fi
+
+
+## set up auto complate by running 'complete -C ./example ./example'
