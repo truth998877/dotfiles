@@ -1,0 +1,22 @@
+#!/bin/bash
+
+_game () {
+
+  local game="$1"
+
+  case "$game" in
+
+    GTAIII)
+      echo "grand-theft-auto-iii"
+    ;;  
+
+    *)  
+      exit 1    
+    ;;  
+  
+  esac
+
+}
+
+_game "$1"
+

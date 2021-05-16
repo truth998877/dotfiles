@@ -1,6 +1,12 @@
 #!/bin/bash
 
 
+clientid=$(cat ~/.secrets/twitch/client-id)
+appccesstoken=$(cat ~/.secrets/twitch/app-access-token)
+twitchid=$(cat ~/.secrets/twitch/twitch-id)
+clientsecret=$(cat ~/.secrets/twitch/oauth-token)
+useraccesstoken=$(cat ~/.secrets/twitch/user-access-token)
+
 foo () {
   local first=$1
   echo "Would foo with $first."
@@ -165,6 +171,12 @@ event () {
       #TODO add number of bits
       local eventstr="Bits Sent From"
       ;;
+    raid)
+      #TODO
+      ;;
+    host)
+      #TODO
+      ;;
     *)
       exit 1
       ;;
@@ -243,20 +255,27 @@ event () {
       sleep 0.06
       clear
     done
-    exit 0
+#    exit 0
+    return
 
   fi
 
   if [[ "$3" -eq "osd" ]]; then
     for i in {0..1300..18};do
-      echo -e "$banner1$plane11\r$banner2$plane21\r$banner3$plane31\r$banner4$plane41\r$banner5$plane51" |aosd_cat -u 250 --fore-color yellow -x "$i" -p 0 -y 50 -l 5 -a 2 -n 'mono'
+      
+      echo -e "$banner1$plane11\r$banner2$plane21\r$banner3$plane31\r$banner4$plane41\r$banner5$plane51" | \
+      aosd_cat -u 250 --fore-color yellow -x "$i" -p 0 -y 50 -l 5 -a 2 -n 'mono'
+      
       #sleep 0.01
+    
     done &
   fi
 
 }
 
 eventosd () {
+
+  #retired - use 'event <blah> osd' instead
 
   local eventtype="$1"
   local username="$2"
@@ -295,6 +314,80 @@ eventosd () {
 
 }
 
+
+getfollowers () {
+  
+  curl -s \
+       -X GET "https://api.twitch.tv/helix/users/follows?to_id=$twitchid" \
+       -H "Authorization: Bearer $useraccesstoken" \
+       -H "Client-Id: $clientid" | \
+        jq -rc '{followers: [.data[]|{from_login: .from_login , followed_at: .followed_at}]}' > followers.json
+
+       #TODO add followers rolls of honour here
+
+}
+
+events () {
+
+#echo "To check for new followers"
+
+local period=20
+
+  while true;do
+
+    local now="$(date --utc +%FT%TZ --date "$time seconds ago")"
+    #local now="2020-04-06T10:15:30Z"
+    #local now="2020-04-02T12:49:47Z"
+    
+    #get followers
+    getfollowers
+    
+    #get subscribers
+    getsubscribers
+
+    #echo "$now"
+    #echo "$followers"
+
+    #obtain list of new followers after $now
+    local newfollowers=$(jq -r --arg now $now  '.followers[]|select(((.followed_at)|strptime("%Y-%m-%dT%H:%M:%SZ") | mktime)|. > ($now|strptime("%Y-%m-%dT%H:%M:%SZ") | mktime)).from_login' followers.json) #in followers select records where .followed_at is after $now and return .from_login values
+    
+    #TODO
+    #local newsubscribers=??
+ 
+    local count=0
+
+    for newfollower in $newfollowers;do
+      event follower "$newfollower"
+      wait
+      ((count++))
+    done
+
+    #TODO
+    #for newsubscriber in $newsubscribers;do
+    #  event subscriber "$newsubscriber"  #plus other arguments, tier, gifted etc.
+    #  wait
+    #  ((count++))
+    #done
+
+    
+    time=$((60 + "$period" * "$count"))
+ 
+    sleep 60
+ 
+  done 
+}
+
+getsubscribers () {
+
+  curl -s \
+       -X GET "https://api.twitch.tv/helix/subscriptions?broadcaster_id=$twitchid" \
+       -H "Authorization: Bearer $useraccesstoken" \
+       -H "Client-Id: $clientid" | \
+        jq '.data[]|{from_login: .from_login}'  
+
+
+}
+
 ############################## Main Command  #############################
 
 subcommand="${1-usage}"
@@ -309,7 +402,7 @@ commands () {
     echo ${commands[@]}
 }
 
-declare -a commands=(foo commands tmux overlay timeoverlay chatoverlay killoverlays event eventosd)
+declare -a commands=(foo commands tmux overlay timeoverlay chatoverlay killoverlays event eventosd getfollowers getsubscribers events)
 
 for i in ${commands[@]}; do
     if [[ "$i" == "$subcommand" ]]; then

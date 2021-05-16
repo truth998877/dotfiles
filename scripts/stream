@@ -5,20 +5,103 @@ foo () {
   echo "Would foo with $first."
 }
 
-on () {
+start () {
 
-  local account=$1
+  local account="$1"
+  local game="$2"
+
+  local gamename=$(lutrisgameindex $game)
 
 #TODO set options for obs command line to stream to different accounts, fortiesgamer, studywithtony, etc
 
 #TODO obs command line option
 
-  echo "To switch obs on with correct setting to stream to various accounts"
+  #echo "To switch obs on with correct setting to stream to various accounts"
+
+  case "$account" in
+  
+    fortiesgamer)
+
+      #TODO check that $game is set else exit          
+    
+      #set currentstream for twitch api and weechat
+      #echo "fortiesgamer" > currentstream
+    
+      obs \
+        --minimize-to-tray \
+        --collection "fortiesgamer twitch" \
+        --profile "fortiesgamer" \
+         &>/dev/null &
+
+      sleep 5   
+
+      #obs-cli SetRecordingFolder "/home/tony/GameCaptures/$game"
+      #obs-cli StartRecording
+      #obs-cli StartStreaming
+
+      twitch chatoverlay
+      #twitcheventcheck osd
+      lutris lutris:rungame/"$gamename" &>/dev/null & 
+
+      tmuxlivegaming
+
+    ;;
+
+    studywithtony)
+
+      #echo "studywithtony" > currentstream
+    
+      obs \
+        --mininze-to-tray \
+        --collection "studywithtony twitch" \
+        --profile "studywithtony" \
+          &>/dev/null &     
+ 
+      sleep 5   
+
+      recdir="/home/tony/GameCaptures/livestudy/$(datepath)"
+ 
+      if [ ! -d "$recdir" ]; then
+        mkdir -p "$recdir"
+      fi
+      
+
+      #obs-cli SetRecordingFolder "$recdir"
+      #obs-cli StartRecording
+      #obs-cli StartStreaming
+ 
+      #obs \
+      # --startstreaming \
+      # --startrecording \
+      
+      tmuxlivestudy
+
+      markcreatefile create "$recdir"
+    
+    ;;
+ 
+    *)
+
+      echo "specified stream channel not recognised"
+      exit 1
+
+    ;;
+
+  esac
+
 }
 
-off () {
+stop () {
 
   echo "To gracfully switch streaming off and exit obs"
+  
+
+  obs-cli StopStreaming
+  obs-cli StopRecording
+
+  twitch killoverlays
+
+}
 
 ############################## Main Command  #############################
 

@@ -1,0 +1,9 @@
+#!/bin/bash
+
+now=$(date "+%s")
+latestvid=$(newestvid recdir)
+marksjson=$($recdir/${lastestvid%.*}-marks.json)
+
+mv "$marksjson" "$marksjson".tmp
+jq --arg now "$now" '.finish=$now' "$marksjson".tmp > "$marksjson"
+rm "$marksjson".tmp

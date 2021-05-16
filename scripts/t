@@ -1,0 +1,11 @@
+#!/bin/bash
+
+
+#Update Stream title box
+tmux -L livestudy send-keys -t 2 C-c
+tmux -L livestudy send-keys -t 2 "f 'Welcome to my Stream!\\n\\n ----Current Topic---- \\n$*'" Enter
+
+#TODO local and twitch video marks
+
+
+#mark "$*"

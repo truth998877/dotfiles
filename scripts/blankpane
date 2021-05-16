@@ -1,0 +1,10 @@
+#!/bin/bash
+
+clear=$'\033[2J'
+trap "setterm --cursor on; echo ${clear}; exit; trap -- - SIGINT SIGTERM" SIGTERM SIGINT
+
+hidecursor
+while true; do
+  clear
+  sleep 10
+done

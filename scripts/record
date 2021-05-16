@@ -5,13 +5,79 @@ foo () {
   echo "Would foo with $first."
 }
 
-on () {
+start () {
   
   local directory=$1
   
-  echo "To record a new video and save in the correct directory
+  echo "To record a new video and save in the correct directory"
+  local account="$1"
+  local game="$2"
+ 
+  local gamename=$(_game $game)
+ 
+  #TODO set options for obs command line to stream to different accounts, fortiesgamer, studywithtony, etc
+ 
+  #TODO obs command line option
+ 
+   #echo "To switch obs on with correct setting to stream to various accounts"
+ 
+  case "$account" in
+ 
+    fortiesgamer)
+ 
+      #TODO select here game and set $game and $lutrisgamename!
+      #set currentstream for twitch api and weechat
+      #   echo "fortiesgamer" > currentstream
+ 
+      obs \
+        --minimize-to-tray \
+        --collection "fortiesgamer twitch" \
+        --profile "fortiesgamer" \
+         &>/dev/null &
+ 
+      sleep 5
+ 
+      #obs-cli SetRecordingFolder "/home/tony/GameCaptures/$game"
+      #obs-cli StartRecording   
+        
+      lutris lutris:rungame/"$gamename" &>/dev/null &
+
+  ;;
+
+  studywithtony)
+ 
+   #    echo "studywithtony" > currentstream
+ 
+       obs \
+         --mininze-to-tray \
+         --collection "studywithtony twitch" \
+         --profile "studywithtony" \
+           &>/dev/null &
+ 
+       sleep 5
+ 
+       recdir="/home/tony/GameCaptures/livestudy/$(datepath)"
+ 
+       #if [ ! -d "$recdir" ]; then
+       #  mkdir -p "$recdir"
+       #fi
+
+       #obs-cli SetRecordingFolder "$recdir"
+       #obs-cli StartRecording
+
+  
+       tmuxlivestudy
+
+       markcreatefile create "$recdir"
 
 }
+
+stop () {
+
+  echo "To stop recording"
+
+}
+
 
 ############################## Main Command  #############################
 
@@ -27,7 +93,7 @@ commands () {
     echo ${commands[@]}
 }
 
-declare -a commands=(foo commands)
+declare -a commands=(foo commands start stop)
 
 for i in ${commands[@]}; do
     if [[ "$i" == "$subcommand" ]]; then

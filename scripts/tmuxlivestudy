@@ -1,0 +1,11 @@
+#!/bin/bash
+
+#tmux for live studying (studywithtony)
+
+
+#tmux new-session \; \split-window -v \;  \split-window -v weechat \; \split-window -v \; \resize-pane -y 6 \; \select-pane -t 3 \; \split-window -h \; \select-pane -t 3 \; \resize-pane -x 130 \; \select-pane -t 2 \; \resize-pane -y 2 
+
+tmux -L livestudy new-session \; \split-window -v 'twitch events'  \; \resize-pane -y 6 \; \select-pane -t 1 \; \split-window -h blankpane \; \resize-pane -x 40 \; \split-window -v weechat \; \split-window -v blankpane \; \select-pane -t 2 \; \resize-pane -y 6 \; \select-pane -t 4 \; resize-pane -y 12 \; \select-pane -t 1 \; \send -t 1 "tmuxin" Enter 
+
+
+

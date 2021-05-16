@@ -1,0 +1,5 @@
+#!/bin/bash
+
+#tmux for live gaming
+
+tmux new-session \; \split-window -v \; \resize-pane -y 6 \; \select-pane -t 1 \; send "weechat" Enter  \; \select-pane -t 2
