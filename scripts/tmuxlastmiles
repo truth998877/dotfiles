@@ -1,0 +1,5 @@
+#!/bin/bash
+
+#tmux for live gaming
+
+tmux -L blastwave new-session \; \split-window -v \; \select-pane -t 1 \; send "weechat -r '/bar show nicklist'" Enter \; send "/buffer #lastmiles" Enter  \; \select-pane -t 2

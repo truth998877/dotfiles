@@ -9,11 +9,11 @@ start () {
   
   local directory=$1
   
-  echo "To record a new video and save in the correct directory"
+ # echo "To record a new video and save in the correct directory"
   local account="$1"
   local game="$2"
  
-  local gamename=$(_game $game)
+  local gamename=$(lutrisgameindex $game)
  
   #TODO set options for obs command line to stream to different accounts, fortiesgamer, studywithtony, etc
  
@@ -46,7 +46,7 @@ start () {
 
   studywithtony)
  
-   #    echo "studywithtony" > currentstream
+   #    echo "studywithtony" > currentchannel
  
        obs \
          --mininze-to-tray \
@@ -68,14 +68,24 @@ start () {
   
        tmuxlivestudy
 
-       markcreatefile create "$recdir"
+       #markcreatefile create 
+  
+   ;;
+
+  *)
+
+    echo "Whaaat?"
+  ;;
+esac
 
 }
 
 stop () {
 
   echo "To stop recording"
-
+  #TODO current stream
+  #obs-cli StopRecording
+  markfinish
 }
 
 

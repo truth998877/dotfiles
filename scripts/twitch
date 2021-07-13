@@ -1,29 +1,190 @@
 #!/bin/bash
 
+############tokens and stuff for current streamer#######
 
+currentstreamer=$(cat /home/tony/repos/github.com/truth998877/dotfiles/scripts/currentchannel)
+
+#echo $currentstreamer
+
+#app stuff
 clientid=$(cat ~/.secrets/twitch/client-id)
 appccesstoken=$(cat ~/.secrets/twitch/app-access-token)
-twitchid=$(cat ~/.secrets/twitch/twitch-id)
-clientsecret=$(cat ~/.secrets/twitch/oauth-token)
-useraccesstoken=$(cat ~/.secrets/twitch/user-access-token)
+
+#streamer stuff
+twitchid=$(cat ~/.secrets/twitch/"$currentstreamer"/twitch-id)
+clientsecret=$(cat ~/.secrets/twitch/"$currentstreamer"/oauth-token)
+useraccesstoken=$(cat ~/.secrets/twitch/"$currentstreamer"/user-access-token)
+
+######################################################
 
 foo () {
   local first=$1
   echo "Would foo with $first."
 }
 
+#######################twitch functions###############
+
+wee () {
+    declare buf="$*"
+    if [ ! -p ~/.weechat/weechat_fifo ]; then
+        echo "WeeChat not running?" >&2
+        return 1
+    fi  
+    if [ -n "$buf" ]; then
+        echo "*$buf"  > ~/.weechat/weechat_fifo
+        return 0
+    fi  
+    while IFS= read -r line; do
+        echo "*$line" > ~/.weechat/weechat_fifo
+    done
+}
+
+slash () {
+    declare cmd="$1"
+    shift 2>/dev/null
+    wee "/msg $currentstreamer /$cmd $*"
+}
+
+#######################################################
+
+###########twitch commands#############################
+
+mod () {
+    if [ -z "$1" ]; then
+        echo 'usage: mod <twitchid>'
+        return 1
+    fi
+    slash mod $1
+}
+
+unmod () {
+    if [ -z "$1" ]; then
+        echo 'usage: unmod <twitchid>'
+        return 1
+    fi
+    slash unmod "$1"
+
+}
+
+raid () {
+    if [ -z "$1" ]; then
+        echo 'usage: raid <twitchid>'
+        return 1
+    fi
+    slash raid $1
+}
+
+unraid() {
+    slash unraid
+}
+
+slow() {
+    if [ -z "$1" ]; then
+        echo 'usage: slowmod <seconds>'
+        return 1
+    fi
+    slash slow "$1"
+}
+
+slowoff() {
+    slash slowoff
+}
+
+vip () {
+    if [ -z "$1" ]; then
+        echo 'usage: vip <twitchid>'
+        return 1
+    fi
+    slash vip $1
+}
+
+ban () {
+    if [ -z "$1" ]; then
+        echo 'usage: ban <twitchid>'
+        return 1
+    fi
+    slash ban $1
+}
+
+unban () {
+    if [ -z "$1" ]; then
+        echo 'usage: unban <twitchid>'
+        return 1
+      fi
+    slash unban $1
+}
+
+timeout () {
+    if [ -z "$1" ]; then
+        echo 'usage: timeout <twitchid>'
+        return 1
+    fi
+    slash timeout $1
+}
+
+untimeout () {
+    if [ -z "$1" ]; then
+        echo 'usage: untimeout <twitchid>'
+        return 1
+    fi
+    slash untimeout $1
+}
+
+unvip () {
+    if [ -z "$1" ]; then
+        echo 'usage: unvip <twitchid>'
+        return 1
+    fi
+    slash unvip $1
+}
+
+host () {
+    if [ -z "$1" ]; then
+        echo 'usage: host <twitchid>'
+        return 1
+    fi
+    slash host $1
+}
+
+unhost () {
+    slash unhost
+}
+
+#####################################################
+
+##############twitch other info######################
+
+#TODO
+
+#get from rwxrob - urls, lasturl, top, subs (use this for events somehow), mods, banned
+
+#####################################################
+
+###########twitch settings##########################
+
+#TODO
+
+#get from rwxrob - description, mark
+
+####################################################
+
+
 tmux () {
 
+#TODO is this being used somewhere?
  tmux new-session \; \split-window -v \; \split-window -h \; \select-pane -t 0 \; \split-window -h
 
 }
+
+
+###############twitch aosd_cat overlays#############
 
 chatoverlay () {
 
   while true; do 
     text=$(cat -e /home/tony/.weechat/logs/irc.twitch.\#fortiesgamer.weechatlog|tail -f)
     echo -e ${text//\$/\\r}| \
-    aosd_cat -l 5 -u 5000 -p 3 -y 0 -x 0  --fore-color yellow 
+    aosd_cat -l 5 -u 5000 -p 3 -y 0 -x 0 -n 10  --fore-color yellow 
   done &
 
 }
@@ -35,10 +196,34 @@ timeoverlay () {
  # while true ; do date ; sleep 1 ; done | aosd_cat -l "$lines" --fore-color yellow -p 0 -y 50 -x 50 -u 1000 &
  # while true ; do date ; sleep 1 ; done | aosd_cat -l "$lines" --fore-color yellow -p 2 -y 50 -x -50 -u 1000 &
  # while true ; do date ; sleep 1 ; done | aosd_cat -l "$lines" --fore-color yellow -p 6 -y -50 -x 50 -u 1000 &
-  while true ; do date ; sleep 1 ; done | aosd_cat -l "$lines" --fore-color yellow -p 8 -y -50 -x -50 -u 1000 &
+  while true ; do date ; sleep 1 ; done | aosd_cat -l "$lines" --fore-color yellow -p 8 -x -10 -y 0 -u 5000 -n 10 &
 
 #  while true ; do cat MYFIFO; done | aosd_cat --fore-color yellow -l $lines -u 10000 &
  
+}
+
+sensoroverlay () {
+
+local text
+
+while true;do 
+  text=$(sensors)
+  text=${text#*)}
+  text=${text//  (high = +80.0°C, crit = +98.0°C)/\\r}
+  
+  text1=$(nvidia-smi -q -d TEMPERATURE| grep "GPU Current Temp")
+  text1="${text1//[[:space:]]/}"
+  text1="${text1//CGPU/C\\rGPU}"
+  text1="${text1//:/\ }"
+
+  text2=$(nvidia-smi --query-gpu="fan.speed" --format=csv)
+  text2=${text2//fan.speed \[%\]};text2=${text2//\ %/%}
+  text2=${text2//[[:space:]]}
+  text2=${text2/\%/\%\\rGPU2\ Fan\ Speed\ }
+
+  echo -e $text\\r$text1\\r\\r"GPU1 Fan Speed "$text2|aosd_cat -l 10 --fore-color yellow -x 0 -y 0 -u 5000 -n 10; done &
+
+
 }
 
 overlay () {
@@ -47,15 +232,20 @@ overlay () {
 
   chatoverlay
   timeoverlay
+  sensoroverlay
 
 }
 
-killoverlays () {
+killoverlay () {
 
   killall aosd_cat
   killall twitch
 
 }
+
+##################################################
+
+#####twitch event listener and notification#######
 
 scroll ()  {
     scroll_by="$1"
@@ -289,6 +479,7 @@ eventosd () {
       local eventstr="New Subscription"
       ;;
     donation)
+      #TODO add dono
       local eventstr="New Donation"
       ;;
     bits)
@@ -324,6 +515,7 @@ getfollowers () {
         jq -rc '{followers: [.data[]|{from_login: .from_login , followed_at: .followed_at}]}' > followers.json
 
        #TODO add followers rolls of honour here
+       #TODO decide where followers.json will be stored and make "$currentstreamer-followers.json"
 
 }
 
@@ -343,13 +535,14 @@ local period=20
     getfollowers
     
     #get subscribers
-    getsubscribers
+    #getsubscribers
 
     #echo "$now"
     #echo "$followers"
 
     #obtain list of new followers after $now
     local newfollowers=$(jq -r --arg now $now  '.followers[]|select(((.followed_at)|strptime("%Y-%m-%dT%H:%M:%SZ") | mktime)|. > ($now|strptime("%Y-%m-%dT%H:%M:%SZ") | mktime)).from_login' followers.json) #in followers select records where .followed_at is after $now and return .from_login values
+    #TODO will need to be updated when new location for followers.json is decided
     
     #TODO
     #local newsubscribers=??
@@ -388,6 +581,10 @@ getsubscribers () {
 
 }
 
+##########################################################################
+
+
+
 ############################## Main Command  #############################
 
 subcommand="${1-usage}"
@@ -402,7 +599,7 @@ commands () {
     echo ${commands[@]}
 }
 
-declare -a commands=(foo commands tmux overlay timeoverlay chatoverlay killoverlays event eventosd getfollowers getsubscribers events)
+declare -a commands=(foo commands tmux overlay timeoverlay chatoverlay sensoroverlay killoverlay event eventosd getfollowers getsubscribers events ban vip raid mod slow slash slowoff host unban unhost unmod unraid unvip timeout untimeout)
 
 for i in ${commands[@]}; do
     if [[ "$i" == "$subcommand" ]]; then

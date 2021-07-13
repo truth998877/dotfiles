@@ -7,13 +7,13 @@ foo () {
 
 create () {
 
-  recdir="$1"
-
+  recdir="/home/tony/GameCaptures/livestudy/$(datepath)"
+  
   now=$(date "+%s")
-  latestvid=$(newestvid recdir)
+  latestvid=$(newestvid "$recdir")
 
   #json filename of marks for latest video
-  marksjson=$($recdir/${lastestvid%.*}-marks.json)
+  marksjson="${latestvid%.*}-marks.json"
 
   #if json filename for the latest video does not exist, create it
   if [ ! -f "$marksjson" ];then

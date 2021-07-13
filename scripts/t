@@ -8,4 +8,4 @@ tmux -L livestudy send-keys -t 2 "f 'Welcome to my Stream!\\n\\n ----Current Top
 #TODO local and twitch video marks
 
 
-#mark "$*"
+mark "$*"

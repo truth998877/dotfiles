@@ -1,0 +1,5 @@
+#!/bin/bash
+
+#say something in current irc buffer
+
+echo "*$*" >~/.weechat/weechat_fifo

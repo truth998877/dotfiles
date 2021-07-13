@@ -39,7 +39,7 @@ start () {
       #obs-cli StartRecording
       #obs-cli StartStreaming
 
-      twitch chatoverlay
+      twitch overlay
       #twitcheventcheck osd
       lutris lutris:rungame/"$gamename" &>/dev/null & 
 
@@ -48,7 +48,7 @@ start () {
     ;;
 
     studywithtony)
-
+    #TODO make this the same as record, only add the obs streaming command 18/5
       #echo "studywithtony" > currentstream
     
       obs \
@@ -99,7 +99,9 @@ stop () {
   obs-cli StopStreaming
   obs-cli StopRecording
 
-  twitch killoverlays
+  twitch killoverlay
+
+  killall obs
 
 }
 
@@ -117,7 +119,7 @@ commands () {
     echo ${commands[@]}
 }
 
-declare -a commands=(foo commands on off)
+declare -a commands=(foo commands start stop)
 
 for i in ${commands[@]}; do
     if [[ "$i" == "$subcommand" ]]; then
