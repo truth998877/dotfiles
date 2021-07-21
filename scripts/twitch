@@ -450,11 +450,31 @@ event () {
 
   fi
 
+#original settings
+#1300, 17, 250
+
+#TODO to cope with long usernames the -w setting will need to be tied to the total length of the banners
   if [[ "$3" -eq "osd" ]]; then
-    for i in {0..1300..18};do
+    for i in {0..2000..7};do
       
+      case $(($i%4)) in
+ 
+      0)      
       echo -e "$banner1$plane11\r$banner2$plane21\r$banner3$plane31\r$banner4$plane41\r$banner5$plane51" | \
-      aosd_cat -u 250 --fore-color yellow -x "$i" -p 0 -y 50 -l 5 -a 2 -n 'mono'
+      aosd_cat -u 10 --fore-color yellow -x "$i" -p 0 -y 50 -l 5 -a 2 -n 'mono' -w 600
+      ;;
+
+      [-2,2])
+      echo -e "$banner1$plane12\r$banner2$plane22\r$banner3$plane32\r$banner4$plane42\r$banner5$plane52" | \
+      aosd_cat -u 10 --fore-color yellow -x "$i" -p 0 -y 50 -l 5 -a 2 -n 'mono' -w 600
+      ;;
+
+      [-1,1,-3,3])
+      echo -e "$banner1$plane13\r$banner2$plane23\r$banner3$plane33\r$banner4$plane43\r$banner5$plane53" | \
+      aosd_cat -u 10 --fore-color yellow -x "$i" -p 0 -y 50 -l 5 -a 2 -n 'mono' -w 600
+      ;;
+
+      esac
       
       #sleep 0.01
     

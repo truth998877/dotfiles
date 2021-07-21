@@ -11,9 +11,7 @@ start () {
   
  # echo "To record a new video and save in the correct directory"
   local account="$1"
-  local game="$2"
- 
-  local gamename=$(lutrisgameindex $game)
+
  
   #TODO set options for obs command line to stream to different accounts, fortiesgamer, studywithtony, etc
  
@@ -24,6 +22,25 @@ start () {
   case "$account" in
  
     fortiesgamer)
+  
+      local game="$2"
+         [[ ! -d ~/GameCaptures/"$game" ]] && read -p "New Game? (y/n)" response
+            if [ $response == "y" ]; then
+              echo "gamecaptures new-game"
+            elif [ "$response" == "n" ]; then
+              local OLD_IFS=${IFS};IFS=$'\n'
+              local array=("$(find ~/GameCaptures/ -maxdepth 1 -type d -printf '%f\n')") 
+              select item in ${array[@]};do
+                 game="$item"
+                 IFS="${OLD_IFS}"
+                 break
+              done    
+            fi
+ 
+      local gamename=$(lutrisgameindex "$game")
+
+      sensoroverlay
+      timeoverlay
  
       #TODO select here game and set $game and $lutrisgamename!
       #set currentstream for twitch api and weechat

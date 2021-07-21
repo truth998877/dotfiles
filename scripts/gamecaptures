@@ -16,6 +16,17 @@ sync-audio () {
 
 new-game () {
 
+#needed
+# 1) Capture Folder - done here
+# 2) Upload folder - dont need
+# 3) Game specific Thumbnail template
+# 4) Game specific Thumbnail template config file
+# 5) description body required in to_upload directory moved here from templates directory
+# 6) Category - needed
+# 7) game tags - linux ro windows tage read here, but not sure if this follows with the rest of the script
+# 8) timings - done here, template moved from templates directory, albeit this may come from 'marks'
+
+
 #not tested
 
   local game="$1"
@@ -23,25 +34,33 @@ new-game () {
 
   if [[ ! -d ~/GameCaptures/"$game" ]];then
     mkdir ~/GameCaptures/"$game"
-    cd ~/GameCaptures/"$game"
-    
-    cp ~/GameCaptures/templates/description_body.txt .
-    cp ~/GameCaptures/templates/thumbnailconfig.txt .
-    
-    if [[ "$platform" == "linux" ]];then
-      cp ~/GameCaptures/templates/linux_game_tags.txt .
-    elif [[ "$platform" == "windows" ]];then
-      cp ~/GameCaptures/templates/windows_game_tags.txt .
-    else
-	echo "platform not recognised"
-    fi
+
   fi
+    
+  cd ~/GameCaptures/"$game"
+    
+  cp ~/GameCaptures/templates/description_body.txt .
+  cp ~/GameCaptures/templates/thumbnailconfig.txt .
+    
+  if [[ "$platform" == "linux" ]];then
+    cp ~/GameCaptures/templates/linux_game_tags.txt .
+  elif [[ "$platform" == "windows" ]];then
+    cp ~/GameCaptures/templates/windows_game_tags.txt .
+  else
+    echo "platform not recognised"
+  fi
+
 
   read -p "Full path to thumbnail?" thumbpath
     cp "$thumbpath" ./thumbnail_w.jpg
 
   cp ~/GameCaptures/templates/timings.txt .  
-  
+
+  if [[ ! -d ~/Gamecaptures/To_Upload/"$game" ]];then
+   mkdir  ~/Gamecaptures/To_Upload/"$game" 
+  fi
+ 
+   
 }
 
 checkuploaddir () {
@@ -196,7 +215,9 @@ pre () {
   #echo "$(checkres "$res")"
 
   checkres "$res"
-   
+  
+
+  #intro and outro are used across functions, wouldn't it be better if intro and outro were set in post?
   if [[ "$?" == "1"  ]]; then 
     intro="$(setintro "$res")"
     outtro="$(setouttro "$res")"
