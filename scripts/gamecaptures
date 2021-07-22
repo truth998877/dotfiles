@@ -18,7 +18,7 @@ new-game () {
 
 #needed
 # 1) Capture Folder - done here
-# 2) Upload folder - dont need
+# 2) Upload folder - don't need
 # 3) Game specific Thumbnail template
 # 4) Game specific Thumbnail template config file
 # 5) description body required in to_upload directory moved here from templates directory
@@ -27,40 +27,66 @@ new-game () {
 # 8) timings - done here, template moved from templates directory, albeit this may come from 'marks'
 
 
+  local text=$(lutris -l)
+  local text="${text//\ /}"
+  local gamesarray=("$(echo -e "$text"|cut -d \| -f 3)")
+  
+  echo -e "\nSelect from the following installed games...\n"
+  
+  select item in ${gamesarray[@]};do
+    echo $item
+    break
+  done  
+
+  read -p "Enter the directory where captures should be stored..." $dirname
+
+  local response="n"
+
+  if [[ ! -d ~/GameCaptures/"$dirname" ]];then
+   read -p  "Directory not found, create? (y/n)" $response
+  fi
+
+  if [[ $response == y ]];then
+   mkdir ~/GameCaptures/"$dirname"
+  fi
+  
+  #update gamecapturedirectories.json - a file which contains the directory to which recording should be saved for a given game.
+  
 #not tested
 
-  local game="$1"
-  local platform="$2"
+#  local game="$1"
+#  local platform="$2"
 
-  if [[ ! -d ~/GameCaptures/"$game" ]];then
-    mkdir ~/GameCaptures/"$game"
-
-  fi
+#  if [[ ! -d ~/GameCaptures/"$game" ]];then
+#    mkdir ~/GameCaptures/"$game"
+#  fi
     
-  cd ~/GameCaptures/"$game"
-    
-  cp ~/GameCaptures/templates/description_body.txt .
-  cp ~/GameCaptures/templates/thumbnailconfig.txt .
-    
-  if [[ "$platform" == "linux" ]];then
-    cp ~/GameCaptures/templates/linux_game_tags.txt .
-  elif [[ "$platform" == "windows" ]];then
-    cp ~/GameCaptures/templates/windows_game_tags.txt .
-  else
-    echo "platform not recognised"
-  fi
-
-
-  read -p "Full path to thumbnail?" thumbpath
-    cp "$thumbpath" ./thumbnail_w.jpg
-
-  cp ~/GameCaptures/templates/timings.txt .  
-
-  if [[ ! -d ~/Gamecaptures/To_Upload/"$game" ]];then
-   mkdir  ~/Gamecaptures/To_Upload/"$game" 
-  fi
- 
-   
+#  #not sure if this works
+#  cd ~/GameCaptures/"$game"
+#  
+#  #here  
+#  cp ~/GameCaptures/templates/description_body.txt ~/GameCaptures/"$game"
+#  cp ~/GameCaptures/templates/thumbnailconfig.txt ~/GameCaptures/"$game"
+#    
+#  if [[ "$platform" == "linux" ]];then
+#    cp ~/GameCaptures/templates/linux_game_tags.txt ~/GameCaptures/"$game"
+#  elif [[ "$platform" == "windows" ]];then
+#    cp ~/GameCaptures/templates/windows_game_tags.txt ~/GameCaptures/"$game"
+#  else
+#    echo "platform not recognised"
+#  fi
+#
+#  read -p "Full path to thumbnail?" thumbpath
+#
+#  if [[ ! -f "$thumpath" ]]; then
+#     echo "thumbnail not found"
+#     exit 1
+#  fi
+#  
+#  cp "$thumbpath" ./thumbnail_w.jpg
+#
+#  cp ~/GameCaptures/templates/timings.txt  ~/GameCaptures/"$game" 
+#   
 }
 
 checkuploaddir () {
@@ -81,8 +107,7 @@ checkuploadeddir () {
 
   local game="$1"
 
-  if [ ! -d ~/GameCaptures/"$game"/Uploaded/ ]
-  then
+  if [[ ! -d ~/GameCaptures/"$game"/Uploaded/ ]];then
     mkdir ~/GameCaptures/"$game"/Uploaded/ 
   fi
 
@@ -133,6 +158,10 @@ readdescriptionfooter () {
 readdescriptionbody () {
 
   local game="$1"
+
+  if [[ ! -f ~/GameCaptures/To_Upload/"$game"/description_body.txt ]]; then
+     cp ~/GameCaptures/generic-description/description_body.txt ~/GameCaptures/To_Upload/"$game"
+  fi
 
   cat ~/GameCaptures/To_Upload/"$game"/description_body.txt
 
