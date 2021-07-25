@@ -26,29 +26,38 @@ new-game () {
 # 7) game tags - linux ro windows tage read here, but not sure if this follows with the rest of the script
 # 8) timings - done here, template moved from templates directory, albeit this may come from 'marks'
 
+  #echo "New Game"
 
-  local text=$(lutris -l)
-  local text="${text//\ /}"
-  local gamesarray=("$(echo -e "$text"|cut -d \| -f 3)")
-  
-  echo -e "\nSelect from the following installed games...\n"
-  
-  select item in ${gamesarray[@]};do
-    echo $item
-    break
-  done  
+  selectedgame="$1"
 
-  read -p "Enter the directory where captures should be stored..." $dirname
+  read -p "Enter the directory where captures should be stored...>" dirname
+  
+  #echo "test"
+  #echo "The dir name is $dirname"
 
   local response="n"
 
   if [[ ! -d ~/GameCaptures/"$dirname" ]];then
-   read -p  "Directory not found, create? (y/n)" $response
+   read -p  "Directory not found, create? (y/n)" response
   fi
 
-  if [[ $response == y ]];then
-   mkdir ~/GameCaptures/"$dirname"
+  if [[ "$response" == "y" ]];then
+#    echo $dirname
+    mkdir ~/GameCaptures/"$dirname"
+
+    mv ~/GameCaptures/gamecapturedirectories.json ~/GameCaptures/gamecapturedirectories.json.tmp
+    
+    jq --arg dirname "$dirname" \
+        --arg selectedgame "$seletectedgame" \
+        '.directory[] += {"'$selectedgame'": $dirname}' \
+        ~/GameCaptures/gamecapturedirectories.json.tmp > ~/GameCaptures/gamecapturedirectories.json
+    
+    rm ~/GameCaptures/gamecapturedirectories.json.tmp 
+
   fi
+
+
+  echo "$dirname"
   
   #update gamecapturedirectories.json - a file which contains the directory to which recording should be saved for a given game.
   

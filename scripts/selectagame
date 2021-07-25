@@ -1,0 +1,19 @@
+#!/bin/bash
+  
+
+selectagame () {
+
+  local text=$(lutris -l)
+  local text="${text//\ /}"
+  local gamesarray=("$(echo -e "$text"|cut -d \| -f 3)")
+  
+#  echo -e "\nSelect from the following installed games...\n"
+  
+  select item in ${gamesarray[@]};do
+    echo $item
+    break
+  done  
+
+}
+
+selectagame

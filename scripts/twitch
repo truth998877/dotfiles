@@ -239,6 +239,7 @@ overlay () {
 killoverlay () {
 
   killall aosd_cat
+  killall sceneoverlay
   killall twitch
 
 }
