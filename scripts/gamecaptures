@@ -247,7 +247,7 @@ pre () {
   checkuploaddir "$game"  
   checkuploadeddir "$game"
 
-  local res=$(videdit res $basevideo)
+  local res=$(videdit res "$basevideo")
 
   echo "res = $res"
   #echo "$(checkres "$res")"
@@ -395,13 +395,20 @@ post () {
 splitequal () { 
 
 #  echo "To Split a baseline video into equal parts and manually upload to yt
+ 
+  selectedgame="$(selectagame)"
+  local game="$(gamedir "$selectedgame")"  #"$3"
 
-  local basevideo="$1"
-  local segtime="$2"   #in minutes
-  local game="$3"
-  local offset="$4"
+  local basevideofile=$(selectavideo "$game")          #"$1"
+  local basevideo=~/GameCaptures/"$game/$basevideofile"
+
+  local segtime=1           #"$2"   #in minutes
+   
+  local offset="$1"
 
   pre "$basevideo" "$game" "$offset"
+
+exit
  
   basevideo="${basevideo%.*}w.mp4"
   videdit split2equalsegments "$basevideo" "$segtime" "${basevideo%.*}"

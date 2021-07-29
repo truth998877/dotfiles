@@ -1,7 +1,7 @@
 #!/bin/bash
   
 
-selectagame () {
+_selectagame () {
 
   local text=$(lutris -l)
   local text="${text//\ /}"
@@ -16,4 +16,4 @@ selectagame () {
 
 }
 
-selectagame
+_selectagame
