@@ -54,6 +54,7 @@ start () {
       obs \
         --mininze-to-tray \
         --collection "studywithtony twitch" \
+        --scene "Intermission" \
         --profile "studywithtony" \
           &>/dev/null &     
  
@@ -65,18 +66,20 @@ start () {
         mkdir -p "$recdir"
       fi
       
+      local setrecdir="SetRecordingFolder="\'"{\"rec-folder\": \"/"$recdir"/\" }"\'
+      echo "$setrecdir" |xargs obs-cli | jq -r '.[].status'
 
-      #obs-cli SetRecordingFolder "$recdir"
-      #obs-cli StartRecording
-      #obs-cli StartStreaming
- 
-      #obs \
-      # --startstreaming \
-      # --startrecording \
+      recordingstatus=$(obs-cli StartRecording | jq -r '.[].status')
+      echo Recording Status: "$recordingstatus"
+      #streamingstatus=$(obs-cli StartStreaming | jq -r '.[].status')
+      #echo Streaming Status: "$streamingstatus"
       
+#      markcreatefile create "$recdir"
+
+      sleep 3
+      markerscreatefile create
       tmuxlivestudy
 
-      markcreatefile create "$recdir"
     
     ;;
  

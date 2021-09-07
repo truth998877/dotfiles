@@ -74,7 +74,7 @@ start () {
     
       # example   local recordingfolderstring = "'{ "rec-folder":"/home/tony/GameCaptures/$capturedir"}'"
       local recdir="SetRecordingFolder="\'"{\"rec-folder\": \"/"home/tony/GameCaptures/$capturedir"/\" }"\'
-      echo "$recdir"|xargs obs-cli | jq -r '.[].status'
+      echo "$recdir" |xargs obs-cli | jq -r '.[].status'
       recordingstatus=$(obs-cli StartRecording | jq -r '.[].status')
       echo "Recording Status $recordingstatus"
          
@@ -95,17 +95,23 @@ start () {
  
        sleep 5
  
-       recdir="/home/tony/GameCaptures/livestudy/$(datepath)"
+       local recdir="/home/tony/GameCaptures/livestudy/$(datepath)"
  
-       #if [ ! -d "$recdir" ]; then
-       #  mkdir -p "$recdir"
-       #fi
+       if [ ! -d "$recdir" ]; then
+         mkdir -p "$recdir"
+       fi
 
        #obs-cli SetRecordingFolder "$recdir"
        #obs-cli StartRecording
 
+       #local setrecdir="SetRecordingFolder="\'"{\"rec-folder\": \"/"home/tony/GameCaptures/livestudy/$(datepath)"/\" }"\'
+       local setrecdir="SetRecordingFolder="\'"{\"rec-folder\": \"/"$recdir"/\" }"\'
+       echo "$setrecdir" |xargs obs-cli | jq -r '.[].status'
+
+       recordingstatus=$(obs-cli StartRecording | jq -r '.[].status')
+       echo "$recordingstatus"
   
-       tmuxlivestudy
+       tmuxin
 
        #markcreatefile create 
   

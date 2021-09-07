@@ -12,8 +12,15 @@ appccesstoken=$(cat ~/.secrets/twitch/app-access-token)
 
 #streamer stuff
 twitchid=$(cat ~/.secrets/twitch/"$currentstreamer"/twitch-id)
-clientsecret=$(cat ~/.secrets/twitch/"$currentstreamer"/oauth-token)
+#echo "$twitchid"
+clientsecret=$(cat ~/.secrets/twitch/client-secret)
 useraccesstoken=$(cat ~/.secrets/twitch/"$currentstreamer"/user-access-token)
+oauthtoken=$(cat ~/.secrets/twitch/"$currentstreamer"/oauth-token)
+
+###The following scopes are required######
+#
+#
+#
 
 ######################################################
 
@@ -533,8 +540,8 @@ getfollowers () {
        -X GET "https://api.twitch.tv/helix/users/follows?to_id=$twitchid" \
        -H "Authorization: Bearer $useraccesstoken" \
        -H "Client-Id: $clientid" | \
-        jq -rc '{followers: [.data[]|{from_login: .from_login , followed_at: .followed_at}]}' > followers.json
-
+       jq -r '{followers: [.data[]|{from_login: .from_login , followed_at: .followed_at}]}' > /home/tony/"$currentstreamer"/followers.json
+ 
        #TODO add followers rolls of honour here
        #TODO decide where followers.json will be stored and make "$currentstreamer-followers.json"
 
@@ -562,7 +569,8 @@ local period=20
     #echo "$followers"
 
     #obtain list of new followers after $now
-    local newfollowers=$(jq -r --arg now $now  '.followers[]|select(((.followed_at)|strptime("%Y-%m-%dT%H:%M:%SZ") | mktime)|. > ($now|strptime("%Y-%m-%dT%H:%M:%SZ") | mktime)).from_login' followers.json) #in followers select records where .followed_at is after $now and return .from_login values
+    #TODO update for new location of followers.json
+    local newfollowers=$(jq -r --arg now $now  '.followers[]|select(((.followed_at)|strptime("%Y-%m-%dT%H:%M:%SZ") | mktime)|. > ($now|strptime("%Y-%m-%dT%H:%M:%SZ") | mktime)).from_login' /home/tony/"$currentstreamer"/followers.json) #in followers select records where .followed_at is after $now and return .from_login values
     #TODO will need to be updated when new location for followers.json is decided
     
     #TODO
@@ -602,6 +610,21 @@ getsubscribers () {
 
 }
 
+marker () {
+
+#echo To set a twitch marker
+  
+  local what="$*"
+
+  curl -X POST "https://api.twitch.tv/helix/streams/markers" \
+       -H "Authorization: Bearer $useraccesstoken" \
+       -H "Client-Id: $clientid" \
+       -H 'Content-Type: application/json' \
+       -d "{"user_id":"$twitchid", "description":"$what"}" | \
+        jq -r '.data[].created_at'
+
+}
+
 ##########################################################################
 
 
@@ -620,7 +643,7 @@ commands () {
     echo ${commands[@]}
 }
 
-declare -a commands=(foo commands tmux overlay timeoverlay chatoverlay sensoroverlay killoverlay event eventosd getfollowers getsubscribers events ban vip raid mod slow slash slowoff host unban unhost unmod unraid unvip timeout untimeout)
+declare -a commands=(foo commands tmux overlay timeoverlay chatoverlay sensoroverlay killoverlay event eventosd getfollowers getsubscribers events ban vip raid mod slow slash slowoff host unban unhost unmod unraid unvip timeout untimeout marker)
 
 for i in ${commands[@]}; do
     if [[ "$i" == "$subcommand" ]]; then
