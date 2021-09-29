@@ -203,7 +203,7 @@ timeoverlay () {
  # while true ; do date ; sleep 1 ; done | aosd_cat -l "$lines" --fore-color yellow -p 0 -y 50 -x 50 -u 1000 &
  # while true ; do date ; sleep 1 ; done | aosd_cat -l "$lines" --fore-color yellow -p 2 -y 50 -x -50 -u 1000 &
  # while true ; do date ; sleep 1 ; done | aosd_cat -l "$lines" --fore-color yellow -p 6 -y -50 -x 50 -u 1000 &
-  while true ; do date ; sleep 1 ; done | aosd_cat -l "$lines" --fore-color yellow -p 8 -x -10 -y 0 -u 5000 -n 10 &
+  while true ; do date ; sleep 30 ; done | aosd_cat -l "$lines" --fore-color yellow -p 8 -x -10 -y 0 -u 30000 -n 10 &
 
 #  while true ; do cat MYFIFO; done | aosd_cat --fore-color yellow -l $lines -u 10000 &
  
@@ -216,6 +216,7 @@ local text
 while true;do 
   text=$(sensors)
   text=${text#*)}
+  text=${text%it8*}
   text=${text//  (high = +80.0°C, crit = +98.0°C)/\\r}
   
   text1=$(nvidia-smi -q -d TEMPERATURE| grep "GPU Current Temp")
