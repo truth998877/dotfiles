@@ -10,15 +10,11 @@ start () {
  # echo "To record a new video and save in the correct directory"
   local account="$1"
  
-  #TODO set options for obs command line to stream to different accounts, fortiesgamer, studywithtony, etc
- 
-  #TODO obs command line option
- 
-  #echo "To switch obs on with correct setting to stream to various accounts"
- 
   case "$account" in
  
     fortiesgamer)
+
+      #TODO -----needed for record and stream, so this needs to be in its own function------------------------------------------------------------
 
       selectedgame="$(selectagame)"
       checkdisc "$selectedgame"
@@ -26,12 +22,6 @@ start () {
       #move this line to its own function as this task needs to be performed by other functions  
       local capturedir="$(jq --arg selectedgame "$selectedgame" -r '.directory[]."'$selectedgame'"' ~/GameCaptures/gamecapturedirectories.json)"
 
-      #test this!!
-      #local capturedir=$(gamedir "$selectedgame")
-
-      #echo "$game"
-
-        # if [[ ! -d ~/GameCaptures/"$capturedir" ]]; then
           if [[ $capturedir == "null" ]]; then 
             read -p "New Game? (y/n)" response
               if [[ $response == "y" ]]; then
@@ -39,7 +29,7 @@ start () {
                capturedir=$(gamecaptures new-game "$selectedgame")
                #echo $capturedir
 
-               #disc details need to be captured here
+               #TODO disc details need to be captured here
                 
               elif [ "$response" == "n" ]; then
                 local OLD_IFS=${IFS};IFS=$'\n'
@@ -51,17 +41,14 @@ start () {
                 done    
               fi
          fi
- 
-#      local gamename=$(lutrisgameindex "$game")
+
+     #--------------------------------------------------------------------------------------------------------------------------------------------
 
       sensoroverlay
       timeoverlay
       sceneoverlay
  
-      #TODO select here game and set $game and $lutrisgamename!
-      #set currentstream for twitch api and weechat
-      #   echo "fortiesgamer" > currentstream
- 
+    #TODO -----obs initialisation needs to be in its own function----------------------------------------------------------------------------------
       obs \
         --minimize-to-tray \
         --collection "fortiesgamer record only" \
@@ -78,10 +65,11 @@ start () {
       echo "$recdir" |xargs obs-cli | jq -r '.[].status'
       recordingstatus=$(obs-cli StartRecording | jq -r '.[].status')
       echo "Recording Status $recordingstatus"
-         
-        
+     #---------------------------------------------------------------------------------------------------------------------------------------------
+     
+     #TODO ---------needs to be own function------------------------------------------------
       lutris lutris:rungame/"$selectedgame" &>/dev/null &
-
+     #--------------------------------------------------------------------------------------
   ;;
 
   studywithtony)
