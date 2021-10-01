@@ -5,39 +5,23 @@ foo () {
   echo "Would foo with $first."
 }
 
-start () {
-  
+start () { 
   
  # echo "To record a new video and save in the correct directory"
   local account="$1"
-
  
   #TODO set options for obs command line to stream to different accounts, fortiesgamer, studywithtony, etc
  
   #TODO obs command line option
  
-   #echo "To switch obs on with correct setting to stream to various accounts"
+  #echo "To switch obs on with correct setting to stream to various accounts"
  
   case "$account" in
  
     fortiesgamer)
 
       selectedgame="$(selectagame)"
-
-      #---------needs to be own script-------------------------------------
-      #check for correct disc in drive if required
-      local disc=$(disc)
-      local correctdisc=$(correctdisc "$selectedgame")
-      if [[ $correctdisc != $disc ]];then 
-         echo "wrong disc in drive, ejecting and exitting..."
-         eject
-         exit  #no
-       
-      #  on tray close
-      #  etic
-      #while tray=$(setcd -i /dev/sr0) is open sleep, once close recheck
-      fi
-      #--------------------------------------------------------------------
+      checkdisc "$selectedgame"
       
       #move this line to its own function as this task needs to be performed by other functions  
       local capturedir="$(jq --arg selectedgame "$selectedgame" -r '.directory[]."'$selectedgame'"' ~/GameCaptures/gamecapturedirectories.json)"
@@ -54,6 +38,8 @@ start () {
                #echo blah
                capturedir=$(gamecaptures new-game "$selectedgame")
                #echo $capturedir
+
+               #disc details need to be captured here
                 
               elif [ "$response" == "n" ]; then
                 local OLD_IFS=${IFS};IFS=$'\n'

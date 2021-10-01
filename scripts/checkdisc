@@ -1,0 +1,35 @@
+#!/bin/bash
+      
+
+checkdisc_ () {
+
+selectedgame="$1"
+
+#check for correct disc in drive if required
+local disc=$(disc)
+local correctdisc=$(correctdisc "$selectedgame")
+      
+#TODO this needs an option for no disc required!
+if [[ $correctdisc != $disc ]];then 
+    echo "wrong disc in drive, ejecting and exitting..."
+    eject
+    sleep 5
+    local trayis="$(setcd -i /dev/sr0)"
+      
+    #wait for tray to close
+      
+    while [[ ${trayis#*is } == open ]];do
+      sleep 5
+      trayis="$(setcd -i /dev/sr0)"
+    done
+ 
+    sleep 15
+    checkdisc "$selectedgame"
+else
+    return
+fi
+
+}
+
+
+checkdisc_ "$1"
