@@ -18,6 +18,9 @@ start () {
 
       selectedgame="$(selectagame)"
       checkdisc "$selectedgame"
+      capturedir "$slectedgame"
+
+      exit
       
       #move this line to its own function as this task needs to be performed by other functions  
       local capturedir="$(jq --arg selectedgame "$selectedgame" -r '.directory[]."'$selectedgame'"' ~/GameCaptures/gamecapturedirectories.json)"
