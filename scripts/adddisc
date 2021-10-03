@@ -6,7 +6,11 @@ if [[ -z "$selectedgame" ]];then
   selectedgame="$(selectagame)"
 fi
 
+#TODO ask here whether the selected game needs a disc
+#if y
 disc=$(disc)
+#if n
+#disc="No Disc"
 
 #echo "disc in drive is $disc"
 #exit
