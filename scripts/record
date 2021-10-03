@@ -14,32 +14,19 @@ start () {
  
     fortiesgamer)
 
-      selectedgame="$(selectagame)"
-      capturedir=$(capturedir "$selectedgame")
+      local profile="fortiesgamer"
+      local collection="fortiesgamer record only"
+      local selectedgame="$(selectagame)"
+      local capturedir=$(capturedir "$selectedgame")
       checkdisc "$selectedgame"
 
       sensoroverlay
       timeoverlay
       sceneoverlay
  
-    #TODO -----obs initialisation needs to be in its own function----------------------------------------------------------------------------------
-      obs \
-        --minimize-to-tray \
-        --collection "fortiesgamer record only" \
-        --profile "fortiesgamer" \
-         &>/dev/null &
- 
-      sleep 10
-
-      obs-cli SetCurrentScene='{"scene-name" : "Intermission"}'
-      sleep 2
-    
-      # example   local recordingfolderstring = "'{ "rec-folder":"/home/tony/GameCaptures/$capturedir"}'"
-      local recdir="SetRecordingFolder="\'"{\"rec-folder\": \"/"home/tony/GameCaptures/$capturedir"/\" }"\'
-      echo "$recdir" |xargs obs-cli | jq -r '.[].status'
-      recordingstatus=$(obs-cli StartRecording | jq -r '.[].status')
-      echo "Recording Status $recordingstatus"
-     #---------------------------------------------------------------------------------------------------------------------------------------------
+    #TODO -----obs initialisation needs to be in its own function-(obsrecord)----------------------------------------------------------------------
+      
+      obsrecord "$collection" "$profile" "$capturedir"
      
      #TODO ---------needs to be own function------------------------------------------------
       lutris lutris:rungame/"$selectedgame" &>/dev/null &

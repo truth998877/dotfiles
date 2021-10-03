@@ -1,0 +1,31 @@
+#!/bin/bash
+
+obsrecord_ () {
+
+local collection="$1"
+local profile="$2"
+local capturedir="$3"
+
+
+obs \
+    --minimize-to-tray \
+    --collection "$collection" \
+    --profile "$profile" \
+    &>/dev/null &
+ 
+      sleep 10
+
+      local scenestatus=$(obs-cli SetCurrentScene='{"scene-name" : "Intermission"}'|jq -r '.[].status')
+      echo "Scene Status - $scenestatus" 
+      sleep 2
+    
+      # example   local recordingfolderstring = "'{ "rec-folder":"/home/tony/GameCaptures/$capturedir"}'"
+      local recdir="SetRecordingFolder="\'"{\"rec-folder\": \"/"home/tony/GameCaptures/$capturedir"/\" }"\'
+      local recdirstatus=$(echo "$recdir" |xargs obs-cli | jq -r '.[].status')
+      echo "Recording Directory Status - $recdirstatus"
+      
+      local recordingstatus=$(obs-cli StartRecording | jq -r '.[].status')
+      echo "Recording Status - $recordingstatus"
+}
+
+obsrecord_ "$1" "$2" "$3"
