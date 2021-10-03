@@ -14,38 +14,9 @@ start () {
  
     fortiesgamer)
 
-      #TODO -----needed for record and stream, so this needs to be in its own function------------------------------------------------------------
-
       selectedgame="$(selectagame)"
+      capturedir=$(capturedir "$selectedgame")
       checkdisc "$selectedgame"
-      capturedir "$slectedgame"
-
-      exit
-      
-      #move this line to its own function as this task needs to be performed by other functions  
-      local capturedir="$(jq --arg selectedgame "$selectedgame" -r '.directory[]."'$selectedgame'"' ~/GameCaptures/gamecapturedirectories.json)"
-
-          if [[ $capturedir == "null" ]]; then 
-            read -p "New Game? (y/n)" response
-              if [[ $response == "y" ]]; then
-               #echo blah
-               capturedir=$(gamecaptures new-game "$selectedgame")
-               #echo $capturedir
-
-               #TODO disc details need to be captured here
-                
-              elif [ "$response" == "n" ]; then
-                local OLD_IFS=${IFS};IFS=$'\n'
-                local array=("$(find ~/GameCaptures/ -maxdepth 1 -type d -printf '%f\n')") 
-                select item in ${array[@]};do
-                  capturedir="$item"
-                  IFS="${OLD_IFS}"
-                  break
-                done    
-              fi
-         fi
-
-     #--------------------------------------------------------------------------------------------------------------------------------------------
 
       sensoroverlay
       timeoverlay
@@ -58,7 +29,7 @@ start () {
         --profile "fortiesgamer" \
          &>/dev/null &
  
-      sleep 5
+      sleep 10
 
       obs-cli SetCurrentScene='{"scene-name" : "Intermission"}'
       sleep 2

@@ -1,11 +1,17 @@
 #!/bin/bash
 
-selectedgame="$(selectagame)"
+
+selectedgame="$1"
+
+if [[ -z "$selectedgame" ]];then
+  selectedgame="$(selectagame)"
+fi
+
 disc=$(disc)
 
 echo "disc in drive is $disc"
 
-read -p "Ok?" response
+read -p "Add this new disc? [y/n]" response
 
 if [[ $response == y ]]; then
   jsonobject="$(jq -n --arg selectedgame $selectedgame --arg disc $disc '{"game":$selectedgame,"disc":$disc}')"

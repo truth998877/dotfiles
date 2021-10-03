@@ -3,19 +3,15 @@
 
 capturedir_ () {
 
-    selectedgame="$1"
+    selectedgame=$1
 
       local capturedir="$(jq --arg selectedgame "$selectedgame" -r '.directory[]."'$selectedgame'"' ~/GameCaptures/gamecapturedirectories.json)"
 
           if [[ $capturedir == "null" ]]; then 
             read -p "New Game? (y/n)" response
               if [[ $response == "y" ]]; then
-               #echo blah
-               capturedir=$(gamecaptures new-game "$selectedgame")
-               #echo $capturedir
-
-               #TODO disc details need to be captured here
-                
+                capturedir=$(gamecaptures new-game "$selectedgame")
+                adddisc $selectedgame
               elif [ "$response" == "n" ]; then
                 local OLD_IFS=${IFS};IFS=$'\n'
                 local array=("$(find ~/GameCaptures/ -maxdepth 1 -type d -printf '%f\n')") 
@@ -23,7 +19,7 @@ capturedir_ () {
                   capturedir="$item"
                   IFS="${OLD_IFS}"
                   break
-                done    
+                done   
               fi
          fi
 
