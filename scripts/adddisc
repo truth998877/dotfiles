@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 selectedgame="$1"
 
 if [[ -z "$selectedgame" ]];then
@@ -14,9 +13,27 @@ echo "disc in drive is $disc"
 read -p "Add this new disc? [y/n]" response
 
 if [[ $response == y ]]; then
+
   jsonobject="$(jq -n --arg selectedgame $selectedgame --arg disc $disc '{"game":$selectedgame,"disc":$disc}')"
 #  echo $jsonobject
   jsonfun fileappend ~/GameCaptures/discs.json "$jsonobject"
+
+elif [[ $response == n ]]; then
+
+  echo "ejecting disc"
+  eject
+ 
+  #TODO istrayopen   
+  while [[ ${trayis#*is } == open ]];do
+    sleep 5
+    trayis="$(setcd -i /dev/sr0)"
+  done
+
+  sleep 20
+  adddisc $selectedgame
+
 else
+
   exit
+
 fi

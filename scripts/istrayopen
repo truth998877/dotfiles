@@ -1,0 +1,9 @@
+#!/bin/bash
+
+#is tray open?
+
+
+while [[ ${trayis#*is } == open ]];do
+  sleep 5
+  trayis="$(setcd -i /dev/sr0)"
+done

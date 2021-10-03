@@ -17,11 +17,16 @@ if [[ $correctdisc != $disc ]];then
     local trayis="$(setcd -i /dev/sr0)"
       
     #wait for tray to close
-      
+
+    #TODO needs to be own script-------      
+
+    #istrayopen - done not tested 
+
     while [[ ${trayis#*is } == open ]];do
       sleep 5
       trayis="$(setcd -i /dev/sr0)"
     done
+    #----------------------------------
  
     sleep 15
     checkdisc "$selectedgame"
