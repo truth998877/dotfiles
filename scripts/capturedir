@@ -11,7 +11,8 @@ capturedir_ () {
             read -p "New Game? (y/n)" response
               if [[ $response == "y" ]]; then
                 capturedir=$(gamecaptures new-game "$selectedgame")
-                adddisc $selectedgame
+                printf "Adding disc for new game..."
+                . adddisc $selectedgame
               elif [ "$response" == "n" ]; then
                 local OLD_IFS=${IFS};IFS=$'\n'
                 local array=("$(find ~/GameCaptures/ -maxdepth 1 -type d -printf '%f\n')") 
