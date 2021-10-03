@@ -1,12 +1,39 @@
 #!/bin/bash
       
+open_ () {
+
+istrayopen
+
+}
+
+waitfortrayclose_ () {
+
+  while [[ $open == "Tray is Oepn" ]];do
+    sleep 5
+    open=$(istrayopen)
+  done
+
+  sleep 20
+
+}
+
 
 checkdisc_ () {
 
 selectedgame="$1"
 
 #check for correct disc in drive if required
-local disc=$(disc)
+
+open=$(open_)
+
+if [[ $open == "Tray is Open" ]]; then
+  echo "$open, close it now!"
+  waitfortrayclose_ 
+  local disc=$(disc)
+else
+  local disc=$(disc)
+fi
+
 local correctdisc=$(correctdisc "$selectedgame")
       
 #TODO this needs an option for no disc required!
@@ -14,27 +41,15 @@ if [[ $correctdisc != $disc ]];then
     echo "wrong disc in drive, ejecting and exitting..."
     eject
     sleep 5
-    local trayis="$(setcd -i /dev/sr0)"
-      
-    #wait for tray to close
+    
+    waitfortrayclose_
 
-    #TODO needs to be own script-------      
-
-    #istrayopen - done not tested 
-
-    while [[ ${trayis#*is } == open ]];do
-      sleep 5
-      trayis="$(setcd -i /dev/sr0)"
-    done
-    #----------------------------------
- 
-    sleep 15
     checkdisc "$selectedgame"
 else
+    echo "Correct disc in drive"
     return
 fi
 
 }
-
 
 checkdisc_ "$1"
