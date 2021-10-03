@@ -22,28 +22,26 @@ start () {
   
     fortiesgamer)
 
-      #TODO check that $game is set else exit          
-    
-      #set currentstream for twitch api and weechat
-      #echo "fortiesgamer" > currentstream
-    
-      obs \
-        --minimize-to-tray \
-        --collection "fortiesgamer twitch" \
-        --profile "fortiesgamer" \
-         &>/dev/null &
+     local profile="fortiesgamer"
+     local collection="fortiesgamer twitch"
+     local selectedgame="$(selectagame)"
+     local capturedir=$(capturedir "$selectedgame")
+     checkdisc "$selectedgame"
+      
+     sensoroverlay
+     timeoverlay
+     sceneoverlay
+     twitch overlay
+      
+     obsrecord "$collection" "$profile" "$capturedir"
+     sleep 5   
 
-      sleep 5   
+     #streamingstatus=$(obs-cli StartStreaming | jq -r '.[].status')
+     echo "Streaming Status - $streamingstatus"
 
-      #obs-cli SetRecordingFolder "/home/tony/GameCaptures/$game"
-      #obs-cli StartRecording
-      #obs-cli StartStreaming
+     record play "$selectedgame"   
 
-      twitch overlay
-      #twitcheventcheck osd
-      lutris lutris:rungame/"$gamename" &>/dev/null & 
-
-      tmuxlivegaming
+     tmuxlivegaming
 
     ;;
 
