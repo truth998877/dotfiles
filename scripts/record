@@ -19,6 +19,7 @@ local selectedgame="$1"
 start () { 
   
  # echo "To record a new video and save in the correct directory"
+
   local account="$1"
  
   case "$account" in

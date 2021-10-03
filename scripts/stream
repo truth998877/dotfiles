@@ -7,16 +7,9 @@ foo () {
 
 start () {
 
+# echo "To stream to twitch and record a new video and save it in the correct directory" 
+  
   local account="$1"
-  local game="$2"
-
-  local gamename=$(lutrisgameindex $game)
-
-#TODO set options for obs command line to stream to different accounts, fortiesgamer, studywithtony, etc
-
-#TODO obs command line option
-
-  #echo "To switch obs on with correct setting to stream to various accounts"
 
   case "$account" in
   
@@ -36,7 +29,7 @@ start () {
      obsrecord "$collection" "$profile" "$capturedir"
      sleep 5   
 
-     #streamingstatus=$(obs-cli StartStreaming | jq -r '.[].status')
+     streamingstatus=$(obs-cli StartStreaming | jq -r '.[].status')
      echo "Streaming Status - $streamingstatus"
 
      record play "$selectedgame"   
