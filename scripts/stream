@@ -29,11 +29,12 @@ start () {
      obsrecord "$collection" "$profile" "$capturedir"
      sleep 5   
 
-     streamingstatus=$(obs-cli StartStreaming | jq -r '.[].status')
+#     streamingstatus=$(obs-cli StartStreaming | jq -r '.[].status')
      echo "Streaming Status - $streamingstatus"
 
      record play "$selectedgame"   
-
+     sleep 2
+     
      tmuxlivegaming
 
     ;;
