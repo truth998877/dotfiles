@@ -22,8 +22,15 @@ checkdisc_ () {
 
 selectedgame="$1"
 
-#check for correct disc in drive if required
+local correctdisc=$(correctdisc "$selectedgame")
 
+#TODO no disc option - move this up after selectedgame, if correctdisc = No Disc, echo No disc required and return
+if [[ $correctdisc == "No Disc" ]]; then
+  echo "No disc required"
+  return
+fi
+
+#check for correct disc in drive if required
 open=$(open_)
 
 if [[ $open == "Tray is Open" ]]; then
@@ -34,11 +41,9 @@ else
   local disc=$(disc)
 fi
 
-#TODO no disc option - move this up after selectedgame, if correctdisc = No Disc, echo No disc required and return
-local correctdisc=$(correctdisc "$selectedgame")
       
 if [[ $correctdisc != $disc ]];then 
-    echo "wrong disc in drive, ejecting and exitting..."
+    echo "Wrong disc in drive, ejecting..."
     eject
     sleep 5
     

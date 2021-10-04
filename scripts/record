@@ -9,9 +9,8 @@ play () {
 
 local selectedgame="$1"
 
-     #TODO ---------needs to be own function------------------------------------------------
-      lutris lutris:rungame/"$selectedgame" &>/dev/null &
-     #--------------------------------------------------------------------------------------
+  echo "Launching selected game, $selectedgame..." 
+  lutris lutris:rungame/"$selectedgame" &>/dev/null &
 
 }
 
