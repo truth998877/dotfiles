@@ -16,7 +16,7 @@ start () {
     fortiesgamer)
 
      local profile="fortiesgamer"
-     local collection="fortiesgamer twitch"
+     local collection="fortiesgamer"
      local selectedgame="$(selectagame)"
      local capturedir=$(capturedir "$selectedgame")
      checkdisc "$selectedgame"
