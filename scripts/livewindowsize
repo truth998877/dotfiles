@@ -1,0 +1,11 @@
+#!/bin/bash
+
+application="$1"
+
+window=$(xdotool search --onlyvisible --name "$application")
+
+wmctrl -ir $window -b remove,maximized_vert,maximized_horz
+xdotool windowsize $window 1255 870
+xdotool windowmove $window 118 79
+
+
