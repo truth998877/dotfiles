@@ -41,6 +41,8 @@ start () {
   ;;
 
   studywithtony)
+
+  #TODO bring in line with new functions
  
    #    echo "studywithtony" > currentchannel
  
@@ -83,6 +85,8 @@ esac
 }
 
 stop () {
+
+#TODO 
 
   echo "To stop recording"
   #TODO current stream

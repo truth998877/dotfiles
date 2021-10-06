@@ -83,6 +83,8 @@ start () {
 
 stop () {
 
+#TODO needs sorting
+
   echo "To gracfully switch streaming off and exit obs"
   
 
