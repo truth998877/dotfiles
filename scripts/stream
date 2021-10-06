@@ -5,6 +5,13 @@ foo () {
   echo "Would foo with $first."
 }
 
+stream_ () {
+
+   local streamingstatus=$(obs-cli StartStreaming | jq -r '.[].status')
+   echo "Streaming Status - $streamingstatus"
+
+}
+
 start () {
 
 # echo "To stream to twitch and record a new video and save it in the correct directory" 
@@ -15,63 +22,51 @@ start () {
   
     fortiesgamer)
 
-     local profile="fortiesgamer"
-     local collection="fortiesgamer"
-     local selectedgame="$(selectagame)"
-     local capturedir=$(capturedir "$selectedgame")
-     checkdisc "$selectedgame"
-      
-     sensoroverlay
-     timeoverlay
-     sceneoverlay
-     twitch overlay
-      
-     obsrecord "$collection" "$profile" "$capturedir"
-     sleep 5   
+      #echo "fortiesgamer" > currentstream
 
-#     streamingstatus=$(obs-cli StartStreaming | jq -r '.[].status')
-     echo "Streaming Status - $streamingstatus"
-
-     record play "$selectedgame"   
-     sleep 2
+      local profile="fortiesgamer"
+      local collection="fortiesgamer"
+      local selectedgame="$(selectagame)"
+      local capturedir=$(capturedir "$selectedgame")
+      checkdisc "$selectedgame"
+      
+      sensoroverlay
+      timeoverlay
+      sceneoverlay
+      twitch overlay
+      
+      obsrecord "$collection" "$profile" "$capturedir"
+      sleep 5   
      
-     tmuxlivegaming
+      stream_
+ 
+      record play "$selectedgame"   
+      sleep 2
+     
+      tmuxlivegaming
 
     ;;
 
     studywithtony)
-    #TODO make this the same as record, only add the obs streaming command 18/5
-      #echo "studywithtony" > currentstream
+
+      local profile="studywithtony"
+      local collection="studywithtony"
+      local capturedir="livestudy/$(datepath)"
+      echo $capturedir
+      
+      if [[ ! -d "/home/tony/GameCaptures/$capturedir" ]]; then
+        mkdir -p "/home/tony/GameCaptures/$capturedir"
+      fi 
     
-      obs \
-        --mininze-to-tray \
-        --collection "studywithtony twitch" \
-        --scene "Intermission" \
-        --profile "studywithtony" \
-          &>/dev/null &     
- 
+      obsrecord "$collection" "$profile" "$capturedir"
       sleep 5   
 
-      recdir="/home/tony/GameCaptures/livestudy/$(datepath)"
- 
-      if [ ! -d "$recdir" ]; then
-        mkdir -p "$recdir"
-      fi
-      
-      local setrecdir="SetRecordingFolder="\'"{\"rec-folder\": \"/"$recdir"/\" }"\'
-      echo "$setrecdir" |xargs obs-cli | jq -r '.[].status'
-
-      recordingstatus=$(obs-cli StartRecording | jq -r '.[].status')
-      echo Recording Status: "$recordingstatus"
-      #streamingstatus=$(obs-cli StartStreaming | jq -r '.[].status')
-      #echo Streaming Status: "$streamingstatus"
-      
-#      markcreatefile create "$recdir"
+      # stream_    
 
       sleep 3
       markerscreatefile create
+      sleep 5
       tmuxlivestudy
-
     
     ;;
  
