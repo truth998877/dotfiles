@@ -61,20 +61,19 @@ start () {
       obsrecord "$collection" "$profile" "$capturedir"
       sleep 5   
 
-      # stream_    
-
+      stream_    
       sleep 3
+
       markerscreatefile create
       sleep 5
-      tmuxlivestudy
+      
+      tmuxstreamstudy
     
     ;;
  
     *)
 
       echo "specified stream channel not recognised"
-      exit 1
-
     ;;
 
   esac

@@ -1,3 +1,4 @@
 #!/bin/bash
 
-mpv https://www.twitch.tv/lastmiles --no-border --geometry=50%+840+77 --ontop --really-quiet &
+#mpv https://www.twitch.tv/lastmiles --no-border --geometry=50%+840+77 --ontop --really-quiet &
+mpv https://www.youtube.com/channel/UC3dcO40Nnrw26e6KfiUAaVg/live --no-border --geometry=50%+840+77 --ontop --really-quiet &

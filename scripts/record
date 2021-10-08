@@ -42,39 +42,24 @@ start () {
 
   studywithtony)
 
-  #TODO bring in line with new functions
- 
-   #    echo "studywithtony" > currentchannel
- 
-       obs \
-         --mininze-to-tray \
-         --collection "studywithtony twitch" \
-         --profile "studywithtony" \
-           &>/dev/null &
- 
-       sleep 5
- 
-       local recdir="/home/tony/GameCaptures/livestudy/$(datepath)"
- 
-       if [ ! -d "$recdir" ]; then
-         mkdir -p "$recdir"
-       fi
+      local profile="studywithtony"
+      local collection="studywithtony"
+      local capturedir="livestudy/$(datepath)"
+      echo $capturedir
 
-       #obs-cli SetRecordingFolder "$recdir"
-       #obs-cli StartRecording
+      if [[ ! -d "/home/tony/GameCaptures/$capturedir" ]]; then
+        mkdir -p "/home/tony/GameCaptures/$capturedir"
+      fi
 
-       #local setrecdir="SetRecordingFolder="\'"{\"rec-folder\": \"/"home/tony/GameCaptures/livestudy/$(datepath)"/\" }"\'
-       local setrecdir="SetRecordingFolder="\'"{\"rec-folder\": \"/"$recdir"/\" }"\'
-       echo "$setrecdir" |xargs obs-cli | jq -r '.[].status'
+      obsrecord "$collection" "$profile" "$capturedir"
+      sleep 5
 
-       recordingstatus=$(obs-cli StartRecording | jq -r '.[].status')
-       echo "$recordingstatus"
+      markerscreatefile create
+      sleep 5
   
-       tmuxin
-
-       #markcreatefile create 
+      tmuxrecordstudy
   
-   ;;
+  ;;
 
   *)
 
@@ -88,10 +73,10 @@ stop () {
 
 #TODO 
 
-  echo "To stop recording"
+  #echo "To stop recording"
   #TODO current stream
-  #obs-cli StopRecording
-  markfinish
+  obs-cli StopRecording
+  markerfinish
 }
 
 
