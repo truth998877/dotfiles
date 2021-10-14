@@ -73,7 +73,7 @@ start () {
  
     *)
 
-      echo "specified stream channel not recognised"
+      echo "Specified stream channel not recognised"
     ;;
 
   esac
@@ -92,7 +92,7 @@ stop () {
 
   twitch killoverlay
 
-  killall obs
+#  killall obs
 
 }
 

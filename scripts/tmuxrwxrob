@@ -1,5 +1,5 @@
 #!/bin/bash
 
-#tmux for live gaming
+#tmux to watch rwxrob
 
-tmux -L blastwave new-session \; \split-window -v \; \select-pane -t 1 \; \resize-pane -y 31 \; \split-window -h \; \select-pane -t 1 \; \resize-pane -x 90 \; \send "weechat -r '/bar show nicklist'" Enter \; send "/buffer #rwxrob" Enter  \; \select-pane -t 3 \; \send "mpvrwxrob &" Enter
+tmux -L rwxrob new-session \; \split-window -v \; \select-pane -t 1 \; \resize-pane -y 31 \; \split-window -h \; \select-pane -t 1 \; \resize-pane -x 90 \; \send "weechat -r '/bar show nicklist'" Enter \; send "/buffer #rwxrob" Enter  \; \select-pane -t 3 \; \send "mpvrwxrob &" Enter
