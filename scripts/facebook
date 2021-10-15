@@ -1,17 +1,14 @@
 #!/bin/bash
 
-#token=$(fbsecrets accesstoken)
-#pagetoken=$(fbsecrets pageaccesstoken)
-#pageid=$(fbsecrets pageid)
-
 #reset tokens notes - 1) get short access token from graph API explorer, 2) setshortaccesstoken, 3) setlongaccesstoken, 4) setpageaccesstoken, 5) should be good to go
+
+#TODO needs to handle multiple pages - move the secrets into directories which correspond to their page, add an argument to all functions which sets the directory from which to retrieve the secrets for the desired page. Perhaps retire fbsecrets and just echo the secrets directly?
 
 setshortaccesstoken () {
 
 echo "$1" > /home/tony/.secrets/facebook/shortaccesstoken 
 
 }
-
 
 exchangetoken () {
 
