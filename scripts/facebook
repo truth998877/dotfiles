@@ -1,7 +1,60 @@
 #!/bin/bash
 
-token=$(fbsecrets accesstoken)
-pageid=$(fbsecrets pageid)
+#token=$(fbsecrets accesstoken)
+#pagetoken=$(fbsecrets pageaccesstoken)
+#pageid=$(fbsecrets pageid)
+
+#reset tokens notes - 1) get short access token from graph API explorer, 2) setshortaccesstoken, 3) setlongaccesstoken, 4) setpageaccesstoken, 5) should be good to go
+
+setshortaccesstoken () {
+
+echo "$1" > /home/tony/.secrets/facebook/shortaccesstoken 
+
+}
+
+
+exchangetoken () {
+
+  local shortaccesstoken=$(fbsecrets shortaccesstoken)
+  local appid=$(fbsecrets appid)
+  local appsecret=$(fbsecrets appsecret)
+
+  curl -X GET "https://graph.facebook.com/oauth/access_token?grant_type=fb_exchange_token&client_id=$appid&client_secret=$appsecret&fb_exchange_token=$shortaccesstoken"
+
+}
+
+setlongaccesstoken () {
+
+  exchangetoken|jq -r '.access_token' > /home/tony/.secrets/facebook/longaccesstoken
+
+}
+
+getlongaccesstoken () {
+
+  echo "$(</home/tony/.secrets/facebook/longaccesstoken)"
+
+}
+
+setpageaccesstoken () { 
+
+  local pageid="$(fbsecrets pageid)"
+  local longtoken="$(getlongaccesstoken)"
+
+  curl -X GET "https://graph.facebook.com/$pageid?fields=access_token&access_token=$longtoken" |jq -r '.access_token' > /home/tony/.secrets/facebook/pageaccesstoken
+
+}
+
+getpageaccesstoken () {
+
+echo "$(</home/tony/.secrets/facebook/pageaccesstoken)"
+
+}
+
+getpageid () {
+
+echo $(fbsecrets pageid)
+
+}
 
 foo () {
   local first=$1
@@ -11,11 +64,11 @@ foo () {
 postmessage2page () {
 #TODO handle token and page id better
 
-  local message="$1"
+  local message="$*"
   local message=${message// /%20}
 
-curl -s -i -X POST \
- "https://graph.facebook.com/v10.0/$pageid/feed?message="$message"&access_token=$token" > /dev/null
+  curl -s -X POST \
+    "https://graph.facebook.com/v10.0/$(getpageid)/feed?message="$message"&access_token=$(getpageaccesstoken)" |jq -r '.id'
 
 }
 
@@ -27,8 +80,8 @@ postlink2page () {
   local message="$2"
   local message=${message// /%20}
 
-curl -s -i -X POST \
- "https://graph.facebook.com/v10.0/$pageid/feed?&access_token="$token"&message="$message"&link="$link"" > /dev/null
+  curl -s -i -X POST \
+    "https://graph.facebook.com/v10.0/$(getpageid)/feed?&access_token="$(getpageaccesstoken)"&message="$message"&link="$link"" > /dev/null
 
 }
 
@@ -47,7 +100,7 @@ commands () {
     echo ${commands[@]}
 }
 
-declare -a commands=(foo commands postmessage2page postlink2page)
+declare -a commands=(foo commands setshortaccesstoken setlongaccesstoken getlongaccesstoken exchangetoken setpageaccesstoken getpageaccesstoken postmessage2page postlink2page)
 
 for i in ${commands[@]}; do
     if [[ "$i" == "$subcommand" ]]; then
