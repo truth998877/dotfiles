@@ -97,7 +97,8 @@ foo () {
 }
 
 postmessage2page () {
-#TODO handle token and page id better
+
+#TODO input error checking
 
   local page="$1"
   shift 1
@@ -106,13 +107,14 @@ postmessage2page () {
   local message=${message// /%20}
 
   curl -s -X POST \
-    "https://graph.facebook.com/v10.0/$(getpageid $page)/feed?message="$message"&access_token=$(getpageaccesstoken $page)" #|jq -r '.id'
+    "https://graph.facebook.com/v10.0/$(getpageid $page)/feed?message="$message"&access_token=$(getpageaccesstoken $page)" |jq -r '.id'
 
 }
 
 
 postlink2page () {
-#TODO handle token and page id better
+
+#TODO input error checking
 
   local page="$1"
   local link="$2"
@@ -121,7 +123,7 @@ postlink2page () {
   local message=${message// /%20}
 
   curl -s -i -X POST \
-    "https://graph.facebook.com/v10.0/$(getpageid $page)/feed?&access_token=$(getpageaccesstoken $page)&message=$message&link=$link" > /dev/null
+    "https://graph.facebook.com/v10.0/$(getpageid $page)/feed?&access_token=$(getpageaccesstoken $page)&message=$message&link=$link" |jq -r '.id'
 
 }
 
