@@ -4,17 +4,54 @@
 
 #TODO needs to handle multiple pages - move the secrets into directories which correspond to their page, add an argument to all functions which sets the directory from which to retrieve the secrets for the desired page. Perhaps retire fbsecrets and just echo the secrets directly?
 
+
+getshortaccesstoken () {
+
+  local page="$1"
+
+  echo "$(</home/tony/.secrets/facebook/$page/shortaccesstoken)"
+
+}
+
+
+getappid () {
+
+echo "$(</home/tony/.secrets/facebook/fortiesgamer/appid)"
+
+}
+
+getappsecret () {
+
+
+echo "$(</home/tony/.secrets/facebook/fortiesgamer/appsecret)"
+
+
+}
+
+
+getpageid () {
+
+  page="$1"
+  echo "$(</home/tony/.secrets/facebook/"$page"/pageid)"
+
+}
+
+
+
 setshortaccesstoken () {
 
-echo "$1" > /home/tony/.secrets/facebook/shortaccesstoken 
+  page="$1"
+  echo "$2" > "/home/tony/.secrets/facebook/$page/shortaccesstoken" 
 
 }
 
 exchangetoken () {
 
-  local shortaccesstoken=$(fbsecrets shortaccesstoken)
-  local appid=$(fbsecrets appid)
-  local appsecret=$(fbsecrets appsecret)
+  local page="$1"
+
+  local shortaccesstoken=$(getshortaccesstoken "$page")
+  local appid=$(getappid)
+  local appsecret=$(getappsecret)
 
   curl -X GET "https://graph.facebook.com/oauth/access_token?grant_type=fb_exchange_token&client_id=$appid&client_secret=$appsecret&fb_exchange_token=$shortaccesstoken"
 
@@ -22,34 +59,35 @@ exchangetoken () {
 
 setlongaccesstoken () {
 
-  exchangetoken|jq -r '.access_token' > /home/tony/.secrets/facebook/longaccesstoken
+  local page="$1"
+
+  exchangetoken "$page"|jq -r '.access_token' > "/home/tony/.secrets/facebook/$page/longaccesstoken"
 
 }
 
 getlongaccesstoken () {
 
-  echo "$(</home/tony/.secrets/facebook/longaccesstoken)"
+  local page="$1"
+
+  echo "$(</home/tony/.secrets/facebook/"$page"/longaccesstoken)"
 
 }
 
 setpageaccesstoken () { 
 
-  local pageid="$(fbsecrets pageid)"
-  local longtoken="$(getlongaccesstoken)"
+  local page="$1"
 
-  curl -X GET "https://graph.facebook.com/$pageid?fields=access_token&access_token=$longtoken" |jq -r '.access_token' > /home/tony/.secrets/facebook/pageaccesstoken
+  local pageid="$(getpageid $page)"
+  local longtoken="$(getlongaccesstoken $page)"
+
+  curl -X GET "https://graph.facebook.com/$pageid?fields=access_token&access_token=$longtoken" |jq -r '.access_token' > "/home/tony/.secrets/facebook/$page/pageaccesstoken"
 
 }
 
 getpageaccesstoken () {
 
-echo "$(</home/tony/.secrets/facebook/pageaccesstoken)"
-
-}
-
-getpageid () {
-
-echo $(fbsecrets pageid)
+  local page="$1"
+  echo "$(</home/tony/.secrets/facebook/"$page"/pageaccesstoken)"
 
 }
 
@@ -61,11 +99,14 @@ foo () {
 postmessage2page () {
 #TODO handle token and page id better
 
+  local page="$1"
+  shift 1
+  
   local message="$*"
   local message=${message// /%20}
 
   curl -s -X POST \
-    "https://graph.facebook.com/v10.0/$(getpageid)/feed?message="$message"&access_token=$(getpageaccesstoken)" |jq -r '.id'
+    "https://graph.facebook.com/v10.0/$(getpageid $page)/feed?message="$message"&access_token=$(getpageaccesstoken $page)" #|jq -r '.id'
 
 }
 
@@ -73,12 +114,14 @@ postmessage2page () {
 postlink2page () {
 #TODO handle token and page id better
 
-  local link="$1"
-  local message="$2"
+  local page="$1"
+  local link="$2"
+  shift 2
+  local message="$*"
   local message=${message// /%20}
 
   curl -s -i -X POST \
-    "https://graph.facebook.com/v10.0/$(getpageid)/feed?&access_token="$(getpageaccesstoken)"&message="$message"&link="$link"" > /dev/null
+    "https://graph.facebook.com/v10.0/$(getpageid $page)/feed?&access_token=$(getpageaccesstoken $page)&message=$message&link=$link" > /dev/null
 
 }
 
