@@ -3,14 +3,18 @@
 
 _selectagame () {
 
+#see comments to return title and lutris game handle to allow auto setting of the game on twitch
+
   local text=$(lutris -l)
-  local text="${text//\ /}"
+  local text="${text//\ /}" #rem this out
+  #local titlegame="$(echo -e "$text"|cut -d \| -f 2,3)"   #include this
   local gamesarray=("$(echo -e "$text"|cut -d \| -f 3)")
   
 #  echo -e "\nSelect from the following installed games...\n"
   
   select item in ${gamesarray[@]};do
-    echo $item
+    echo $item #rem this out
+    #echo -e "$titlegame"|grep -E '(^|\s)'"$item"'($|\s)' #include this
     break
   done  
 
