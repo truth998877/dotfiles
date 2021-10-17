@@ -27,6 +27,7 @@ start () {
       local profile="fortiesgamer"
       local collection="fortiesgamer"
       local selectedgame="$(selectagame)"
+      #TODO what if epic games store??
       local capturedir=$(capturedir "$selectedgame")
       checkdisc "$selectedgame"
       
