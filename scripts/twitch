@@ -172,7 +172,21 @@ unhost () {
 #TODO
 
 #get from rwxrob - description, mark
+channelupdate () {
 
+  local game="$1"
+  local title="$2"
+  local lang="en"
+
+  local json='{"game_id":'"$game"', "title":'"$title"', "broadcaster_language":'"$lang"'}'
+
+  curl -X PATCH "https://api.twitch.tv/helix/channels?broadcaster_id=$twitchid" \
+    -H "Authorization: Bearer $useraccesstoken" \
+    -H "Client-Id: $clientid" \
+    -H 'Content-Type: application/json' \
+    --data-raw "$json"
+
+}
 ####################################################
 
 
