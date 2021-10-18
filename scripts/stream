@@ -26,11 +26,26 @@ start () {
 
       local profile="fortiesgamer"
       local collection="fortiesgamer"
-      local selectedgame="$(selectagame)"
+      #local selectedgame="$(selectagame)"
+      
+      local response="$(selectagame)"
+      local selectedgametitle="$(echo "$response" | cut -d \| -f 1 |xargs)"
+      local selectedgame="$(echo "$response" | cut -d \| -f 2 |xargs)"
+      
+      #echo "$selectedgametitle"
+      #echo "$selectedgame"
+      
+      #exit
+   
       #TODO what if epic games store??
       local capturedir=$(capturedir "$selectedgame")
       checkdisc "$selectedgame"
-      
+     
+      local twitchgameid=$(twitch gameid "$selectedgametitle")
+      read -p "Enter stream title: [$selectedgametitle]" title
+      title="${title:-$selectedgametitle}"
+      twitch channelupdate "$twitchgameid" "$title" 
+
       sensoroverlay
       timeoverlay
       sceneoverlay
@@ -87,11 +102,12 @@ stop () {
 
   echo "To gracfully switch streaming off and exit obs"
   
+  markerfinish 
 
   obs-cli StopStreaming
   obs-cli StopRecording
 
-  twitch killoverlay
+  killoverlay
 
 #  killall obs
 

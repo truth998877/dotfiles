@@ -27,7 +27,8 @@ start () {
 
       local profile="fortiesgamer"
       local collection="fortiesgamer"
-      local selectedgame="$(selectagame)"
+      local response="$(selectagame)"
+      local selectedgame="$(echo "$response" | cut -d \| -f 2 |xargs)"
       #What if epic games store?
       local capturedir=$(capturedir "$selectedgame")
       checkdisc "$selectedgame"
@@ -76,8 +77,9 @@ stop () {
 
   #echo "To stop recording"
   #TODO current stream
-  obs-cli StopRecording
-  markerfinish
+  echo "Stopped recording - $(obs-cli StopRecording|jq -r '.[].status')"
+  killoverlay
+  #markerfinish
 }
 
 
