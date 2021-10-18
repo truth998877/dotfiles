@@ -172,15 +172,17 @@ unhost () {
 #TODO
 
 #get from rwxrob - description, mark
+
+
 channelupdate () {
 
   local game="$1"
   local title="$2"
   local lang="en"
 
-  local json='{"game_id":'"$game"', "title":'"$title"', "broadcaster_language":'"$lang"'}'
+  local json='{"game_id":"'$game'", "title":"'$title'", "broadcaster_language":"'$lang'"}'
 
-  curl -X PATCH "https://api.twitch.tv/helix/channels?broadcaster_id=$twitchid" \
+echo  curl -X PATCH "https://api.twitch.tv/helix/channels?broadcaster_id=$twitchid" \
     -H "Authorization: Bearer $useraccesstoken" \
     -H "Client-Id: $clientid" \
     -H 'Content-Type: application/json' \
@@ -640,6 +642,20 @@ marker () {
 
 }
 
+gameid () {
+
+  local gamename="$*"
+
+  gamename="$(echo $gamename|jq -Rr '@uri')"
+
+  curl -s -X GET "https://api.twitch.tv/helix/games?name=$gamename" \
+    -H "Authorization: Bearer $useraccesstoken" \
+    -H "Client-Id: $clientid" | \
+    jq -r '.data[].id' 
+
+
+}
+
 ##########################################################################
 
 
@@ -658,7 +674,7 @@ commands () {
     echo ${commands[@]}
 }
 
-declare -a commands=(foo commands tmux overlay timeoverlay chatoverlay sensoroverlay killoverlay event eventosd getfollowers getsubscribers events ban vip raid mod slow slash slowoff host unban unhost unmod unraid unvip timeout untimeout marker)
+declare -a commands=(foo commands tmux overlay timeoverlay chatoverlay sensoroverlay killoverlay event eventosd getfollowers getsubscribers events ban vip raid mod slow slash slowoff host unban unhost unmod unraid unvip timeout untimeout marker gameid channelupdate)
 
 for i in ${commands[@]}; do
     if [[ "$i" == "$subcommand" ]]; then
