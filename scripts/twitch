@@ -173,8 +173,36 @@ unhost () {
 
 #get from rwxrob - description, mark
 
+updategame () {
 
-channelupdate () {
+  local game="$*"
+
+  local json='{"game_id":"'$game'"}'
+
+  curl -X PATCH "https://api.twitch.tv/helix/channels?broadcaster_id=$twitchid" \
+    -H "Authorization: Bearer $useraccesstoken" \
+    -H "Client-Id: $clientid" \
+    -H 'Content-Type: application/json' \
+    --data-raw "$json"
+
+}
+
+updatetitle () {
+
+
+  local title="$*"
+
+  local json='{"title":"'$title'"}'
+
+  curl -X PATCH "https://api.twitch.tv/helix/channels?broadcaster_id=$twitchid" \
+    -H "Authorization: Bearer $useraccesstoken" \
+    -H "Client-Id: $clientid" \
+    -H 'Content-Type: application/json' \
+    --data-raw "$json"
+
+}
+
+updatechannel () {
 
   local game="$1"
   local title="$2"
@@ -182,7 +210,7 @@ channelupdate () {
 
   local json='{"game_id":"'$game'", "title":"'$title'", "broadcaster_language":"'$lang'"}'
 
-echo  curl -X PATCH "https://api.twitch.tv/helix/channels?broadcaster_id=$twitchid" \
+  curl -X PATCH "https://api.twitch.tv/helix/channels?broadcaster_id=$twitchid" \
     -H "Authorization: Bearer $useraccesstoken" \
     -H "Client-Id: $clientid" \
     -H 'Content-Type: application/json' \
@@ -674,7 +702,7 @@ commands () {
     echo ${commands[@]}
 }
 
-declare -a commands=(foo commands tmux overlay timeoverlay chatoverlay sensoroverlay killoverlay event eventosd getfollowers getsubscribers events ban vip raid mod slow slash slowoff host unban unhost unmod unraid unvip timeout untimeout marker gameid channelupdate)
+declare -a commands=(foo commands tmux overlay timeoverlay chatoverlay sensoroverlay killoverlay event eventosd getfollowers getsubscribers events ban vip raid mod slow slash slowoff host unban unhost unmod unraid unvip timeout untimeout marker gameid updatechannel updatetitle updategame)
 
 for i in ${commands[@]}; do
     if [[ "$i" == "$subcommand" ]]; then

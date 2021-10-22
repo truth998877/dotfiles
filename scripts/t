@@ -1,14 +1,28 @@
 #!/bin/bash
 
+#TODO need to check whether here whether tmux is running
+
 buff="$*"
+
+
+hour=$(date "+%k")
+
+txt1="Evening Stream - "
+if ((hour < 12 )); then
+  txt1="Morning Stream - "
+elif ((hour < 18 )); then
+  txt1="Afternoon Stream - "
+fi
+
+txt="$txt1$(date "+%A %d/%m/%Y")"
 
 #Update Stream title box
 tmux -L livestudy send-keys -t 2 C-c
-tmux -L livestudy send-keys -t 2 "f 'Welcome to my Stream!\\n\\n ----Current Topic---- \\n$buff'" Enter
+tmux -L livestudy send-keys -t 2 "f 'Welcome to my Channel!\\n$txt\\n ----Current Topic---- \\n$buff'" Enter
 
 #TODO local and twitch video marks
 
-
-marker "$buff"
+#twitch updatetitle "$buff"
+#marker "$buff"
 
 #TODO update twitter

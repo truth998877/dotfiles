@@ -44,7 +44,7 @@ start () {
       local twitchgameid=$(twitch gameid "$selectedgametitle")
       read -p "Enter stream title: [$selectedgametitle]" title
       title="${title:-$selectedgametitle}"
-      twitch channelupdate "$twitchgameid" "$title" 
+      twitch updatechannel "$twitchgameid" "$title" 
 
       sensoroverlay
       timeoverlay
@@ -68,22 +68,46 @@ start () {
       local profile="studywithtony"
       local collection="studywithtony"
       local capturedir="livestudy/$(datepath)"
-      echo $capturedir
+#      echo $capturedir
+
+      local hour=$(date "+%k")
+
+
+      local txt="Evening Stream - "
+      if ((hour < 12 )); then
+           txt="Morning Stream - "
+      elif ((hour < 18 )); then
+           txt="Afternoon Stream - "
+      fi
+
+      local defaulttitle="$txt$(date "+%A %d/%m/%Y")"
+
       
       if [[ ! -d "/home/tony/GameCaptures/$capturedir" ]]; then
         mkdir -p "/home/tony/GameCaptures/$capturedir"
       fi 
-    
+      
+      if [[ ! -z $2 ]];then
+        shift 2
+        local title="$*"
+      else
+        read -p "Enter stream title: [$defaulttitle]" title
+        title="${title:-$defaulttitle}"
+      fi    
+ 
+      #TODO perhaps change the order here to run stream_ after tmuxlivestudy. Need every thing ready before going live
+
       obsrecord "$collection" "$profile" "$capturedir"
       sleep 5   
 
-      stream_    
+      #stream_    
       sleep 3
 
       markerscreatefile create
       sleep 5
       
       tmuxstreamstudy
+      t "$title"
     
     ;;
  
