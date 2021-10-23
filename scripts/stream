@@ -74,20 +74,11 @@ start () {
       if [[ ! -d "/home/tony/GameCaptures/$capturedir" ]]; then
         mkdir -p "/home/tony/GameCaptures/$capturedir"
       fi 
-      
-      if [[ ! -z $2 ]];then
-        shift 2
-        local title="$*"
-      else
-        read -p "Enter stream title: [$defaulttitle]" title
-        title="${title:-$defaulttitle}"
-      fi    
- 
 
       obsrecord "$collection" "$profile" "$capturedir"
       sleep 5   
 
-      stream_    
+#      stream_    
       sleep 3
 
       markerscreatefile create
@@ -108,7 +99,7 @@ start () {
 
 stop () {
 
-#TODO needs sorting
+#TODO needs different options depending on which account is streaming
 
   echo "To gracfully switch streaming off and exit obs"
   

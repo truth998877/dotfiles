@@ -22,7 +22,7 @@ tmux -L livestudy send-keys -t 2 "f 'Welcome to my Channel!\\n$txt\\n ----Curren
 
 #TODO local and twitch video marks
 
-twitch updatetitle "$buff"
+#twitch updatetitle "$buff"
 marker "$buff"
 
 #TODO update twitter
