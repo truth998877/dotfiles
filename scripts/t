@@ -14,13 +14,13 @@ elif ((hour < 18 )); then
   txt1="Afternoon Stream - "
 fi
 
-txt="$txt1$(date "+%A %d/%m/%Y")"
+txt="$txt1""$(date "+%A %d/%m/%Y")"
 
 #Update Stream title box
 tmux -L livestudy send-keys -t 2 C-c
-tmux -L livestudy send-keys -t 2 "f 'Welcome to my Channel!\\n$txt\\n ----Current Topic---- \\n$buff'" Enter
+tmux -L livestudy send-keys -t 2 "f 'Welcome To My Channel!\\n$txt\\n ----Current Topic---- \\n$buff'" Enter
 
-#TODO local and twitch video marks
+promotestream topicchange studywithtony "$buff"
 
 #twitch updatetitle "$buff"
 marker "$buff"

@@ -83,6 +83,8 @@ start () {
 
       markerscreatefile create
       sleep 5
+  
+      promotestream streamstart "$acount"
       
       tmuxstreamstudy 
     
