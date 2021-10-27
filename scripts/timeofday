@@ -1,0 +1,12 @@
+#!/bin/bash
+
+hour=$(date "+%k")
+
+txt="Evening"
+if ((hour < 12)); then
+  txt="Morning"
+elif ((hour < 18 )); then
+  txt="Afternoon"
+fi
+
+echo "$txt"
