@@ -21,13 +21,14 @@ local timeofday=$(timeofday)
 
 local link="$(link_ $account)"
 
-local message="Good $timeofday! I am, right now, streaming live at $link"
+local message="Good $timeofday! I am, right now, streaming live..."
 
-echo twitter post "$account" "$message"
+echo "Tweeting"
+twitter post "$account" "$message $link"
 #TODO hashtags
 
-
-echo facebook postmessage2page studywithtony "$message"
+echo "Posting link to facebook page $account"
+facebook postlink2page studywithtony "$link" "$message"
 } 
 
 topicchange () {
@@ -39,12 +40,14 @@ local topic="$*"
 
 local link="$(link_ $account)"
 
-local message="I have now changed topics; $topic - on my live stream at $link" 
+local message="I have now changed topics; $topic - on my live stream..." 
 
-echo twitter post "$account" "$message" 
+echo "Tweeting as $account"
+twitter post "$account" "$message $link" 
 #TODO hash tags
 
-echo facebook postmessage2page studywithtony "$message"
+echo "Posting to facebook page $account"
+facebook postmessage2page studywithtony "$message" "$link"
 
 }
 ############################## Main Command  #############################

@@ -7,13 +7,13 @@ foo () {
 
 create () {
 
-  echo here
+  #echo here
 
   recdir="/home/tony/GameCaptures/livestudy/$(datepath)"
-  echo "$recdir"
+  #echo "$recdir"
   
   now=$(date "+%s")
-  echo "$now"
+#  echo "$now"
   latestvid=$(newestvid "$recdir")
 #  echo "$latestvid"
 
