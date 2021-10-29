@@ -5,6 +5,20 @@
 buff="$*"
 #TODO need to add a character length limit
 
+fatal() { 
+
+  echo "$*"
+  exit 1
+
+}
+
+buff="${buff%%#*}"
+if [[ ${#sbuff} > 50 ]]; then
+   fatal "Topic must be less than 50 characters"
+fi
+
+echo "$buff" >> "$HOME/GameCaptures/livestudy/topics"
+
 hour=$(date "+%k")
 
 txt1="Evening Stream - "
