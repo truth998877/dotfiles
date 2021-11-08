@@ -1,6 +1,7 @@
 #!/bin/bash
 
 #TODO move from python to curl
+#TODO need to pass an account argument to each of the functions which is then passed to pyytinterface.py
 #TODO use rwxrobs auth tool for yt login
 #TODO need to add usage details for each function
 #TODO error checking and handling
