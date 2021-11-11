@@ -14,10 +14,12 @@ ls-pretty () {
 #  --compressed
 #}
 
+  local account="$1"
+
   source ~/GameCaptures/ytupload/bin/activate
   cd ~/GameCaptures/ytupload
 
- python pyytinterface.py listvideos
+  python pyytinterface.py listvideos --account="$account"
 
 }
 
@@ -27,14 +29,14 @@ ls-json (){
 
 #output video id, title, description, tags and provacy settings of all channel videos to json file.
 
-  local format="$1"
-  local path="/home/tony/GameCaptures/fortiesgamer-as-is.json"
+  local account="$1"
+  local path="/home/tony/GameCaptures/$account-as-is.json"
 
   source ~/GameCaptures/ytupload/bin/activate
   cd ~/GameCaptures/ytupload
   
   #query yt for uploaded playlist
-  response=$(python pyytinterface.py listvideos --format=json)
+  response=$(python pyytinterface.py listvideos --account="$account" --format=json)
 
   
   #parse respose to just get the video_ids
@@ -58,12 +60,13 @@ ls-json (){
 
 ls-videostatus (){
 
-  local video_id="$1"
+  local account="$1"
+  local video_id="$2"
 
   source ~/GameCaptures/ytupload/bin/activate
   cd ~/GameCaptures/ytupload
 
-  python pyytinterface.py listvideostatus --video_id="$video_id"
+  python pyytinterface.py listvideostatus --account="$account" --video_id="$video_id"
 
 }
 
@@ -71,12 +74,13 @@ ls-video (){
 
  # echo "here"
 
-  local video_id="$1"
+  local account="$1"
+  local video_id="$2"
 
   source ~/GameCaptures/ytupload/bin/activate
   cd ~/GameCaptures/ytupload
 
-  response=$(python pyytinterface.py listvideo --video_id="$video_id")
+  response=$(python pyytinterface.py listvideo --acount="$account" --video_id="$video_id")
 
   echo "$response"|jq -r '.'
 
@@ -89,10 +93,25 @@ manual-upload () {
   #local channel="$1"  
   #TO-DO set up case to set $channel-str to open upload page for $channel
   
-  local dir="$1"
-  xdg-open "https://studio.youtube.com/channel/UCxocdFJo68AAmfC3NsieKgg/videos/upload?d=ud"
+  local account="$1"
+  local dir="$2"
+
+  case $account in
+    fortiesgamer)
+      local channelid="UCxocdFJo68AAmfC3NsieKgg"
+      ;;
+    studywithtony)
+      local channelid="UCAPH_kDcoQMA5zav2OwgFng"
+      ;;
+    *)
+      echo "Whaaat?"
+      exit 1
   
-  #xdg-open https://studio.youtube.com/channel/"$channel-str"/videos/upload?d=ud &
+  esac
+
+  #xdg-open "https://studio.youtube.com/channel/UCxocdFJo68AAmfC3NsieKgg/videos/upload?d=ud"
+  
+  xdg-open "https://studio.youtube.com/channel/$channelid/videos/upload?d=ud" 
 
   nautilus --browser "$dir" &
 
@@ -102,31 +121,33 @@ update-video () {
 
   #updates a single video
 
-  local id="$1"
-  local title="$2"
-  local tags1="$3"
-  local description="$4"
-  local category="$5"
+  local account="$1"
+  local id="$2"
+  local title="$3"
+  local tags1="$4"
+  local description="$5"
+  local category="$6"
 
   echo "Tags to update, $tags1"
 
   source ~/GameCaptures/ytupload/bin/activate
   cd ~/GameCaptures/ytupload
 
-  response=$(python pyytinterface.py update --video_id="$id" --title="$title" --tags="$tags1" --description="$description" --category="$category")
+  response=$(python pyytinterface.py update --acount="$account" --video_id="$id" --title="$title" --tags="$tags1" --description="$description" --category="$category")
 
 }
 
 set-privacy () {
 
   #published video by changing privacy setting
-  local id="$1"
-  local privacystatus="$2"
+  local account="$1"
+  local id="$2"
+  local privacystatus="$3"
   
   source ~/GameCaptures/ytupload/bin/activate
   cd ~/GameCaptures/ytupload
 
- response=$(python pyytinterface.py setprivacy --video_id="$id" --privacy_status="$privacystatus")
+ response=$(python pyytinterface.py setprivacy --account="$account" --video_id="$id" --privacy_status="$privacystatus")
 }
 
 set-thumbnail () {
@@ -134,27 +155,29 @@ set-thumbnail () {
 
 
   #sets thumbnail for video
-  local id="$1"
-  local thumbnail="$2"
+  local account="$1"
+  local id="$2"
+  local thumbnail="$3"
 
   source ~/GameCaptures/ytupload/bin/activate
   cd ~/GameCaptures/ytupload
 
-  response=$(python pyytinterface.py updatethumbnail --video_id "$id" --file "$thumbnail")
+  response=$(python pyytinterface.py updatethumbnail --account="$account" --video_id="$id" --file="$thumbnail")
 
 }
 
 delete () {
 #working
 
-  local id="$1"
+  local account="$1"
+  local id="$2"
  
   local dir=$(pwd)  
 
   source ~/GameCaptures/ytupload/bin/activate
   cd ~/GameCaptures/ytupload
 
-  python pyytinterface.py removevideo --video_id "$id"
+  python pyytinterface.py removevideo --account="$account" --video_id="$id"
 
   cd dir
 
