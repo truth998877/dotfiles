@@ -371,7 +371,7 @@ post () {
 
   mv ~/GameCaptures/staging/"$game"/* ~/GameCaptures/To_Upload/"$game"
 
-  youtube manual-upload  "/home/tony/GameCaptures/To_Upload/$game"
+  youtube manual-upload "fortiesgamer"  "/home/tony/GameCaptures/To_Upload/$game"
 
 ##################
 

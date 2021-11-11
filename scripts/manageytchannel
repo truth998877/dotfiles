@@ -31,7 +31,7 @@ set-channel () {
   echo "Current Channel set to $channel"
   ;;
   *)
-  echo "fortiesgamer">~/repos/github.com/truth998877/dotfiles/scripts/currentchannel
+  #echo "fortiesgamer">~/repos/github.com/truth998877/dotfiles/scripts/currentchannel
   echo "Channel not recognised, channel set to default, fortiesgamer"
   ;;
   esac
@@ -96,12 +96,13 @@ bulkpublish () {
   #echo "To publish a video"
 
   local shouldbe="$(setshouldbe)"
+  local currentchannel="$(current-channel)"
 
   dir=$(pwd)
 
   while read line;do
 
-    youtube set-privacy "$line" public
+    youtube "$currentchannel" set-privacy "$line" public
     echo "$line published"
 
     cd "$dir"
@@ -127,8 +128,9 @@ delete () {
 
   local video_id="$1"
   local shouldbe="$(setshouldbe)"
+  local currentchannel="$(current-channel)"
 
-  youtube delete "$video_id"
+  youtube "$currentchannel" delete "$video_id"
   
   jsonfun setdeleted "$shouldbe" "$id"
 
@@ -141,11 +143,12 @@ newvideos () {
 
   local shouldbe="$(setshouldbe)"
   local asis="$(setasis)"
+  local currentchannel="$(current-channel)"
 
   #echo "$shouldbe"
   #echo test
 
-  youtube ls-json
+  youtube "$currentchannel" ls-json
 
   local dir=$(pwd)
 
@@ -169,15 +172,15 @@ newvideos () {
           description=$(echo -e "$descriptionraw")
 
           echo "updating video, $line..."
-          until [ "$(echo $(youtube ls-video "$video_id")|jq '.[].snippet|.tags==null')" = "false" ];do
-           youtube update-video "$video_id" "$title" "$tags" "$description" $category
+          until [ "$(echo $(youtube "$(current-channel)" ls-video "$video_id")|jq '.[].snippet|.tags==null')" = "false" ];do
+           youtube "$currentchannel" update-video "$video_id" "$title" "$tags" "$description" $category
           done
           sleep 2 #not sure if this is necessary
           echo "done, uploading thumbnail"
 
           cd "$dir"
 
-          youtube set-thumbnail "$video_id" "$thumbnail"
+          youtube "$currentchannel" set-thumbnail "$video_id" "$thumbnail"
 
           cd "$dir"
 
@@ -185,7 +188,7 @@ newvideos () {
 
   echo "All new videos updated, updating "as is json file""
 
-  youtube ls-json
+  youtube "$currrentchannel" ls-json
 
 }
 
