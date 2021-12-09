@@ -156,6 +156,32 @@ vertappend () {
 
 }
 
+rb-radial-gradient () {
+
+  local colour1="$1"
+  local colour2="$2"
+
+  local height=$((7632/8))
+  local width=$((6480/8))
+
+  local outputfilename="$colour1-$colour2-$width-$width.png"
+
+  convert -size "$width"x"$width" radial-gradient:"$colour1"-"$colour2" "$outputfilename"
+
+  echo "$outputfilename"
+
+}
+
+rb-tile () {
+
+#TODO combine this with rb-radial-graidient, background colour will need 576 pixels of padding top and bottom, as the radial gradient needs to be square
+
+  local filename="$1"
+
+  convert -size 6480x6480 tile:$filename $(filename%.*)-rb-tiled.png
+
+}
+
 # more at https://www.skcript.com/svr/useful-imagemagick-commands/
 
 
