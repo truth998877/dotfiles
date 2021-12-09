@@ -1,0 +1,4 @@
+#!/bin/bash
+
+xournalpp > /dev/null 2>&1 &
+weylus > /dev/null 2>&1 &
