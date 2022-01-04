@@ -2,7 +2,11 @@
 
 #say something in current irc buffer
 
-buffer=""$*""
+buffer="$*"
 
-#echo "$buffer"
-echo  "*$buffer" >~/.weechat/weechat_fifo
+if [[ -z $buffer ]]; then
+ echo "Don't forget to escape"
+ exit
+fi
+
+echo "*$buffer" > ~/.weechat/weechat_fifo
