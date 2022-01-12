@@ -1,0 +1,63 @@
+#!/bin/bash
+
+#a limited bash interface to inkscape
+
+presskey () {
+
+  local key="$@"
+  xdotool search --class Inkscape key --window %2 "$key"
+
+}
+
+holdkey () {
+
+  local key="$@"
+
+  xdotool search --class Inkscape keydown --window %2 "$key"
+
+}
+
+pastestyle () {
+
+  #paste style
+  holdkey ctrl+Shift
+  presskey v
+
+  #clear held keys
+  presskey ctrl+c
+
+}
+
+copystyle () {
+
+echo To copy and svg to the clipboard
+
+}
+  
+
+lookup () {
+
+  local key="$@"
+  presskey "${bindings["$key"]}"
+
+}
+
+applystyle () {
+
+echo "To apply a style to the selected object(s) by copying raw, programmatically created svg to the clipboard and pasting to inkscape as a style"
+
+send ctrl+c
+
+}
+
+declare -A bindings
+bindings[e]=e
+bindings[r]=r
+
+
+while read line;do
+  #if line is a single character
+  lookup "$line"
+  #if line is more than one character
+  #probably create a style and paste as style in inkscape
+done < "${1:-/dev/stdin}"
