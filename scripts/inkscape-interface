@@ -17,7 +17,7 @@ holdkey () {
 
 }
 
-pastestyle () {
+paste-style () {
 
   #paste style
   holdkey ctrl+Shift
@@ -28,12 +28,27 @@ pastestyle () {
 
 }
 
-copystyle () {
+copy-style () {
 
-echo To copy and svg to the clipboard
+  echo To copy and svg to the clipboard
 
 }
   
+create-style () {
+
+  echo "To create a style"
+
+}
+
+apply-style () {
+
+  echo "To apply a style to the selected object(s) by copying raw, programmatically created svg to the clipboard and pasting to inkscape as a style"
+
+  style=$(create-style) #args requried
+  copy-style "$style"
+  paste-style
+
+}
 
 lookup () {
 
@@ -42,14 +57,10 @@ lookup () {
 
 }
 
-applystyle () {
 
-echo "To apply a style to the selected object(s) by copying raw, programmatically created svg to the clipboard and pasting to inkscape as a style"
 
-send ctrl+c
 
-}
-
+#single key bindings
 declare -A bindings
 bindings[e]=e
 bindings[r]=r
@@ -59,5 +70,5 @@ while read line;do
   #if line is a single character
   lookup "$line"
   #if line is more than one character
-  #probably create a style and paste as style in inkscape
+  #probably apply-style
 done < "${1:-/dev/stdin}"
