@@ -41,27 +41,6 @@ paste-style () {
 
 }
 
-copy-style () {
-
-  echo To copy and svg to the clipboard
-
-}
-  
-create-style () {
-
-  echo "To create a style"
-
-}
-
-apply-style () {
-
-  echo "To apply a style to the selected object(s) by copying raw, programmatically created svg to the clipboard and pasting to inkscape as a style"
-
-  style=$(create-style) #args requried
-  copy-style "$style"
-  paste-style
-
-}
 
 quit () {
 
@@ -133,6 +112,14 @@ circle () {
 xclip -selection c -target 'image/x-inkscape-svg' ~/svg/circle.svg
 p
 
+
+}
+
+style () {
+#TODO load svg style string from file, make substitutions a-la Rob's snip tool
+#TODO style creation function
+xclip -selection c -target 'image/x-inkscape-svg' ~/svg/style.svg
+presskey ctrl+Shift+v 
 
 }
 
