@@ -1,0 +1,44 @@
+#!/bin/bash
+
+# - echoes snippet if called from command line with no arguments.
+# - runs if call from the command line with the required arguments
+# - does not run if called from within vim ie the tony tony@tony.com
+#   is sent from vim to snip nameemail, the snippet is returned rather
+#   than the snippet having beeing substituted with the arguments
+
+# see rwxrob snip
+
+
+snip() {
+
+  local name="$1"
+  local path="$SNIPPETS/$name"
+  shift
+  if [[ -r $path ]]; then
+    local buf="$(<$path)"
+   
+    if [[ $# = 0 ]]; then
+     #TODO goes in here if called from within vim whereas it shouldn't at $# is greater than 0 
+       echo "$buf"
+      return
+    fi
+
+    if [[ $# > 0 ]]; then
+      local -i n=1
+      for arg in "$@";do
+        buf=${buf//\{$n\}/$arg}
+        ((n++))
+      done
+    else
+     while  IFS=$'\n' read -r argline; do
+         IFS=" " snip "$name" $argline
+      done
+      return
+    fi
+    echo "$buf"
+  fi
+
+
+}
+
+snip "$@"
