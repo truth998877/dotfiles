@@ -1,44 +1,58 @@
 #!/bin/bash
 
-# - echoes snippet if called from command line with no arguments.
-# - runs if call from the command line with the required arguments
-# - does not run if called from within vim ie the tony tony@tony.com
-#   is sent from vim to snip nameemail, the snippet is returned rather
-#   than the snippet having beeing substituted with the arguments
+#Stolen from rwxrob - www.twitch.tv/rwxrob
 
-# see rwxrob snip
 
+[[ -z "$SNIPPETS" ]] && echo "SNIPPETS directory undefined" && exit 1
+
+snippet() {
+  > "$SNIPPETS/last"
+  while IFS= read -r line; do
+    echo "$line"
+    echo "$line" >> "$SNIPPETS/last"
+  done
+}
 
 snip() {
-
+  if (( $# == 0 ));then
+    snippet "$@"
+    return $?
+  fi
   local name="$1"
-  local path="$SNIPPETS/$name"
   shift
+  local path="$SNIPPETS/$name"
+  
   if [[ -r $path ]]; then
+
     local buf="$(<$path)"
-   
-    if [[ $# = 0 ]]; then
-     #TODO goes in here if called from within vim whereas it shouldn't at $# is greater than 0 
-       echo "$buf"
+    if [[ -s /dev/stdin ]]; then
+      local in="$(</dev/stdin)"
+    else
+      local in=""
+    fi
+
+    if [[ $# = 0 && -z $in ]]; then
+      echo "$buf"
       return
     fi
 
     if [[ $# > 0 ]]; then
       local -i n=1
-      for arg in "$@";do
+      for arg in $@; do
         buf=${buf//\{$n\}/$arg}
         ((n++))
       done
+      echo "$buf"
     else
-     while  IFS=$'\n' read -r argline; do
-         IFS=" " snip "$name" $argline
+      while IFS=$'\n' read -r argline; do
+        if [[ -n $argline ]]; then
+          IFS=" " snip $name $argline
+        fi
       done
-      return
     fi
-    echo "$buf"
+
   fi
-
-
 }
 
 snip "$@"
+
