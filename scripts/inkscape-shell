@@ -2,6 +2,7 @@
 
 #a limited bash interface to inkscape
 
+
 activate () {
 
 xdotool search --class Inkscape windowactivate %@ > /dev/null 2>&1
@@ -112,13 +113,31 @@ p
 
 }
 
-graph-paper () {
+centre () {
+  #TODO not working
+  presskey ctrl+Alt_L+84
 
-local svgstring=$(<~/svg/Graph-paper.svg)
+}
 
-#xclip -selection c -target 'image/x-inkscape-svg' ~/svg/Graph-paper.svg
-echo "$svgstring" |xclip -selection c -target 'image/x-inkscape-svg'
-p
+graphpaper () {
+  
+  local -i x  
+  local -i y
+  local -i width
+  local -i height
+
+  read -p 'x y) ' x y  
+  
+  x10=$(( $x * 10 ))
+  y10=$(( $y * 10 ))
+  width=$(( $x10 + 10 ))
+  height=$(( $y10 + 10 ))
+  
+  local svgstring="$(snip Graph-paper.snip "$x10" "$y10" "$width" $height)"
+
+  #xclip -selection c -target 'image/x-inkscape-svg' ~/svg/Graph-paper.svg
+  echo "$svgstring" | xclip -selection c -target 'image/x-inkscape-svg'
+  p
 
 }
 
@@ -150,7 +169,7 @@ presskey ctrl+Shift+v
 
 while read line;do
   #if line is a single character
-  "$line"
+ "$line"
   #if line is more than one character
   #probably apply-style
 done < "${1:-/dev/stdin}"
