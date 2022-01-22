@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="{3}mm" height="{4}mm" >
+  <defs>
+    <pattern id="square" width="1mm" height="1mm" patternUnits="userSpaceOnUse" >
+      <rect width="1mm" height="1mm" style="fill:none;stroke:#a9a9a9"/>
+    </pattern>
+    <pattern id="quad" width="10mm" height="10mm" patternUnits="userSpaceOnUse" >
+      <rect width="10mm" height="10mm" style="stroke:#366" fill="url(#square)"/>
+    </pattern>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" 
+    refX="0" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" />
+    </marker>
+  </defs>
+  <rect x="0mm" y="0mm" width="{1}mm" height="{2}mm" fill="url(#quad)" style="stroke:#366;stroke-width:2px"/>
+  <line x1="{10}mm" y1="{7}mm" x2="{10}mm" y2="{8}mm" stroke="black" 
+  stroke-width="2px" marker-end="url(#arrowhead)" />
+  <line x1="{5}mm" y1="{9}mm" x2="{6}mm" y2="{9}mm" stroke="black" 
+  stroke-width="2px" marker-end="url(#arrowhead)" />
+  <circle cx="{10}mm" cy="{9}mm" r="1mm"
+            fill="red" stroke="none"  /> 
+</svg>

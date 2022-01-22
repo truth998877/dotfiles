@@ -30,7 +30,6 @@ p () {
 
   presskey ctrl+v
 
-
 }
 
 paste-style () {
@@ -39,16 +38,13 @@ paste-style () {
 
   presskey ctrl+Shift+v
 
-
 }
-
 
 quit () {
 
  exit
 
 }
-
 
 e () {
 
@@ -104,7 +100,6 @@ c () {
 
 }
 
-
 circle () {
 
 
@@ -120,38 +115,80 @@ centre () {
 }
 
 graphpaper () {
+
+  #TODO needs the ability to be called from other functions with arguments to return just the svgstring
   
   local -i x  
   local -i y
   local -i width
   local -i height
 
-  read -p 'x y) ' x y  
+  read -p 'x y> ' x y  
   
   x10=$(( $x * 10 ))
   y10=$(( $y * 10 ))
-  width=$(( $x10 + 10 ))
-  height=$(( $y10 + 10 ))
+  width=$(( $x10 + 0 ))
+  height=$(( $y10 + 0 ))
   
-  local svgstring="$(snip Graph-paper.snip "$x10" "$y10" "$width" $height)"
+  local svgstring="$(snip Graph-paper.snip "$x10" "$y10" "$width" "$height")"
 
   #xclip -selection c -target 'image/x-inkscape-svg' ~/svg/Graph-paper.svg
   echo "$svgstring" | xclip -selection c -target 'image/x-inkscape-svg'
   p
+  centre
 
 }
 
 draw-graph () {
 
-echo "To draw a graph"
-#set paper size & orientation
-#set origin location (bottom left or middle, as calculated from paper size and orientation)
-#set x-axis range
-#set y-axis range
-#generate points
-#transform points into paper coordinates based of paper size, origin location, x-axis range and y-axis range
-#add multiple data sets
-#add legend
+  echo "To draw a graph"
+
+  local -i x
+  local -i y
+  local -i width
+  local -i height
+  local -i xaxisstart=10
+  local -i yaxisfinish=10
+  local xaxisselection
+  local yaxisselection
+  local -i xaxisvposition
+  local -i yaxishposition
+
+  read -p 'set number squares, x y> ' x y
+
+  x10=$(( $x * 10 ))
+  y10=$(( $y * 10 ))
+  width=$(( $x10 + 0 ))
+  height=$(( $y10 + 0 ))
+  
+  local -i xaxisfinish=$(( $width - 10 ))
+  local -i yaxisstart=$(( $height - 10 ))
+
+  read -p 'x-axis position, bottom or middle> ' xaxisselection
+  read -p 'y-axis position, left or middle> ' yaxisselection
+  
+  echo $xaxisselection
+  echo $yaxisselection
+
+  xaxisvposition=$(( $height / 2 ))
+  if [[ $xaxisselection == "bottom" ]]; then
+    xaxisvposition=$(( $height - 20 ))
+  fi
+  echo "$xaxisvposition"
+
+  yaxishposition=$(( $width / 2 ))
+  if [[ $yaxisselection == "left" ]]; then
+    yaxishposition=20
+  fi
+  echo "$yaxishposition"
+    
+  local svgstring="$(snip Graph-paper-1.snip  "$x10" "$y10" "$width" "$height" "$xaxisstart" "$xaxisfinish" "$yaxisstart" "$yaxisfinish" "$xaxisvposition" "$yaxishposition")"
+
+  echo "$svgstring" | xclip -selection c -target 'image/x-inkscape-svg' 
+  p
+  centre
+    
+
 
 }
 
@@ -167,7 +204,7 @@ presskey ctrl+Shift+v
 #TODO objects to add - square, rectangle, eclipse, triangles, polygons, arcs, up down left right diagonal arched single and double ended arrows, xy graph no grid, xy graph with grid, xyz graph, 
 #graph paper
 
-while read line;do
+while read -p '> ' line;do
   #if line is a single character
  "$line"
   #if line is more than one character
