@@ -100,13 +100,6 @@ c () {
 
 }
 
-circle () {
-
-
-xclip -selection c -target 'image/x-inkscape-svg' ~/svg/circle.svg
-p
-
-}
 
 centre () {
   #TODO not working
@@ -184,19 +177,162 @@ draw-graph () {
     
   local svgstring="$(snip Graph-paper-1.snip  "$x10" "$y10" "$width" "$height" "$xaxisstart" "$xaxisfinish" "$yaxisstart" "$yaxisfinish" "$xaxisvposition" "$yaxishposition")"
 
-  echo "$svgstring" | xclip -selection c -target 'image/x-inkscape-svg' 
-  p
+  echopaste 
   centre
     
+#TODO points/series, axis ranges, axis labels, title, legend
 
+}
+
+larrow () {
+
+  #TODO add length
+
+  local svgstring="$(snip larrow.snip)"
+  echopaste "$svgstring" 
+
+
+}
+
+rarrow () {
+
+  #TODO add length
+
+  local svgstring="$(snip rarrow.snip)"
+  echopaste "$svgstring" 
+
+}
+
+
+uarrow () {
+
+  #TODO add length
+
+  local svgstring="$(snip uarrow.snip)"
+  echopaste "$svgstring" 
+
+}
+
+
+darrow () {
+
+  #TODO add length
+
+  local svgstring="$(snip darrow.snip)"
+  echopaste "$svgstring" 
+
+}
+
+doublearrow () {
+
+  local svgstring="$(snip doublearrow.snip)"
+  echopaste "$svgstring"
+
+}
+
+vline () {
+
+  #TODO add length
+
+  local svgstring="$(snip vline.snip)"
+  echopaste "$svgstring"
+
+}
+
+hline () {
+
+  #TODO add length
+
+  local svgstring="$(snip hline.snip)"
+  echopaste "$svgstring"
+
+}
+
+box () {
+  
+  local -i width
+  local -i height
+
+  read -p 'width height> ' width height
+
+  local svgstring="$(snip rectangle.snip "$width" "$height")"
+  echopaste "$svgstring"
+
+}
+
+circle () {
+
+  local -i radius
+
+  read -p 'radius> ' radius
+
+  local svgstring="$(snip circle.snip "$radius")"
+  echopaste "$svgstring"
+
+}
+
+ellipse () {
+
+  local -i xradius
+  local -i yradius
+  read -p 'xradius yradius> ' xradius yradius
+
+  local svgstring="$(snip ellipse.snip "$xradius" "$yradius")"
+  echopaste "$svgstring"
+
+}
+
+eqtriangle () {
+  
+  local -i length
+  read -p 'length, integer> ' length
+
+  local xpeak
+  local ypeak
+  local xr
+
+  xpeak=$(echo "scale=2; 100+($length)/2"|bc)
+  ypeak=$(echo "scale=2; 100-(($length) * sqrt(3)/2)"|bc)
+  xr=$(echo "scale=2; 100+($length)"|bc)
+
+  svgstring=$(snip triangle.snip "$xpeak" "$ypeak" "$xr") 
+  echopaste "$svgstring"
+
+}
+
+rtriangle () {
+
+  local -i base
+  local -l height
+
+  read -p 'base height as integers> ' base height
+
+  local xpeak
+  local ypeak
+  local xr
+
+  xpeak=100
+  ypeak=$(( 100 - $height ))
+  xr=$(( 100 + $base ))
+
+  svgstring=$(snip triangle.snip "$xpeak" "$ypeak" "$xr")
+  echopaste "$svgstring"
+
+}
+
+echopaste () {
+
+ local svgstring="$1"
+ echo "$svgstring" | xclip -selection c -target 'image/x-inkscape-svg'
+ p
 
 }
 
 style () {
 #TODO load svg style string from file, make substitutions a-la Rob's snip tool
 #TODO style creation function
-xclip -selection c -target 'image/x-inkscape-svg' ~/svg/style.svg
-presskey ctrl+Shift+v 
+  xclip -selection c -target 'image/x-inkscape-svg' ~/svg/style.svg
+  presskey ctrl+Shift+v 
 
 }
 
@@ -204,7 +340,7 @@ presskey ctrl+Shift+v
 #TODO objects to add - square, rectangle, eclipse, triangles, polygons, arcs, up down left right diagonal arched single and double ended arrows, xy graph no grid, xy graph with grid, xyz graph, 
 #graph paper
 
-while read -p '> ' line;do
+while read -p 'inkscape-shell> ' line;do
   #if line is a single character
  "$line"
   #if line is more than one character
