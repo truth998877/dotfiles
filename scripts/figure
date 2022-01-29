@@ -1,0 +1,21 @@
+#!/bin/bash
+
+figure_ () {
+
+echo "$(snip figure.snip allargs "$@")"
+
+}
+
+#from within vim the line is not passed as args, this line is sent to stdin
+while IFS="\n" read -r args; do
+  figure_ "$args"
+done
+
+
+#TODO set inkscape working directory to be somewhere relevant to the file being worked on- can be done from oping a template in the working directory but how do you get vim to tell the script what is its working directory 
+#TODO check if a figure with the same name already exists, if yes do nothing or echo already exists, else, create new figure etc
+#TODO find out how to launch inkscape-shell when this command is invoked from within vim
+#TODO arrange the windows such that inkscape and inkscape shell can both be viewed at once
+#TODO watch for new svg files to appear in the working directory and when new files appear save these as pdf+LaTeX using inkscape command line options so that any text in the figure is rendered by latex etc 
+
+inkscape & 
