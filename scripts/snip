@@ -37,11 +37,16 @@ snip() {
     fi
 
     if [[ $# > 0 ]]; then
-      local -i n=1
-      for arg in $@; do
-        buf=${buf//\{$n\}/$arg}
-        ((n++))
-      done
+      if [[ $1 == "allargs" ]]; then
+        shift 
+        buf=${buf//\{1\}/"$@"}
+      else  
+        local -i n=1
+        for arg in $@; do
+          buf=${buf//\{$n\}/$arg}
+          ((n++))
+        done
+      fi
       echo "$buf"
     else
       while IFS=$'\n' read -r argline; do
