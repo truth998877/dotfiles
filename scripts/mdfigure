@@ -15,6 +15,8 @@ figuresnip_ () {
   local caption="$str"
   local filename="${str//\ /-}"
 
+  #TODO test if figure already exists, if so do nothing
+
   echo "$(snip mdfigure.snip mdfigure "$filename" "$caption")"
 
   #TODO copy figure template to pwd of the markdown file and open it in inkscape
