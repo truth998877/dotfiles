@@ -37,9 +37,11 @@ snip() {
     fi
 
     if [[ $# > 0 ]]; then
-      if [[ $1 == "allargs" ]]; then
+      if [[ $1 == "mdfigure" ]]; then
         shift 
-        buf=${buf//\{1\}/"$@"}
+        buf=${buf//\{1\}/"$1"}
+        shift
+        buf=${buf//\{2\}/"$@"}
       else  
         local -i n=1
         for arg in $@; do
