@@ -42,6 +42,9 @@ paste-style () {
 
 quit () {
 
+ #TODO choose whether or not to same the file
+ #TODO exit inkscape
+
  exit
 
 }
