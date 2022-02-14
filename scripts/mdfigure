@@ -14,14 +14,31 @@ figuresnip_ () {
   
   local caption="$str"
   local filename="${str//\ /-}"
+ 
+  #does the figures directory exist for this note? if not create it, as it's needed
+  if [[ ! -d ./figures ]]; then
+    mkdir ./figures
+  fi
 
-  #TODO test if figure already exists, if so do nothing
-
+  #is there a file of the same input title already in the figures directory for this note? If yes, do nothing
+  if [[ -f ./figures/$filename.svg ]]; then
+    exit
+  fi
+ 
+  #snip the link to vim
   echo "$(snip mdfigure.snip mdfigure "$filename" "$caption")"
+  
+  #copy the template for the note to the figure directory of the note
+  #TODO need to decide where to put the figure template for the current note.
+  cp figure-template.svg ./figures/$filename.svg
 
-  #TODO copy figure template to pwd of the markdown file and open it in inkscape
-  #TODO size the inkscape window appropriately
-  #TODO launch inkscape shell, so that the figure can be drawnZZ
+  #launch inkscape and inkscape-shell
+  inkscape ./figures/"$filename".svg
+  #inkscape-shell
+
+
+  #TODO size the inkscape window appropriately - livewindowsize??
+  #TODO launch inkscape shell, so that the figure can be drawn
 
 }
 
@@ -32,4 +49,4 @@ done
 
 #from within vim the line is not passed as args, this line is sent to stdin
 
-inkscape & 
+#inkscape & 
