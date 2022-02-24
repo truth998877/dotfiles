@@ -1,0 +1,18 @@
+#!/bin/bash
+
+figureedit_ () {
+
+  filename="${@#*/}"
+  filename="${filename#*/}"
+  filename="${filename%)*}"
+  inkscape ./figures/"$filename"
+  #inkscape-shell
+  echo "$@"
+
+}
+
+
+while IFS="\n" read -r args;do
+  figureedit_ "$args"
+  break
+done
