@@ -33,9 +33,9 @@ figuresnip_ () {
   cp figure-template.svg ./figures/$filename.svg
 
   #launch inkscape and inkscape-shell
-  inkscape ./figures/"$filename".svg
+  inkscape ./figures/"$filename".svg &
   #inkscape-shell
-
+  tilix --geometry=156x5+120+900 --window-style=borderless -x "bash -i /home/tony/repos/github.com/truth998877/dotfiles/scripts/inkscape-shell"
 
   #TODO size the inkscape window appropriately - livewindowsize??
   #TODO launch inkscape shell, so that the figure can be drawn
