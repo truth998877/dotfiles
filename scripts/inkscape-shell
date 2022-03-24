@@ -2,6 +2,11 @@
 
 #a limited bash interface to inkscape
 
+path () {
+
+echo "$PATH"
+
+}
 
 activate () {
 
@@ -13,6 +18,12 @@ presskey () {
 
   local key="$@"
   xdotool search --class Inkscape key --window %@ "$key" > /dev/null 2>&1
+
+}
+
+save () {
+
+  presskey ctrl+s
 
 }
 
@@ -42,7 +53,7 @@ paste-style () {
 
 quit () {
 
- #TODO choose whether or not to same the file
+ #TODO choose whether or not to save the file
  #TODO exit inkscape
 
  exit
