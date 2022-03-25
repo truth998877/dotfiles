@@ -8,6 +8,15 @@ echo "$PATH"
 
 }
 
+dock () {
+
+#wmctrl -ir $window -b remove,maximized_vert,maximized_horz
+#xdotool windowsize inkscape 1254 870
+#xdotool windowmove inkscape 118 79
+wmctrl -r "inkscape" -e 0,118,79,1254,753
+
+}
+
 activate () {
 
 xdotool search --class Inkscape windowactivate %@ > /dev/null 2>&1
@@ -55,7 +64,7 @@ quit () {
 
  #TODO choose whether or not to save the file
  #TODO exit inkscape
-
+ presskey ctrl+q
  exit
 
 }
