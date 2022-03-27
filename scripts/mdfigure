@@ -40,6 +40,7 @@ figuresnip_ () {
   #tilix --geometry=156x5+120+900 --window-style=borderless -x "bash -i /home/tony/repos/github.com/truth998877/dotfiles/scripts/inkscape-shell"
 
   tmux \split-window -v 'inkscape-shell' \; \resize-pane -y 6
+  #inkscape-shell
 
   #TODO size the inkscape window appropriately - livewindowsize??
   #TODO launch inkscape shell, so that the figure can be drawn

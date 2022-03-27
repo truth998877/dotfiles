@@ -363,7 +363,11 @@ style () {
 #TODO objects to add - square, rectangle, eclipse, triangles, polygons, arcs, up down left right diagonal arched single and double ended arrows, xy graph no grid, xy graph with grid, xyz graph, 
 #graph paper
 
-while read -p 'inkscape-shell> ' line;do
+#tmux
+#sleep 1
+#tmux -L inkscapeshell new-session \; \split-window -v \; \resize-pane -y 6
+
+while read -p 'inkscape-shell [quit 2 quit]> ' line;do
   #if line is a single character
  "$line"
   #if line is more than one character
