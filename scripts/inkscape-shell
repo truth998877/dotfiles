@@ -370,10 +370,12 @@ help () {
       functions=$(declare -F)
       functionsarray=(${functions//declare -f/})
       select function in "${functionsarray[@]}";do
-        echo $function  #echo the correct element in the 'help' associative array
+        "$function"  #echo the correct element in the 'help' associative array
         break
       done
 
+      clear
+      tmux resize-pane -y 6
 }
 
 #TODO instead of having a function for each object, create a add-object function whose argument is the filename of the object to copy
@@ -383,8 +385,8 @@ help () {
 #tmux
 #sleep 1
 #tmux -L inkscapeshell new-session \; \split-window -v \; \resize-pane -y 6
-
-while read -p 'inkscape-shell [quit 2 quit]> ' line;do
+echo "inkscape-shell"
+while read -p "['save->quit' 2 quit]> " line;do
   #if line is a single character
  "$line"
   #if line is more than one character
