@@ -5,7 +5,8 @@ figureedit_ () {
   filename="${@#*/}"
   filename="${filename#*/}"
   filename="${filename%)*}"
-  inkscape ./figures/"$filename"
+  inkscape ./figures/"$filename" &
+  tmux \split-window -v 'inkscape-shell' \; \resize-pane -y 6
   #inkscape-shell
   echo "$@"
 
