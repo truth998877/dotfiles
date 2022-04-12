@@ -1,0 +1,3 @@
+#!/bin/bash
+
+mpv "$@" --no-border --geometry=50%+844+78 --ontop --really-quiet 
