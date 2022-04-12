@@ -9,7 +9,7 @@ foo () {
 
 play () {
 
-mpv "$@" --no-border --geometry=50%+844+78 --ontop --really-quiet 
+mpv "$@" --no-border --geometry=50%+844+78 --ontop --really-quiet &
 
 }
 
@@ -17,7 +17,7 @@ record () {
 
 local now="$(date +%s)"
 
-mpv "$@" --no-border --geometry=50%+844+78 --ontop --really-quiet --record-file="$@-$now".ts 
+mpv "$@" --no-border --geometry=50%+844+78 --ontop --really-quiet --record-file=/home/tony/videos/"$now".ts &
 
 }
 
