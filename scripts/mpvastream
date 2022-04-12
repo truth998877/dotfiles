@@ -1,3 +1,58 @@
 #!/bin/bash
 
+foo () {
+  local first=$1
+  echo "Would foo with $first."
+}
+
+
+
+play () {
+
 mpv "$@" --no-border --geometry=50%+844+78 --ontop --really-quiet 
+
+}
+
+record () {
+
+local now="$(date +%s)"
+
+mpv "$@" --no-border --geometry=50%+844+78 --ontop --really-quiet --record-file="$@-$now".ts 
+
+}
+
+############################## Main Command  #############################
+
+subcommand="${1-usage}"
+shift 2>/dev/null
+
+if [ -z "$subcommand" ]; then
+    usage
+    exit 1
+fi
+
+commands () {
+    echo ${commands[@]}
+}
+
+declare -a commands=(foo play record)
+
+for i in ${commands[@]}; do
+    if [[ "$i" == "$subcommand" ]]; then
+        "$subcommand" "$@"
+        exit 0
+    fi
+done
+
+######################### Tab Completion Context ########################
+
+# remember COMP_LINE is changed by shift
+if [ -n "$COMP_LINE" ]; then
+    for cmd in ${commands[@]}; do 
+        [[ "${cmd:0:${#1}}" == "$1" ]] && echo $cmd
+    done
+    exit 0
+fi
+
+
+## set up auto complate by running 'complete -C ./example ./example'
