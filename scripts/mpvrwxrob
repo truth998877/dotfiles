@@ -1,3 +1,5 @@
 #!/bin/bash
 
-mpv https://www.twitch.tv/rwxrob --no-border --geometry=50%+844+78 --ontop --really-quiet &
+#mpv https://www.twitch.tv/rwxrob --no-border --geometry=50%+844+78 --ontop --really-quiet &
+
+mpvastream play https://www.twitch.tv/rwxrob

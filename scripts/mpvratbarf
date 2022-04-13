@@ -1,3 +1,5 @@
 #!/bin/bash
 
-mpv https://www.twitch.tv/the_rat_barfs --no-border --geometry=50%+844+78 --ontop --really-quiet &
+#mpv https://www.twitch.tv/the_rat_barfs --no-border --geometry=50%+844+78 --ontop --really-quiet &
+
+mpvastream play https://www.twitch.tv/the_rat_barfs
