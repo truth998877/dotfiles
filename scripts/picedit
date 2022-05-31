@@ -6,6 +6,30 @@ foo () {
 }
 
 
+tile () {
+
+  local fullfilename="$1"
+  local extension="${fullfilename##*.}"
+  local filename="${fullfilename%.*}"
+  local x="$2"
+  local y="$3"
+  
+#return image size
+  local dims="$(identify -ping -format '%w %h' "$fullfilename")"
+  local xdim="${dims%\ *}"
+  local ydim="${dims##*\ }"
+
+  local newx="$(( x * xdim ))"
+  local newy="$(( y * ydim ))"
+
+#tile a 464x278 image 5x5 
+#
+  convert -size "$newx"x"$newy" tile:"$fullfilename" "$filename"_tiled_"$x"x"$y"."$extension"
+
+}
+
+
+
 overlay () {
 
   local basepic="$1"
@@ -199,7 +223,7 @@ commands () {
     echo ${commands[@]}
 }
 
-declare -a commands=(foo commands shadowannotate bubbletext hozappend vertappend fbprofilepic fbbannerpic twitchprofilepic twitchbannerpic twitterprofilepic  twitterbannerpic  allbanners overlay)   
+declare -a commands=(foo commands tile shadowannotate bubbletext hozappend vertappend fbprofilepic fbbannerpic twitchprofilepic twitchbannerpic twitterprofilepic  twitterbannerpic  allbanners overlay)   
 
 for i in ${commands[@]}; do
     if [[ "$i" == "$subcommand" ]]; then
