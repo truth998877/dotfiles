@@ -230,6 +230,9 @@ tmux () {
 
 ###############twitch aosd_cat overlays#############
 
+#TODO - move position of overlays now dual screened
+
+
 chatoverlay () {
 
   while true; do 
