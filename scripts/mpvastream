@@ -7,7 +7,8 @@ foo () {
 
 play () {
 
-mpv "$@" --no-border --geometry=50%+844+78 --ontop --really-quiet &
+#mpv "$@" --no-border --geometry=50%+844+78 --ontop --really-quiet &
+mpv "$@" --no-border --geometry=50%+2764+78 --ontop --really-quiet &
 
 }
 
