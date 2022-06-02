@@ -5,9 +5,11 @@ while true; do
  obsrunning=$(ps -C obs >/dev/null && echo "true" || echo "false")
 
    if [[ "$obsrunning" == "true" ]]; then
-      echo "Scene: "$(obs-cli GetCurrentScene|jq -r '.[].name')| aosd_cat --fore-color yellow -p 7 -x -10 -y 0 -n 10 -u 5000
+      ##echo "Scene: "$(obs-cli GetCurrentScene|jq -r '.[].name')| aosd_cat --fore-color yellow -p 7 -x -10 -y 0 -n 10 -u 5000
+      echo "Scene: "$(obs-cli GetCurrentScene|jq -r '.[].name')| aosd_cat --fore-color yellow -p 8 -x 0 -y 0 -n 10 -u 5000
    else
-      echo "OBS not running"| aosd_cat --fore-color yellow -p 7 -x -10 -y 0 -n 10 -u 5000
+      #echo "OBS not running"| aosd_cat --fore-color yellow -p 7 -x -10 -y 0 -n 10 -u 5000
+      echo "OBS not running"| aosd_cat --fore-color yellow -p 8 -x 0 -y 0 -n 10 -u 5000
       #break
    fi
 
