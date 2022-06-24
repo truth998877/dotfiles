@@ -2,7 +2,7 @@
 
 ############tokens and stuff for current streamer#######
 
-currentstreamer=$(cat /home/tony/repos/github.com/truth998877/dotfiles/scripts/currentchannel)
+currentstreamer=$(cat /home/tony/currentchannel)
 
 #echo $currentstreamer
 

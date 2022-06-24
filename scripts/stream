@@ -22,7 +22,7 @@ start () {
   
     fortiesgamer)
 
-      #echo "fortiesgamer" > currentstream
+      echo "fortiesgamer" > /home/tony/currentchannel
 
       local profile="fortiesgamer"
       local collection="fortiesgamer"
@@ -42,10 +42,12 @@ start () {
       checkdisc "$selectedgame"
      
       local twitchgameid=$(twitch gameid "$selectedgametitle")
+      echo here
       read -p "Enter stream title: [$selectedgametitle]" title
       title="${title:-$selectedgametitle}"
       twitch updatechannel "$twitchgameid" "$title" 
-
+      echo here1
+      
       sensoroverlay
       timeoverlay
       sceneoverlay
@@ -64,6 +66,8 @@ start () {
     ;;
 
     studywithtony)
+      
+      echo "studywithtony" > /home/tony/currentchannel
 
       local profile="studywithtony"
       local collection="studywithtony"
@@ -78,13 +82,13 @@ start () {
       obsrecord "$collection" "$profile" "$capturedir"
       sleep 5   
 
-#      stream_    
+      #stream_    
       sleep 3
 
       markerscreatefile create
       sleep 5
       #TODO add no promotion option  
-      promotestream streamstart "$account"
+#      promotestream streamstart "$account"
       
       tmuxstreamstudy 
     

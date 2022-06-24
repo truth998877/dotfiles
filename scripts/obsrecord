@@ -15,7 +15,7 @@ obs \
  
       sleep 10
 
-      local scenestatus=$(obs-cli SetCurrentScene='{"scene-name" : "Intermission"}'|jq -r '.[].status')
+      local scenestatus=$(obs-cli SetCurrentScene='{"scene-name" : "Starting Soon"}'|jq -r '.[].status')
       echo "Scene Status - $scenestatus" 
       sleep 2
     
