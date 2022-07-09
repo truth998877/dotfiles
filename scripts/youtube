@@ -19,6 +19,7 @@ ls-pretty () {
   source ~/GameCaptures/ytupload/bin/activate
   cd ~/GameCaptures/ytupload
 
+
   python pyytinterface.py listvideos --account="$account"
 
 }
