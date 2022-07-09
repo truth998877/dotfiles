@@ -266,21 +266,26 @@ while true;do
   text=${text#*)}
   text=${text%it8*}
   ##text=${text//  (high = +80.0°C, crit = +98.0°C)/\\r}
-  text=${text//  (high = +85.0°C, crit = +105.0°C)/\\r}
+  #text=${text//  (high = +85.0°C, crit = +105.0°C)/\\r}
+  text=${text//  (high = +85.0°C, crit = +105.0°C)/}
+  text=${text//: / = }
   
   text1=$(nvidia-smi -q -d TEMPERATURE| grep "GPU Current Temp")
   text1="${text1//[[:space:]]/}"
-  text1="${text1//CGPU/C\\rGPU}"
-  text1="${text1//:/\ }"
+  #text1="${text1//CGPU/C\\rGPU}"
+  text1="${text1//CGPU/C\ GPU}"
+  #text1="${text1//:/\ }"
+  text1="${text1//:/\ = }"
 
   text2=$(nvidia-smi --query-gpu="fan.speed" --format=csv)
   text2=${text2//fan.speed \[%\]};text2=${text2//\ %/%}
   text2=${text2//[[:space:]]}
-  text2=${text2/\%/\%\\rGPU2\ Fan\ Speed\ }
+  #text2=${text2/\%/\%\\rGPU2\ Fan\ Speed\ }
+  text2=${text2/\%/\%\ GPU2\ Fan\ Speed\ }
 
   #echo -e $text\\r$text1\\r\\r"GPU1 Fan Speed "$text2|aosd_cat -l 10 --fore-color yellow -x 0 -y 0 -u 5000 -n 10; done &
-  echo -e $text\\r$text1\\r\\r"GPU1 Fan Speed "$text2|aosd_cat -l 10 --fore-color yellow -x 1920 -y 0 -u 5000 -n 10; done &
-
+  #echo -e $text\\r$text1\\r\\r"GPU1 Fan Speed "$text2|aosd_cat -l 10 --fore-color yellow -x 1920 -y 0 -u 5000 -n 10; done &
+  echo -e $text "  -  " $text1 "  -   GPU1 Fan Speed "$text2|aosd_cat -l 1 --fore-color yellow -x 1920 -y 0 -u 5000 -n 10; done &
 
 }
 
