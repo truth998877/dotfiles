@@ -42,11 +42,9 @@ start () {
       checkdisc "$selectedgame"
      
       local twitchgameid=$(twitch gameid "$selectedgametitle")
-      echo here
       read -p "Enter stream title: [$selectedgametitle]" title
       title="${title:-$selectedgametitle}"
       twitch updatechannel "$twitchgameid" "$title" 
-      echo here1
       
       sensoroverlay
       timeoverlay
