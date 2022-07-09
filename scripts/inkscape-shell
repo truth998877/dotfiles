@@ -26,6 +26,7 @@ xdotool search --class Inkscape windowactivate %@ > /dev/null 2>&1
 presskey () {
 
   local key="$@"
+  #activate
   xdotool search --class Inkscape key --window %@ "$key" > /dev/null 2>&1
 
 }
@@ -46,7 +47,7 @@ holdkey () {
 
 p () {
 
-#  activate
+  #activate
 
   presskey ctrl+v
 
