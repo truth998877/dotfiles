@@ -13,7 +13,7 @@ obs \
     --profile "$profile" \
     &>/dev/null &
  
-      sleep 10
+      sleep 15
 
       local scenestatus=$(obs-cli SetCurrentScene='{"scene-name" : "Starting Soon"}'|jq -r '.[].status')
       echo "Scene Status - $scenestatus" 
