@@ -3,4 +3,12 @@
 #mpv https://www.twitch.tv/lastmiles --no-border --geometry=50%+840+77 --ontop --really-quiet &
 #mpv --ytdl-format="best"  https://www.youtube.com/channel/UC3dcO40Nnrw26e6KfiUAaVg/live --no-border --geometry=50%+840+77 --ontop --really-quiet &
 #mpvastream play rtmp://live.herrhotzenplotz.de/blastwave
-mpvastream play rtmp://live.genunix.com/blastwave/
+
+case "$1" in
+  genunix)
+    mpvastream play rtmp://live.genunix.com/blastwave/
+  ;;
+  twitch)
+    mpvastream play https://www.twitch.tv/lastmiles/
+  ;;
+esac
