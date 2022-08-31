@@ -1,4 +1,4 @@
 #!/bin/bash
 
 unset TMUX
-exec tmux "$@"
+exec tmux -f ~/.tmux-in.conf "$@"
