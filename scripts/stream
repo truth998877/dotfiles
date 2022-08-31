@@ -80,7 +80,7 @@ start () {
       obsrecord "$collection" "$profile" "$capturedir"
       sleep 5   
 
-      #stream_    
+      stream_    
       sleep 3
 
       markerscreatefile create
