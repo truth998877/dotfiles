@@ -6,7 +6,7 @@ local collection="$1"
 local profile="$2"
 local capturedir="$3"
 
-
+#TODO move to separate obs start command
 obs \
     --minimize-to-tray \
     --collection "$collection" \
@@ -22,10 +22,17 @@ obs \
       # example   local recordingfolderstring = "'{ "rec-folder":"/home/tony/GameCaptures/$capturedir"}'"
       local recdir="SetRecordingFolder="\'"{\"rec-folder\": \"/"home/tony/GameCaptures/$capturedir"/\" }"\'
       local recdirstatus=$(echo "$recdir" |xargs obs-cli | jq -r '.[].status')
+
       echo "Recording Directory Status - $recdirstatus"
       
-      local recordingstatus=$(obs-cli StartRecording | jq -r '.[].status')
+      local recordingstatus="$(obs-cli StartRecording | jq -r '.[].status')"
       echo "Recording Status - $recordingstatus"
+      
+      #set recording status manually
+      if [[ $recordingstatus == ok ]]; then
+            echo "true" > ~/obsrecordingstatus
+      fi       
+
 }
 
 obsrecord_ "$1" "$2" "$3"

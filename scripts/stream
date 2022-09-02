@@ -111,12 +111,16 @@ stop () {
 
   obs-cli StopStreaming
   obs-cli StopRecording
+  echo "false" > ~/obsrecordingstatus
 
   killoverlay
+
 
 #  killall obs
 
 }
+
+#TODO add stream restart command
 
 ############################## Main Command  #############################
 

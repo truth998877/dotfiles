@@ -1,0 +1,3 @@
+#!/bin/bash
+
+echo "$(obs-cli GetStreamingStatus | jq -r '.[].streaming')"

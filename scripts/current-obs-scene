@@ -1,0 +1,3 @@
+#!/bin/bash
+
+echo "$(obs-cli GetCurrentScene|jq -r '.[].name')"
