@@ -13,13 +13,21 @@ dock () {
 #wmctrl -ir $window -b remove,maximized_vert,maximized_horz
 #xdotool windowsize inkscape 1254 870
 #xdotool windowmove inkscape 118 79
-wmctrl -r "inkscape" -e 0,118,79,1254,753
+#wmctrl -r "inkscape" -e 0,118,79,1254,753
+wmctrl -r "inkscape" -b add,above
+wmctrl -r "inkscape" -e 0,2038,79,1254,735
 
 }
 
-activate () {
+activate-inkscape () {
 
 xdotool search --class Inkscape windowactivate %@ > /dev/null 2>&1
+
+}
+
+activate-tilix () {
+
+xdotool search --class tilix windowactivate %@ > /dev/null 2>&1
 
 }
 
@@ -27,8 +35,11 @@ presskey () {
 
   local key="$@"
   #activate
-  xdotool search --class Inkscape key --window %@ "$key" > /dev/null 2>&1
-
+  #xdotool search --class Inkscape key --window %@ "$key" > /dev/null 2>&1
+  #xdotool search --class Inkscape windowactivate %@ > /dev/null 2>&1;xdotool key "$key" ;xdotool search --class tilix windowactivate %@ > /dev/null 2>&1
+  activate-inkscape
+  xdotool key "$key" 
+  activate-tilix  
 }
 
 save () {

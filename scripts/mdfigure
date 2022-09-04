@@ -47,6 +47,8 @@ figuresnip_ () {
 
 }
 
+#TODO $1 will be file type, this needs to be passed to snip to set the subdirectory location where the svg snips will be stored (md)
+
 while IFS="\n" read -r args;do
   figuresnip_ "$args"
   break  

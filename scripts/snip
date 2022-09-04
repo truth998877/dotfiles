@@ -5,7 +5,7 @@
 
 [[ -z "$SNIPPETS" ]] && echo "SNIPPETS directory undefined" && exit 1
 
-snippet() {
+_snippet() {
   > "$SNIPPETS/last"
   while IFS= read -r line; do
     echo "$line"
@@ -13,11 +13,14 @@ snippet() {
   done
 }
 
-snip() {
+_snip() {
   if (( $# == 0 ));then
-    snippet "$@"
+    _snippet "$@"
     return $?
   fi
+
+#TODO change $1 to $2. $1 should be sub directory according to file type
+
   local name="$1"
   shift
   local path="$SNIPPETS/$name"
@@ -61,5 +64,5 @@ snip() {
   fi
 }
 
-snip "$@"
+_snip "$@"
 
