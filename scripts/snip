@@ -19,11 +19,14 @@ _snip() {
     return $?
   fi
 
-#TODO change $1 to $2. $1 should be sub directory according to file type
+#  local name="$1"
+#  shift
+#  local path="$SNIPPETS/$name"
 
+  local subdir="$SNIPSUBDIR"
   local name="$1"
   shift
-  local path="$SNIPPETS/$name"
+  local path="$SNIPPETS/$subdir/$name"
   
   if [[ -r $path ]]; then
 
