@@ -1,0 +1,61 @@
+#!/bin/bash
+
+figure_ () {
+
+str="$@"
+
+echo !["$@"]\(.\/figures\/"${str//\ /-}".svg\) 
+
+}
+
+figuresnip_ () {
+
+  local str="$@"
+  
+  local caption="$str"
+  local filename="${str//\ /-}"
+ 
+  #does the figures directory exist for this note? if not create it, as it's needed
+  if [[ ! -d ./figures ]]; then
+    mkdir ./figures
+  fi
+
+  #is there a file of the same input title already in the figures directory for this note? If yes, do nothing
+  if [[ -f ./figures/$filename.svg ]]; then
+    exit
+  fi
+ 
+  #snip the link to vim
+  echo "$(snip-dev mdfigure.snip mdfigure "$filename" "$caption")"
+  
+  #copy the template for the note to the figure directory of the note
+  #TODO need to decide where to put the figure template for the current note.
+  cp figure-template.svg ./figures/$filename.svg
+
+  #launch inkscape and inkscape-shell
+  inkscape ./figures/"$filename".svg &
+  sleep 3
+  wmctrl -r "inkscape" -b add,above
+  #inkscape-shell
+  #tilix --geometry=156x5+120+900 --window-style=borderless -x "bash -i /home/tony/repos/github.com/truth998877/dotfiles/scripts/inkscape-shell"
+
+ # tmux \split-window -v \; \resize-pane -y 6 \; send "SNIPSUBDIR=markdown" Enter "export \$SNIPSUBDIR" Enter "inkscape-shell-dev" Enter
+  #inkscape-shell
+
+  tmux \split-window -v '. snipsubdir;inkscape-shell-dev' \; \resize-pane -y 6 
+
+  #TODO size the inkscape window appropriately - livewindowsize??
+  #TODO launch inkscape shell, so that the figure can be drawn
+
+}
+
+#TODO $1 will be file type, this needs to be passed to snip to set the subdirectory location where the svg snips will be stored (md)
+
+while IFS="\n" read -r args;do
+  figuresnip_ "$args"
+  break  
+done
+
+#from within vim the line is not passed as args, this line is sent to stdin
+
+#inkscape & 

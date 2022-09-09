@@ -1,0 +1,82 @@
+#!/bin/bash
+
+#Stolen from rwxrob - www.twitch.tv/rwxrob
+
+
+[[ -z "$SNIPPETS" ]] && echo "SNIPPETS directory undefined" && exit 1
+
+
+_echostuff () {
+  local subdir="$SNIPSUBDIR"
+  local name="$1"
+  local path="$SNIPPETS/$subdir/$name"
+
+  echo "$path"
+
+}
+
+
+_snippet() {
+  > "$SNIPPETS/last"
+  while IFS= read -r line; do
+    echo "$line"
+    echo "$line" >> "$SNIPPETS/last"
+  done
+}
+
+_snip() {
+  if (( $# == 0 ));then
+    _snippet "$@"
+    return $?
+  fi
+
+#TODO change $1 to $2. $1 should be sub directory according to file type
+
+  local subdir="$SNIPSUBDIR"
+  local name="$1"
+  shift
+  local path="$SNIPPETS/$subdir/$name"
+  
+  if [[ -r $path ]]; then
+
+    local buf="$(<$path)"
+    if [[ -s /dev/stdin ]]; then
+      local in="$(</dev/stdin)"
+    else
+      local in=""
+    fi
+
+    if [[ $# = 0 && -z $in ]]; then
+      echo "$buf"
+      return
+    fi
+
+    if [[ $# > 0 ]]; then
+      if [[ $1 == "mdfigure" ]]; then
+        shift 
+        buf=${buf//\{1\}/"$1"}
+        shift
+        buf=${buf//\{2\}/"$@"}
+      else  
+        local -i n=1
+        for arg in $@; do
+          buf=${buf//\{$n\}/$arg}
+          ((n++))
+        done
+      fi
+      echo "$buf"
+    else
+      while IFS=$'\n' read -r argline; do
+        if [[ -n $argline ]]; then
+          IFS=" " snip-dev $name $argline
+        fi
+      done
+    fi
+
+  fi
+}
+
+_snip "$@"
+
+#_echostuff "$@"
+
