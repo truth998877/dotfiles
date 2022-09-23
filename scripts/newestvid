@@ -1,6 +1,0 @@
-#!/bin/bash
-
-#TODO modify so that this returns only the newest file of a given file type
-IFS=$'\n'
-f=($(ls -1 --color=never -trd ${1:-.}/*.mp4))
-echo "${f[-1]}"

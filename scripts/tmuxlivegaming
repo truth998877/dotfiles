@@ -1,5 +1,0 @@
-#!/bin/bash
-
-#tmux for live gaming
-
-tmux -L livegaming -f ~/.tmux-in.conf new-session \; \split-window -v \; \resize-pane -y 6 \; \select-pane -t 1 \; send "weechat -r '/bar show  nicklist'" Enter \; send "/buffer #fortiesgamer" Enter  \; \select-pane -t 2
