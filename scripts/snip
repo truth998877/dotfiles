@@ -3,6 +3,9 @@
 #Stolen from rwxrob - www.twitch.tv/rwxrob
 
 
+#TODO need a help function, list of snippets and usage in an associative array in each directory
+
+
 [[ -z "$SNIPPETS" ]] && echo "SNIPPETS directory undefined" && exit 1
 
 _snippet() {
