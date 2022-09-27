@@ -1,0 +1,9 @@
+#!/bin/sh
+
+if [ -z "$(which vim)" -o -z "$(which vimtutor)" ]; then
+  echo "Warning, doesn't look like you have full Vim version."
+fi
+
+cp "$HOME/.vimrc" "$HOME/.vimrc-orig"
+
+ln -sf "$PWD/.vimrc" "$HOME/.vimrc"

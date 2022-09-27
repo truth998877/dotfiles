@@ -1,0 +1,7 @@
+#!/bin/sh
+
+for i in .tmux.conf .tmux-in.conf .tmux.live.conf .tmux-out.conf;do  
+  unlink "$HOME/$i"
+  cp "$HOME/$i-orig" "$HOME/$i"
+done
+

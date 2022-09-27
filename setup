@@ -1,14 +1,20 @@
 #!/bin/sh
 set -e
 
-ln -sf "$PWD/.bashrc" "$HOME/.bashrc"
-ln -sf "$PWD/.dircolors" "$HOME/.dircolors"
-ln -sf "$PWD/.inputrc" "$HOME/.inputrc"
-ln -sf "$PWD/.profile" "$HOME/.profile"
-ln -sf "$PWD/.profile" "$HOME/.bash_profile"
-ln -sf "$PWD/scripts" "$HOME/Scripts"
+for i in .bashrc .dircolors .inputrc .profile .bash_profile; do
+  cp "$HOME/$i" "$HOME/$i-orig"
+  ln -sf "$PWD/$i" "$HOME/$i"
+done
 
-#for i in vim lynx git r podman iam; do
-#  cd $i && ./setup
-#  cd -
-#done
+
+#ln -sf "$PWD/.bashrc" "$HOME/.bashrc"
+#ln -sf "$PWD/.dircolors" "$HOME/.dircolors"
+#ln -sf "$PWD/.inputrc" "$HOME/.inputrc"
+#ln -sf "$PWD/.profile" "$HOME/.profile"
+#ln -sf "$PWD/.profile" "$HOME/.bash_profile"
+#ln -sf "$PWD/scripts" "$HOME/Scripts"
+
+for i in vim tmux; do
+  cd $i && ./setup
+  cd -
+done

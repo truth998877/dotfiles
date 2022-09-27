@@ -1,0 +1,5 @@
+#!/bin/sh
+
+unlink "$HOME/.vimrc"
+
+cp "HOME/.vimrc-orig" "$HOME/.vimrc"

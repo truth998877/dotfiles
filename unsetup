@@ -1,0 +1,14 @@
+#!/bin/sh
+set -e
+
+for i in .bashrc .dircolors .inputrc .profile .bash_profile; do
+  unlink "$HOME/$i" 
+  cp "$HOME/$i-orig" "$HOME/$i"
+done
+
+for i in vim tmux;do
+  cd "$i" && ./unsetup
+  cd -
+done 
+
+

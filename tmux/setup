@@ -1,0 +1,12 @@
+#!/bin/sh
+test type tmux >/dev/null 2>&1 && echo "TMUX isn't installed. Skipping." && exit 1
+
+for i in .tmux.conf .tmux-in.conf .tmux.live.conf .tmux-out.conf;do
+  cp "$HOME/$i" "$HOME/$i-orig"
+  ln -sf "$PWD/$i" "$HOME/$i"
+done
+
+#ln -sf "$PWD/.tmux.conf" "$HOME/.tmux.conf"
+#ln -sf "$PWD/.tmux-in.conf" "$HOME/.tmux-in.conf"
+#ln -sf "$PWD/.tmux.live.conf" "$HOME/.tmux.live.conf"
+#ln -sf "$PWD/.tmux-out.conf" "$HOME/.tmux-out.conf"
