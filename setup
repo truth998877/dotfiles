@@ -4,10 +4,10 @@ set -e
 for i in .bashrc .dircolors .inputrc .profile .bash_profile; do
   if [[ -f "$HOME/$i" ]];then
     cp "$HOME/$i" "$HOME/$i-orig"
-    ln -sf "$PWD/$i" "$HOME/$i"
   else
    echo "$i not found"
   fi
+  ln -sf "$PWD/$i" "$HOME/$i"
 done
 
 
