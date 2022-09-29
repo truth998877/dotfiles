@@ -1,9 +1,13 @@
-#!/bin/sh
+#!/bin/bash
 set -e
 
 for i in .bashrc .dircolors .inputrc .profile .bash_profile; do
-  cp "$HOME/$i" "$HOME/$i-orig"
-  ln -sf "$PWD/$i" "$HOME/$i"
+  if [[ -f "$HOME/$i" ]];then
+    cp "$HOME/$i" "$HOME/$i-orig"
+    ln -sf "$PWD/$i" "$HOME/$i"
+  else
+   echo "$i not found"
+  fi
 done
 
 
