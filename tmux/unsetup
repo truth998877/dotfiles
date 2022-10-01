@@ -1,7 +1,9 @@
-#!/bin/sh
+#!/bin/bash
 
 for i in .tmux.conf .tmux-in.conf .tmux.live.conf .tmux-out.conf;do  
-  unlink "$HOME/$i"
-  cp "$HOME/$i-orig" "$HOME/$i"
+  rm "$HOME/$i"
+  if [[ -z "$HOME/$i-orig" ]]; then
+    cp "$HOME/$i-orig" "$HOME/$i"
+  fi
 done
 

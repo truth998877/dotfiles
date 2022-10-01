@@ -1,9 +1,11 @@
-#!/bin/sh
+#!/bin/bash
 set -e
 
 for i in .bashrc .dircolors .inputrc .profile .bash_profile; do
-  unlink "$HOME/$i" 
-  cp "$HOME/$i-orig" "$HOME/$i"
+  rm "$HOME/$i"
+  if [[ -z "$HOME/$i-orig" ]] ; then 
+    cp "$HOME/$i-orig" "$HOME/$i"
+  fi
 done
 
 for i in vim tmux;do

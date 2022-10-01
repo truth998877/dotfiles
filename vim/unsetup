@@ -1,5 +1,7 @@
-#!/bin/sh
+#!/bin/bash
 
-unlink "$HOME/.vimrc"
+rm "$HOME/.vimrc"
 
-cp "HOME/.vimrc-orig" "$HOME/.vimrc"
+if [[ -z "$HOME/.vimrc-orig" ]]; then 
+  cp "$HOME/.vimrc-orig" "$HOME/.vimrc"
+fi
