@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-for i in .bashrc .dircolors .inputrc .profile .bash_profile; do
+for i in .bashrc .dircolors .profile; do
   if [[ -f "$HOME/$i" ]];then
     cp "$HOME/$i" "$HOME/$i-orig"
   else
