@@ -4,7 +4,7 @@ set -e
 for i in .bashrc .dircolors .inputrc .profile .bash_profile; do
   rm "$HOME/$i"
   if [[ -z "$HOME/$i-orig" ]] ; then 
-    cp "$HOME/$i-orig" "$HOME/$i"
+    cp -p "$HOME/$i-orig" "$HOME/$i"
   fi
 done
 

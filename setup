@@ -3,7 +3,7 @@ set -e
 
 for i in .bashrc .dircolors .profile; do
   if [[ -f "$HOME/$i" ]];then
-    cp "$HOME/$i" "$HOME/$i-orig"
+    cp -p "$HOME/$i" "$HOME/$i-orig"
   else
    echo "$i not found"
   fi

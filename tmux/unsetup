@@ -3,7 +3,7 @@
 for i in .tmux.conf .tmux-in.conf .tmux.live.conf .tmux-out.conf;do  
   rm "$HOME/$i"
   if [[ -z "$HOME/$i-orig" ]]; then
-    cp "$HOME/$i-orig" "$HOME/$i"
+    cp -p "$HOME/$i-orig" "$HOME/$i"
   fi
 done
 

@@ -3,7 +3,7 @@ test type tmux >/dev/null 2>&1 && echo "TMUX isn't installed. Skipping." && exit
 
 for i in .tmux.conf .tmux-in.conf .tmux.live.conf .tmux-out.conf;do
   if [[ -f "$HOME/$i" ]]; then
-    cp "$HOME/$i" "$HOME/$i-orig"
+    cp -p "$HOME/$i" "$HOME/$i-orig"
   fi
 
   ln -sf "$PWD/$i" "$HOME/$i"

@@ -5,7 +5,7 @@ if [ -z "$(which vim)" -o -z "$(which vimtutor)" ]; then
 fi
 
 if [[ -f "$HOME/.vimrc" ]]; then
-  cp "$HOME/.vimrc" "$HOME/.vimrc-orig"
+  cp -p "$HOME/.vimrc" "$HOME/.vimrc-orig"
 fi
 
 ln -sf "$PWD/.vimrc" "$HOME/.vimrc"

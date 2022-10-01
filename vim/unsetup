@@ -3,5 +3,5 @@
 rm "$HOME/.vimrc"
 
 if [[ -z "$HOME/.vimrc-orig" ]]; then 
-  cp "$HOME/.vimrc-orig" "$HOME/.vimrc"
+  cp -p  "$HOME/.vimrc-orig" "$HOME/.vimrc"
 fi
