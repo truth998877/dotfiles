@@ -6,6 +6,7 @@ for i in .bashrc .dircolors .profile; do
   if [[ -f "$HOME/$i-orig" ]] ; then 
     cp -p "$HOME/$i-orig" "$HOME/$i"
     chmod 644 "$HOME/$i"
+    rm "$HOME/$i-orig"
   fi
 done
 
