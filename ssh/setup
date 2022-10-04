@@ -5,4 +5,4 @@ if [[ -f "$HOME/.ssh/config" ]]; then
   cp -p "$HOME/.ssh/config" "$HOME/.ssh/config-orig"
 fi
 
-ln -sf "$PWD/ssh/config" "$HOME/.ssh/config"
+ln -sf "$PWD/config" "$HOME/.ssh/config"
