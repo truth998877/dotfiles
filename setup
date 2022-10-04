@@ -22,3 +22,5 @@ for i in vim tmux ssh; do
   cd $i && ./setup
   cd -
 done
+
+echo "now run 'exec bash -l'"
