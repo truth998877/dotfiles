@@ -10,7 +10,7 @@ for i in .bashrc .dircolors .profile; do
   fi
 done
 
-for i in vim tmux;do
+for i in vim tmux ssh;do
   cd "$i" && ./unsetup
   cd -
 done 

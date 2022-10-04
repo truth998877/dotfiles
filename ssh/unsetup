@@ -1,0 +1,7 @@
+#!/bin/bash
+
+rm "$HOME/.ssh/config"
+
+if [[ -z "$HOME/.ssh/config-orig" ]]; then 
+  cp -p  "$HOME/.ssh/config-orig" "$HOME/.ssh/config"
+fi

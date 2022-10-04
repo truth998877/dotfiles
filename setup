@@ -18,7 +18,7 @@ done
 #ln -sf "$PWD/.profile" "$HOME/.bash_profile"
 #ln -sf "$PWD/scripts" "$HOME/Scripts"
 
-for i in vim tmux; do
+for i in vim tmux ssh; do
   cd $i && ./setup
   cd -
 done

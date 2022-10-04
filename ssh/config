@@ -1,0 +1,35 @@
+Host venus
+     Hostname 192.168.0.2
+    Protocol 2
+
+Host mars
+     Hostname 192.168.0.4
+    Protocol 2
+
+Host jupiter
+     Hostname 192.168.0.5
+    Protocol 2
+
+Host saturn
+     Hostname 192.168.0.6
+    Protocol 2
+
+Host uranus
+     Hostname 192.168.0.7
+    Protocol 2
+
+Host neptune 
+     Hostname 192.168.0.8
+    Protocol 2
+
+Host pluto 
+     Hostname 192.168.0.9
+    Protocol 2
+
+Host alpha 
+     Hostname 192.168.0.10
+    Protocol 2
+
+Host beta
+     Hostname 192.168.0.11
+    Protocol 2
