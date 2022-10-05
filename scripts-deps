@@ -6,5 +6,5 @@ inkscape
 jq
 figlet
 pandoc
-latex
+texlive-full
 weechat

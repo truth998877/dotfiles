@@ -3,4 +3,4 @@
 deplist="$(<scripts-deps)"
 deplist="${deplist//$'\n'/ }"
 
-sudo apt-get install "$deplist"
+sudo apt-get install $deplist
