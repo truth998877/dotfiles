@@ -1,0 +1,6 @@
+#!/bin/bash
+
+deplist="$(<scripts-deps)"
+deplist="${deplist//$'\n'/ }"
+
+sudo apt-get install "$deplist"

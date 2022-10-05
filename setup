@@ -23,4 +23,6 @@ for i in vim tmux ssh; do
   cd -
 done
 
+#./scripts/install-dependants
+
 echo "now run 'exec bash -l'"
