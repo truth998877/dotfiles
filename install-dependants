@@ -1,0 +1,12 @@
+#!/bin/bash
+
+sudo apt-get update
+
+for i in weechat;do
+  install/"$i"
+done
+
+sudo apt-get install vim tmux lynx mpv inkscape jq figlet pandoc texlive-full imagemagick
+
+
+

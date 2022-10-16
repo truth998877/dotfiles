@@ -1,10 +1,14 @@
 #!/bin/bash
 set -e
 
+
 if [[ -f "$HOME/alreadysetup" ]]; then
   echo "Already set up"
   exit 0
 fi
+
+echo "Installing dependents"
+./install-dependents
 
 echo "Setting up bash dot files..."
 
