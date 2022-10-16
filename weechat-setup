@@ -1,14 +1,16 @@
 #!/bin/bash
 
-if [[ -d ~/.weechat ]];then 
-  cp -rp ~/.weechat ~/.weechat-orig
+if [[ -d $HOME/.weechat ]];then 
+  mv -rp ~/.weechat ~/.weechat-orig
 fi
+
+mkdir $HOME/.weechat
 
 cd weechat
 
-
 for file in *; do
   if [[ $f != sec.conf ]]; then 
+    touch $HOME/$file
     ln -sf "$PWD/$file" "$HOME/.weechat/$file"
   fi
 done
