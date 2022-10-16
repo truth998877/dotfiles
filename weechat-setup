@@ -1,16 +1,26 @@
 #!/bin/bash
 
+
+#if weechat exists the back it up
 if [[ -d $HOME/.weechat ]];then 
   mv -rp ~/.weechat ~/.weechat-orig
 fi
 
+#create new .weechat dir to receive conf files from github
 mkdir $HOME/.weechat
 
+#change to weechat dir
 cd weechat
 
+#for each file in dir touch the file in $HOME then sym link to it
 for file in *; do
   if [[ $f != sec.conf ]]; then 
     touch $HOME/$file
     ln -sf "$PWD/$file" "$HOME/.weechat/$file"
   fi
 done
+
+#if exists remove, this then forces weechat to use $HOME/.weechat etc
+if [[ -d $HOME/.config/weechat ]];then
+  rm -rf $HOME/.config/weechat 
+fi
