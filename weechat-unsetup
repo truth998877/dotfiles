@@ -1,0 +1,6 @@
+#!/bin/bash
+
+cd $HOME
+rm -rf .weechat
+mv .weechat-orig .weechat
+cd -

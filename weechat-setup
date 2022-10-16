@@ -1,0 +1,14 @@
+#!/bin/bash
+
+if [[ -d ~/.weechat ]];then 
+  cp -rp ~/.weechat ~/.weechat-orig
+fi
+
+cd weechat
+
+
+for file in *; do
+  if [[ $f != sec.conf ]]; then 
+    ln -sf "$PWD/$file" "$HOME/.weechat/$file"
+  fi
+done

@@ -1,6 +1,13 @@
 #!/bin/bash
 set -e
 
+if [[ -f "$HOME/alreadysetup" ]]; then
+  echo "Already set up"
+  exit 0
+fi
+
+echo "Setting up bash dot files..."
+
 for i in .bashrc .dircolors .profile; do
   if [[ -f "$HOME/$i" ]];then
     cp -p "$HOME/$i" "$HOME/$i-orig"
@@ -18,11 +25,19 @@ done
 #ln -sf "$PWD/.profile" "$HOME/.bash_profile"
 #ln -sf "$PWD/scripts" "$HOME/Scripts"
 
+echo "Setting up vim, tmux and ssh config"
+
 for i in vim tmux ssh; do
   cd $i && ./setup
   cd -
 done
 
+echo "Setting up weechat"
+./weechat-setup
+
 #./scripts/install-dependants
 
-echo "now run 'exec bash -l'"
+echo "Setting already setup flag"
+touch $HOME/alreadysetup
+
+echo "To finalise setup, run 'exec bash -l'"
