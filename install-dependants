@@ -2,11 +2,15 @@
 
 sudo apt-get update
 
+
+#for the packages in the for loop use dedicated install script
 for i in weechat;do
   install/"$i"
 done
 
-sudo apt-get install vim tmux lynx mpv inkscape jq figlet pandoc texlive-full imagemagick
+
+#install packages from distro
+sudo apt-get install vim tmux lynx mpv inkscape jq figlet pandoc texlive texlive-latex-base texlive-fonts-recommended texlive-extra-utils texlive-latex-extra texlive-xetex imagemagick
 
 
 
