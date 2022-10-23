@@ -7,8 +7,8 @@ if [[ -f "$HOME/alreadysetup" ]]; then
   exit 0
 fi
 
-echo "Installing dependants"
-./install-dependants
+#echo "Installing dependants"
+#./install-dependants
 
 echo "Setting up bash dot files..."
 
