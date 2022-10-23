@@ -89,6 +89,7 @@ _source_if() { [[ -r "$1" ]] && source "$1"; }
 #these can be on other systems if ~/.ssh/config is shared across systems
 alias venus='ssh tony@venus'
 alias moon='ssh tony@moon'
+alias moonbaby='ssh tony@moonbaby'
 alias mars='ssh tony@mars'
 alias jupiter='ssh tony@jupiter'
 alias saturn='ssh tony@saturn'
@@ -97,6 +98,8 @@ alias netpure='ssh tony@neptune'
 alias pluto='ssh tony@pluto'
 alias alpha='ssh -X tony@alpha'
 alias beta='ssh -X tony@beta'
+alias gamma='ssh -X tony@gamma'
+alias macbook='ssh tony@macbook'
 
 #these need to be on every system
 alias '?'=duck

@@ -33,3 +33,21 @@ Host alpha
 Host beta
      Hostname 192.168.0.11
     Protocol 2
+
+Host gamma
+     Hostname 192.168.0.12
+    Protocol 2
+
+Host moon
+     Hostname 192.168.0.13
+    Protocol 2
+
+Host moonbaby
+     Hostname 192.168.0.14
+    Protocol 2
+
+Host macbook
+     Hostname 192.168.0.15
+    Protocol 2
+
+
