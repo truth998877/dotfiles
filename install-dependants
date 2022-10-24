@@ -1,17 +1,59 @@
 #!/bin/bash
 
-sudo apt-get update
-sudo apt-get upgrade
+packages="vim tmux lynx mpv inkscape jq figlet pandoc \
+        texlive texlive-latex-base texlive-fonts-recommended \
+        texlive-extra-utils texlive-latex-extra \
+        texlive-xetex imagemagick xdotool xclip pass"
 
 
-#for the packages in the for loop use dedicated install script
-for i in weechat;do
-  install/"$i"
-done
+case $PLATFORM in
+
+  debian)
+
+  echo debian...
+
+  sudo apt-get update
+  sudo apt-get upgrade
 
 
-#install packages from distro
-sudo apt-get install vim tmux lynx mpv inkscape jq figlet pandoc texlive texlive-latex-base texlive-fonts-recommended texlive-extra-utils texlive-latex-extra texlive-xetex imagemagick xdotool xclip pass
+  #install packages from distro
+  sudo apt-get install $packages 
+  ;;
+
+  darwin)
+
+  echo darwin...
+
+  brew update
+  brew upgrade
+
+  #install packages from brew
+
+  brew install $packages
+  ;;
+
+  manjaro)
+
+  echo manjaro...
+
+  sudo pacman -Syu $packages
+
+  ;;
+
+  postmarketos)
+
+  echo postmarketos...
+
+  apk update
+  apk upgrade
+
+  apk add $packages
+
+  ;;
+
+
+  
+  
 
 
 

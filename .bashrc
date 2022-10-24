@@ -1,3 +1,34 @@
+case $HOSTNAME in
+
+   earth|alpha|beta|gamma)
+
+   PLATFORM=debian
+   ;;
+
+   moon)
+
+   PLATFORM=majaro
+   ;;
+
+   moonbaby)
+
+   PLATFORM=postmarketos
+   ;;
+
+   macbook.local)
+
+   PLATFORM=darwin
+
+   *)
+   echo 'Hostname not recognised, assuming debian based'
+
+   PLATFORM=debian
+
+esac
+
+export PLATFORM
+ 
+
 # ~/.bashrc: executed by bash(1) for non-login shells.
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
 # for examples
