@@ -12,31 +12,31 @@ case $PLATFORM in
 
   echo debian...
 
-  sudo apt-get update
-  sudo apt-get upgrade
+  echo sudo apt-get update
+  echo sudo apt-get upgrade
 
 
   #install packages from distro
-  sudo apt-get install $packages 
+  echo sudo apt-get install $packages 
   ;;
 
   darwin)
 
   echo darwin...
 
-  brew update
-  brew upgrade
+  echo brew update
+  echo brew upgrade
 
   #install packages from brew
 
-  brew install $packages
+  echo brew install $packages
   ;;
 
   manjaro)
 
   echo manjaro...
 
-  sudo pacman -Syu $packages
+  echo sudo pacman -Syu $packages
 
   ;;
 
@@ -44,10 +44,10 @@ case $PLATFORM in
 
   echo postmarketos...
 
-  apk update
-  apk upgrade
+  echo apk update
+  echo apk upgrade
 
-  apk add $packages
+  echo apk add $packages
 
   ;;
 
