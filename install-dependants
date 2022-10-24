@@ -29,7 +29,21 @@ case $PLATFORM in
 
   #install packages from brew
 
-  echo brew install $packages
+  echo brew install vim
+  echo brew install tmux
+  echo brew install --cask lynx
+  echo brew install --cask mpv
+  echo brew install --cask inkscape
+  echo brew install jq
+  echo brew install figlet
+  echo brew install pandoc
+  echo brew install texlive
+  echo brew install --cask basictex
+  echo brew install imagemagick
+  echo brew install xdotool
+  echo brew install xclip
+  echo brew install pass
+  
   ;;
 
   manjaro)
