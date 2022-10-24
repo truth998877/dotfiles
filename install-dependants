@@ -12,37 +12,37 @@ case $PLATFORM in
 
   echo debian...
 
-  echo sudo apt-get update
-  echo sudo apt-get upgrade
+  sudo apt-get update
+  sudo apt-get upgrade
 
 
   #install packages from distro
-  echo sudo apt-get install $packages 
+  sudo apt-get install $packages 
   ;;
 
   darwin)
 
   echo darwin...
 
-  echo brew update
-  echo brew upgrade
+  brew update
+  brew upgrade
 
   #install packages from brew
 
-  echo brew install vim
-  echo brew install tmux
-  echo brew install --cask lynx
-  echo brew install --cask mpv
-  echo brew install --cask inkscape
-  echo brew install jq
-  echo brew install figlet
-  echo brew install pandoc
-  echo brew install texlive
-  echo brew install --cask basictex
-  echo brew install imagemagick
-  echo brew install xdotool
-  echo brew install xclip
-  echo brew install pass
+  brew install vim
+  brew install tmux
+  brew install --cask lynx
+  brew install --cask mpv
+  brew install --cask inkscape
+  brew install jq
+  brew install figlet
+  brew install pandoc
+  brew install texlive
+  brew install --cask basictex
+  brew install imagemagick
+  brew install xdotool
+  brew install xclip
+  brew install pass
   
   ;;
 
@@ -50,7 +50,7 @@ case $PLATFORM in
 
   echo manjaro...
 
-  echo sudo pacman -Syu $packages
+  sudo pacman -Syu $packages
 
   ;;
 
@@ -66,8 +66,3 @@ case $PLATFORM in
   ;;
 
 esac
-  
-  
-
-
-
