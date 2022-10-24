@@ -7,7 +7,7 @@ case $HOSTNAME in
 
    moon)
 
-   PLATFORM=majaro
+   PLATFORM=manjaro
    ;;
 
    moonbaby)
