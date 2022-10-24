@@ -18,6 +18,7 @@ case $HOSTNAME in
    macbook.local)
 
    PLATFORM=darwin
+   ;;
 
    *)
    echo 'Hostname not recognised, assuming debian based'
