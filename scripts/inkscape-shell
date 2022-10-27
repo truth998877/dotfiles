@@ -47,7 +47,13 @@ presskey () {
   #xdotool search --class Inkscape key --window %@ "$key" > /dev/null 2>&1
   #xdotool search --class Inkscape windowactivate %@ > /dev/null 2>&1;xdotool key "$key" ;xdotool search --class tilix windowactivate %@ > /dev/null 2>&1
   activate-inkscape
-  xdotool key "$key" 
+
+  if [[ $PLATFORM == darwin ]];then
+    xdotool type $key
+  else
+    xdotool key "$key" 
+  fi
+  
   activate-tilix  
 }
 
