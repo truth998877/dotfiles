@@ -2,7 +2,7 @@
 
 #This installs latest weechat version on debian bullseye accdoing to https://weechat.org/download/debian
 
-case in $PLATFORM
+case $PLATFORM in
 
   debian)
 
