@@ -1,4 +1,4 @@
-#!/bin/bash
+#/bin/bash
 
 
 #if weechat exists the back it up

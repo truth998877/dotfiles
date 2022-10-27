@@ -3,8 +3,7 @@
 packages="vim tmux lynx mpv inkscape jq figlet pandoc \
         texlive texlive-latex-base texlive-fonts-recommended \
         texlive-extra-utils texlive-latex-extra \
-        texlive-xetex imagemagick xdotool xclip pass \
-        weechat"
+        texlive-xetex imagemagick xdotool xclip pass"
 
 
 case $PLATFORM in
@@ -68,3 +67,6 @@ case $PLATFORM in
   ;;
 
 esac
+
+./weechat-install
+./weechat-setup

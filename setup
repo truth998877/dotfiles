@@ -36,8 +36,8 @@ for i in vim tmux ssh; do
   cd -
 done
 
-echo "Setting up weechat"
-./weechat-setup
+#echo "Setting up weechat"
+#./weechat-setup
 
 #./scripts/install-dependants
 
