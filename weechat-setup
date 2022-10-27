@@ -4,6 +4,7 @@
 #if weechat exists the back it up
 if [[ -d $HOME/.weechat ]];then 
   mv -rp ~/.weechat ~/.weechat-orig
+  mv -rp ~/.config/weechat ~/.config/weechat-orig
 fi
 
 #create new .weechat dir to receive conf files from github
