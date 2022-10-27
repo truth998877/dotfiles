@@ -1,28 +1,23 @@
 case $HOSTNAME in
 
    earth|alpha|beta|gamma)
-
    PLATFORM=debian
    ;;
 
    moon)
-
    PLATFORM=manjaro
    ;;
 
    moonbaby)
-
    PLATFORM=postmarketos
    ;;
 
    macbook.local)
-
    PLATFORM=darwin
    ;;
 
    *)
    echo 'Hostname not recognised, assuming debian based'
-
    PLATFORM=debian
 
 esac
@@ -109,9 +104,11 @@ if [ -x /usr/bin/dircolors ]; then
     #alias egrep='egrep --color=auto'
 fi
 
+if [[ $PLATFORM == darwin ]];then
+  alias ls='ls -G'
+fi
 
 _source_if() { [[ -r "$1" ]] && source "$1"; }
-
 
 # some more ls aliases
 #alias ll='ls -l'
