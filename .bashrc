@@ -185,4 +185,4 @@ complete -C fbsecrets fbsecrets
 complete -C twitch twitch
 complete -C stream stream
 
-_source_if "$HOME/.bash_$HOSTNAME"
+_source_if "$HOME/.bashrc.d/.bashrc_$HOSTNAME"
