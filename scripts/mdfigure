@@ -29,7 +29,7 @@ figuresnip_ () {
   echo "$(snip mdfigure.snip mdfigure "$filename" "$caption")"
   
   #copy the template for the note to the figure directory of the note
-  cp figure-template.svg ./figures/$filename.svg
+  cp ~/templates/figures/figure-template.svg ./figures/$filename.svg
   
   inkscape ./figures/"$filename".svg &
   sleep 3
