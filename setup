@@ -21,6 +21,9 @@ for i in .bashrc .dircolors .profile; do
   ln -sf "$PWD/$i" "$HOME/$i"
 done
 
+ln -sf "$PWD/bashrc.d/" "$HOME/bashrc.d"
+ln -sf "$PWD/templates/" "$HOME/templates"
+
 
 #ln -sf "$PWD/.bashrc" "$HOME/.bashrc"
 #ln -sf "$PWD/.dircolors" "$HOME/.dircolors"
