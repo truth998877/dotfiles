@@ -23,7 +23,20 @@ case $HOSTNAME in
 esac
 
 export PLATFORM
- 
+export USER="${USER:-$(whoami)}"
+export GITUSER="truth998877"
+
+export REPOS="$HOME/repos"
+export GHREPOS="$REPOS/github.com/$GITUSER"
+export DOTFILES="$GHREPOS/dotfiles"
+export SCRIPTS="$DOTFILES/scripts"
+export SNIPPETS="$DOTFILES/snippets"
+export EDITOR=vi
+export VISUAL=vi
+
+export CDPATH=".:$GHREPOS:$DOTFILES:$REPOS:$SCRIPTS:$SNIPPETS"
+#export CDPATH=".:$REPOS"
+
 
 # ~/.bashrc: executed by bash(1) for non-login shells.
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
@@ -159,7 +172,7 @@ export PATH="/usr/local/go/bin:$PATH"
 export PATH="~/repos/github.com/truth998877/dotfiles/scripts:$HOME/.secrets/facebook:$PATH"
 
 #these need to be on all systems
-export SNIPPETS="/home/tony/repos/github.com/truth998877/dotfiles/snippets"
+#export SNIPPETS="/home/tony/repos/github.com/truth998877/dotfiles/snippets"
 export LOCALSCRIPTS="$HOME/local-scripts"
 
 #these are just for earth
