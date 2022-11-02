@@ -21,6 +21,14 @@ mpv "$@" --no-border --geometry=50%+844+78 --ontop --really-quiet --record-file=
 
 }
 
+twitch () {
+
+local streamer="$1"
+
+play "http://www.twitch.tv/$streamer"
+
+}
+
 ############################## Main Command  #############################
 
 subcommand="${1-usage}"
@@ -35,7 +43,7 @@ commands () {
     echo ${commands[@]}
 }
 
-declare -a commands=(foo play record)
+declare -a commands=(foo play record twitch)
 
 for i in ${commands[@]}; do
     if [[ "$i" == "$subcommand" ]]; then
