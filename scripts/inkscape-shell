@@ -46,15 +46,15 @@ presskey () {
   #activate
   #xdotool search --class Inkscape key --window %@ "$key" > /dev/null 2>&1
   #xdotool search --class Inkscape windowactivate %@ > /dev/null 2>&1;xdotool key "$key" ;xdotool search --class tilix windowactivate %@ > /dev/null 2>&1
-  activate-inkscape
 
   if [[ $PLATFORM == darwin ]];then
-    xdotool type $key
+    osascript $DOTFILES/applescript/test.scpt "$key" 
   else
+    activate-inkscape
     xdotool key "$key" 
+    activate-tilix  
   fi
   
-  activate-tilix  
 }
 
 save () {
@@ -74,9 +74,11 @@ holdkey () {
 p () {
 
   #activate
-
-  presskey ctrl+v
-
+  if [[ $PLATFORM == darwin ]]; then
+    presskey '"V" using command down'
+  else
+    presskey ctrl+v
+  fi
 }
 
 paste-style () {
@@ -372,9 +374,13 @@ rtriangle () {
 
 echopaste () {
 
- local svgstring="$1"
- echo "$svgstring" | xclip -selection c -target 'image/x-inkscape-svg'
- p
+  local svgstring="$1"
+  if [[ $PLATFORM == darwin ]]; then
+    echo $svgstring | pbcopy
+  else
+   echo "$svgstring" | xclip -selection c -target 'image/x-inkscape-svg'
+  fi
+  p
 
 }
 
