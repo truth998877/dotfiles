@@ -197,5 +197,6 @@ complete -C youtube youtube
 complete -C fbsecrets fbsecrets
 complete -C twitch twitch
 complete -C stream stream
+complete -C ankicli ankicli
 
 _source_if "$HOME/.bashrc.d/.bashrc_$HOSTNAME"
