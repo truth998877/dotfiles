@@ -1,17 +1,55 @@
 #!/bin/bash
 
+#where's anki
 URL=localhost
 PORT=8765
 
+# tell the script what the current deck is
+[[ -r CURRENTANKIDECK ]] && source CURRENTANKIDECK;
+
+
+#communicate with anki
 _curl () {
 
   local args="$1"
   
   curl $URL:$PORT -s -X POST -d "$args"
 
+}
+
+#set which deck to interact with
+set-deck () {
+
+  echo "The current deck is:"
+  current-deck
+
+  read -p "Continue? [y/n]: " response
+
+  case $response in
+
+    n) 
+      exit 0
+    ;;
+    
+    y)
+    ;;
+    
+    *)
+      echo "Response not supported"
+      exit 0
+    ;;
+  
+  esac     
+
+  select deck in $(ls-decks)
+  do
+    echo "export CURRENTANKIDECK=$deck" > CURRENTANKIDECK
+    break
+  done
 
 }
 
+#list all the decks
 ls-decks () {
 
   local str='{"action": "deckNames", "version": 6}'
@@ -22,6 +60,7 @@ ls-decks () {
 
 }
 
+#create a deck
 touch-deck () {
 
   local deckname="$1"
@@ -31,19 +70,29 @@ touch-deck () {
   response="$(_curl "$str"|jq -r .result)"   
 
   echo "$response" 
+
 }
 
+#delete a deck
 rm-deck () {
 
-  local deckname="$1"
+  select deck in $(ls-decks)
+  do
+   deckname=$deck
+   break
+  done
+
+ # local deckname="$1"
 
   str='{"action": "deleteDecks","version": 6,"params": {"decks": ["'"$deckname"'"],"cardsToo": true}}'
 
   response="$(_curl "$str"|jq -r .result)"   
   
   echo "$response" 
+
 }
 
+#return deck info
 deck-info () {
 
   local deckname="$1"
@@ -56,6 +105,7 @@ deck-info () {
  
 }
 
+#get the stats for a deck
 deck-stats () { 
 
   local deckname="$1"
@@ -68,6 +118,18 @@ deck-stats () {
  
 }
 
+#return the deck currently set
+current-deck () {
+
+ str="Not Set" 
+
+ if [[ ! -z  "$CURRENTANKIDECK" ]]; then
+   str=$CURRENTANKIDECK
+ fi
+
+echo "$str"
+
+}
 
 ############################## Main Command  #############################
 
@@ -83,7 +145,7 @@ commands () {
     echo ${commands[@]}
 }
 
-declare -a commands=(ls-decks touch-deck rm-deck deck-info deck-stats commands)
+declare -a commands=(ls-decks touch-deck rm-deck deck-info deck-stats commands set-deck current-deck)
 
 for i in ${commands[@]}; do
     if [[ "$i" == "$subcommand" ]]; then
