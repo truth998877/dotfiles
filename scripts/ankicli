@@ -54,7 +54,7 @@ ls-decks () {
 
   local str='{"action": "deckNames", "version": 6}'
 
-  response="$(_curl "$str"|jq -r .result[])"  
+  local response="$(_curl "$str"|jq -r .result[])"  
 
   echo "$response" 
 
@@ -67,7 +67,7 @@ touch-deck () {
 
   local str='{"action": "createDeck", "version": 6, "params": {"deck": "'"$deckname"'"}}'
 
-  response="$(_curl "$str"|jq -r .result)"   
+  local response="$(_curl "$str"|jq -r .result)"   
 
   echo "$response" 
 
@@ -86,7 +86,7 @@ rm-deck () {
 
   str='{"action": "deleteDecks","version": 6,"params": {"decks": ["'"$deckname"'"],"cardsToo": true}}'
 
-  response="$(_curl "$str"|jq -r .result)"   
+  local response="$(_curl "$str"|jq -r .result)"   
   
   echo "$response" 
 
@@ -99,7 +99,7 @@ deck-info () {
   
   str='{"action": "getDeckConfig","version": 6,"params": {"deck":"'"$deckname"'"}}'
 
-  response="$(_curl "$str"|jq -r .result)"   
+  local response="$(_curl "$str"|jq -r .result)"   
 
   echo "$response" 
  
@@ -112,7 +112,7 @@ deck-stats () {
 
   str='{"action": "getDeckStats", "version": 6,"params": {"decks":["'"$deckname"'"]}}'   
 
-  response="$(_curl "$str"|jq -r .result)"   
+  local response="$(_curl "$str"|jq -r .result)"   
 
   echo "$response" 
  
@@ -121,7 +121,7 @@ deck-stats () {
 #return the deck currently set
 current-deck () {
 
- str="Not Set" 
+ local str="Not Set" 
 
  if [[ ! -z  "$CURRENTANKIDECK" ]]; then
    str=$CURRENTANKIDECK
@@ -131,6 +131,74 @@ echo "$str"
 
 }
 
+model-names () {
+
+  str='{ "action": "modelNames", "version": 6 }'
+
+  local response="$(_curl "$str"|jq -r .result[])"   
+
+  echo "$response" 
+ 
+}
+
+select-model () {
+
+  #echo "Select Card Type: "
+  IFS=$'\n'
+  select model in $(model-names)
+  do
+    echo "$model"
+    break
+  done
+
+}
+
+model-fieldnames () {
+
+  local model="$(select-model)"
+
+  str='{"action": "modelFieldNames", "version": 6, "params": { "modelName": "'"$model"'"}}'
+  
+  local response="$(_curl "$str"|jq -r .result[])"   
+
+  echo "$response" 
+ 
+}
+
+add-note () {
+
+  local deck=$CURRENTANKIDECK
+  echo "Current deck is set to $deck" 
+  read -p "Select different deck? [y/n] " differentdeck
+
+  case $differentdeck in
+    y)
+      set-deck
+      . CURRENTANKIDECK
+    ;;
+ 
+    n)
+    ;;
+
+    *)
+    echo "fuck off"
+    exit 0
+    ;; 
+  
+  esac
+ 
+  declare -A contents 
+  echo "Select model:"
+  local modelfieldnames=$(model-fieldnames)
+ 
+  for field in $modelfieldnames;do
+    read -p "Enter the content of "$field": "  contents["$field"]
+    echo "${contents["$field"]}"
+  done
+
+ #TODO populate the string, curl the string
+
+} 
 ############################## Main Command  #############################
 
 subcommand="${1-usage}"
@@ -145,7 +213,7 @@ commands () {
     echo ${commands[@]}
 }
 
-declare -a commands=(ls-decks touch-deck rm-deck deck-info deck-stats commands set-deck current-deck)
+declare -a commands=(ls-decks touch-deck rm-deck deck-info deck-stats commands set-deck current-deck model-names select-modeli model-fieldnames add-note)
 
 for i in ${commands[@]}; do
     if [[ "$i" == "$subcommand" ]]; then
