@@ -1,3 +1,6 @@
+
+set +H
+
 case $HOSTNAME in
 
    earth|alpha|beta|gamma)
