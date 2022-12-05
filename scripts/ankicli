@@ -155,7 +155,8 @@ select-model () {
 
 model-fieldnames () {
 
-  local model="$(select-model)"
+  #local model="$(select-model)"
+  local model="$1"
 
   str='{"action": "modelFieldNames", "version": 6, "params": { "modelName": "'"$model"'"}}'
   
@@ -187,16 +188,42 @@ add-note () {
   
   esac
  
-  declare -A contents 
-  echo "Select model:"
-  local modelfieldnames=$(model-fieldnames)
+  declare -a contents 
+  echo -e "\nSelect model:"
+  model="$(select-model)"
+  local modelfieldnames="$(model-fieldnames "$model")"
  
   for field in $modelfieldnames;do
+    echo -e "\n"
     read -p "Enter the content of "$field": "  contents["$field"]
     echo "${contents["$field"]}"
   done
 
+  echo -e "\n"
+  read -p "Enter tags: " tags
+
  #TODO populate the string, curl the string
+
+  case "$model" in
+
+    Basic)
+    
+    str='{ "action": "addNote", "version": 6, "params": { "note": { "deckName": "'"$CURRENTANKIDECK"'", "modelName": "'"$model"'", "fields": { "Front": "'"${contents[front]}"'", "Back": "'"${contents[back]}"'" }, "options": { "allowDuplicate": false, "duplicateScope": "deck", "duplicateScopeOptions": { "deckName": "'"$CURRENTANKIDECK"'", "checkChildren": false, "checkAllModels": false } }, "tags": [ "'"$tags"'" ]}}}'
+
+  #echo "$str"  
+  
+  local response="$(_curl "$str"|jq -r .result)"   
+
+  echo "$response" 
+    
+    ;;
+
+    *)
+       echo "Unsupported model"
+       exit 0
+    ;;
+
+  esac
 
 } 
 ############################## Main Command  #############################
