@@ -1,11 +1,11 @@
-#!/bin/bash
+#!/usr/local/bin/bash
 
 #where's anki
 URL=localhost
 PORT=8765
 
 # tell the script what the current deck is
-[[ -r CURRENTANKIDECK ]] && source CURRENTANKIDECK;
+[[ -r "$HOME"/CURRENTANKIDECK ]] && . "$HOME"/CURRENTANKIDECK;
 
 
 #communicate with anki
@@ -43,7 +43,7 @@ set-deck () {
 
   select deck in $(ls-decks)
   do
-    echo "export CURRENTANKIDECK=$deck" > CURRENTANKIDECK
+    echo "export CURRENTANKIDECK=$deck" > "$HOME"/CURRENTANKIDECK
     break
   done
 
@@ -175,7 +175,7 @@ add-note () {
   case $differentdeck in
     y)
       set-deck
-      . CURRENTANKIDECK
+      . "$HOME"/CURRENTANKIDECK
     ;;
  
     n)
@@ -208,7 +208,7 @@ add-note () {
 
     Basic)
     
-    str='{ "action": "addNote", "version": 6, "params": { "note": { "deckName": "'"$CURRENTANKIDECK"'", "modelName": "'"$model"'", "fields": { "Front": "'"${contents[front]}"'", "Back": "'"${contents[back]}"'" }, "options": { "allowDuplicate": false, "duplicateScope": "deck", "duplicateScopeOptions": { "deckName": "'"$CURRENTANKIDECK"'", "checkChildren": false, "checkAllModels": false } }, "tags": [ "'"$tags"'" ]}}}'
+    local str='{ "action": "addNote", "version": 6, "params": { "note": { "deckName": "'"$CURRENTANKIDECK"'", "modelName": "'"$model"'", "fields": { "Front": "'"${contents[front]}"'", "Back": "'"${contents[back]}"'" }, "options": { "allowDuplicate": false, "duplicateScope": "deck", "duplicateScopeOptions": { "deckName": "'"$CURRENTANKIDECK"'", "checkChildren": false, "checkAllModels": false } }, "tags": [ "'"$tags"'" ]}}}'
 
   #echo "$str"  
   
@@ -225,7 +225,33 @@ add-note () {
 
   esac
 
-} 
+}
+
+find-cards () {
+
+  declare -A searches
+
+  echo "$CURRENTANKIDECK"
+
+  searches=( [due]=is:due [in-deck]=deck:"$CURRENTANKIDECK" )
+  #echo "${!searches[@]}"
+  #exit 0
+
+  select search in "${!searches[@]}"
+  do
+    #echo "$search seleced"
+    break
+  done
+
+  local str='{"action": "findCards", "version": 6, "params": { "query": "'"${searches[$search]}"'"}}'
+
+  local response="$(_curl "$str"|jq -r .result[])"   
+
+  echo "$response" 
+    
+}
+
+
 ############################## Main Command  #############################
 
 subcommand="${1-usage}"
@@ -240,7 +266,7 @@ commands () {
     echo ${commands[@]}
 }
 
-declare -a commands=(ls-decks touch-deck rm-deck deck-info deck-stats commands set-deck current-deck model-names select-modeli model-fieldnames add-note)
+declare -a commands=(ls-decks touch-deck rm-deck deck-info deck-stats commands set-deck current-deck model-names select-modeli model-fieldnames add-note find-cards)
 
 for i in ${commands[@]}; do
     if [[ "$i" == "$subcommand" ]]; then
