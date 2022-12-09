@@ -204,13 +204,13 @@ add-note () {
     echo "$field"
     echo -e "\n"
     read -p "Enter the content of '$field': "  contents["$field"]
-    echo "${contents["$field"]}"
+#    echo "${contents["$field"]}"
   done
 
   IFS="${old_IFS}"
 
-  echo "${!contents[@]}"
-  echo "${contents[@]}"
+ # echo "${!contents[@]}"
+ # echo "${contents[@]}"
 
   echo -e "\n"
   read -p "Enter tags: " tags
