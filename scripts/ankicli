@@ -188,16 +188,29 @@ add-note () {
   
   esac
  
-  declare -a contents 
+  declare -A contents 
   echo -e "\nSelect model:"
   model="$(select-model)"
+  echo "$model"
+
   local modelfieldnames="$(model-fieldnames "$model")"
- 
+  
+  echo "$modelfieldnames"
+  
+  old_IFS="${IFS}" 
+  IFS=$'\n' 
+
   for field in $modelfieldnames;do
+    echo "$field"
     echo -e "\n"
-    read -p "Enter the content of "$field": "  contents["$field"]
+    read -p "Enter the content of '$field': "  contents["$field"]
     echo "${contents["$field"]}"
   done
+
+  IFS="${old_IFS}"
+
+  echo "${!contents[@]}"
+  echo "${contents[@]}"
 
   echo -e "\n"
   read -p "Enter tags: " tags
@@ -206,18 +219,44 @@ add-note () {
 
   case "$model" in
 
-    Basic)
+    "Basic" | \
+    "Basic (and reversed card)" | \
+    "Basic (type in the answer)")
     
-    local str='{ "action": "addNote", "version": 6, "params": { "note": { "deckName": "'"$CURRENTANKIDECK"'", "modelName": "'"$model"'", "fields": { "Front": "'"${contents[front]}"'", "Back": "'"${contents[back]}"'" }, "options": { "allowDuplicate": false, "duplicateScope": "deck", "duplicateScopeOptions": { "deckName": "'"$CURRENTANKIDECK"'", "checkChildren": false, "checkAllModels": false } }, "tags": [ "'"$tags"'" ]}}}'
+    local str='{ "action": "addNote", "version": 6, "params": { "note": { "deckName": "'"$CURRENTANKIDECK"'", "modelName": "'"$model"'", "fields": { "Front": "'"${contents[Front]}"'", "Back": "'"${contents[Back]}"'" }, "options": { "allowDuplicate": false, "duplicateScope": "deck", "duplicateScopeOptions": { "deckName": "'"$CURRENTANKIDECK"'", "checkChildren": false, "checkAllModels": false } }, "tags": [ "'"$tags"'" ]}}}'
 
-  #echo "$str"  
+    #echo "$str"  
   
-  local response="$(_curl "$str"|jq -r .result)"   
+    local response="$(_curl "$str"|jq -r .result)"   
 
-  echo "$response" 
+    echo "$response"
+
+    ;;
     
+    "Basic (optional reversed card)")
+    
+    local str='{ "action": "addNote", "version": 6, "params": { "note": { "deckName": "'"$CURRENTANKIDECK"'", "modelName": "'"$model"'", "fields": { "Front": "'"${contents[Front]}"'", "Back": "'"${contents[Back]}"'", "Add Reverse": "'"${contents["Add Reverse"]}"'" }, "options": { "allowDuplicate": false, "duplicateScope": "deck", "duplicateScopeOptions": { "deckName": "'"$CURRENTANKIDECK"'", "checkChildren": false, "checkAllModels": false } }, "tags": [ "'"$tags"'" ]}}}'
+
+    #echo $str
+  
+    local response="$(_curl "$str"|jq -r .result)"   
+
+    echo "$response"
+   
     ;;
 
+    "Cloze")
+    
+    local str='{ "action": "addNote", "version": 6, "params": { "note": { "deckName": "'"$CURRENTANKIDECK"'", "modelName": "'"$model"'", "fields": { "Back Extra": "'"${contents["Back Extra"]}"'", "Text": "'"${contents[Text]}"'" }, "options": { "allowDuplicate": false, "duplicateScope": "deck", "duplicateScopeOptions": { "deckName": "'"$CURRENTANKIDECK"'", "checkChildren": false, "checkAllModels": false } }, "tags": [ "'"$tags"'" ]}}}'
+
+    #echo $str
+  
+    local response="$(_curl "$str"|jq -r .result)"   
+
+    echo "$response"
+   
+    ;;
+ 
     *)
        echo "Unsupported model"
        exit 0
