@@ -1,0 +1,19 @@
+#!/usr/local/bin/bash
+
+if [[ -s /dev/stin ]]; then
+  local in="$(</dev/stin)"
+else
+  local in=''
+fi
+
+
+if [[ $# = 0 && -z $in ]]; then
+  echo "in"
+fi
+
+
+
+
+
+
+
