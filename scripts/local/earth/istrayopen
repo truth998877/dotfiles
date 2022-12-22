@@ -1,0 +1,20 @@
+#!/bin/bash
+
+#is tray open?
+
+closed_ () { 
+  echo "Tray is Closed" 
+}
+
+open_ () {
+  echo "Tray is Open"
+
+}
+
+trayis="$(setcd -i /dev/sr0)"
+
+if [[ ${trayis#*is } == open ]]; then 
+ open_
+else
+  closed_
+fi

@@ -1,0 +1,111 @@
+#!/bin/bash
+
+foo () {
+  local first=$1
+  echo "Would foo with $first."
+}
+
+publish2blog () {
+
+  #TODO not tested
+
+  #will more than likely need a new field in shouldbe, published2blog
+ 
+   local id="$1"
+   local title="$2"
+   local site="$3"
+   local unixdate="$4"
+ 
+   #local filename="$(date +"%Y-%m-%H:%M:%S")-video-post.md"
+   local filename="$(date -d @"$unixdate" +"%Y-%m-%H:%M:%S")-video-post.md"
+   local filepath="/home/tony/sites/"$site"-site/_posts/$filename"
+ 
+   if [[ -f "$filepath" ]]; then
+           echo "$filepath already exists!"
+           exit 1
+   fi
+ 
+ 
+   string="<iframe width=\"560\" height\"315\" src\"//www.youtube.com/embed/$id\" frameborder=\"0\"></iframe?"
+ 
+   touch "$filepath"
+ 
+   cat << EOF >> "$filepath"
+---
+layout:      post
+title:       "$title"
+date:        "$(date +"%Y-%m-%d %H:%M:%S %z")"
+description: "Custom written post descriptions are the way to go... if you're not lazy."
+tags:  [sample post, video]
+---
+ 
+$string
+ 
+This is some text
+ 
+EOF
+ 
+    echo "New Blog Post created: $filepath"
+ 
+}
+
+main () {
+#TODO the jq query in the heredoc needs to return video ids in date order, earliest to latest, so as the tweets, facebook page entries and blog posts are in date order, earliest to latest - "added" added to shouldbe as a unix timestamp
+
+
+  local shouldbe="$1"
+  local site="fortiesgamer"
+
+  while read line; do
+    
+    local shouldbeindex=$(jq --arg line "$line" '.|map(.video_id==$line)|index(true)' "$shouldbe")
+
+    local title=$(jq -r --argjson shouldbeindex $shouldbeindex '.[$shouldbeindex].title' "$shouldbe")
+    local unixdate=$(jq -r --argjson shouldbeindex $shouldbeindex '.[$shouldbeindex].added' "$shouldbe")
+
+    publish2blog "$line" "$title" "$site" "$unixdate"
+     
+    jsonfun setpublish2blog "$shouldbe" "$shouldbeindex"
+
+  done<<<$(jq -r '.[]|select((.published2blog != null) and (.published2blog = false))|.video_id' "$shouldbe")
+
+#  echo "This needs to call publish2blog for each video that has not been published to the blog according to \$shouldbe"
+
+  #"$id" "$title" "$site" "$shouldbe"
+
+}
+############################## Main Command  #############################
+
+subcommand="${1-usage}"
+shift 2>/dev/null
+
+if [ -z "$subcommand" ]; then
+    usage
+    exit 1
+fi
+
+commands () {
+    echo ${commands[@]}
+}
+
+declare -a commands=(foo commands main)
+
+for i in ${commands[@]}; do
+    if [[ "$i" == "$subcommand" ]]; then
+        "$subcommand" "$@"
+        exit 0
+    fi
+done
+
+######################### Tab Completion Context ########################
+
+# remember COMP_LINE is changed by shift
+if [ -n "$COMP_LINE" ]; then
+    for cmd in ${commands[@]}; do 
+        [[ "${cmd:0:${#1}}" == "$1" ]] && echo $cmd
+    done
+    exit 0
+fi
+
+
+## set up auto complate by running 'complete -C ./example ./example'

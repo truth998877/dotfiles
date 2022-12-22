@@ -1,0 +1,218 @@
+#!/bin/bash
+
+#TODO move from python to curl
+#TODO need to pass an account argument to each of the functions which is then passed to pyytinterface.py
+#TODO use rwxrobs auth tool for yt login
+#TODO need to add usage details for each function
+#TODO error checking and handling
+
+ls-pretty () {
+#curl \
+#  'https://youtube.googleapis.com/youtube/v3/search?part=snippet&forMine=true&type=video&key="$access_token"' \
+#  --header 'Authorization: Bearer "$client_id"' \
+#  --header 'Accept: application/json' \
+#  --compressed
+#}
+
+  local account="$1"
+
+  source ~/GameCaptures/ytupload/bin/activate
+  cd ~/GameCaptures/ytupload
+
+
+  python pyytinterface.py listvideos --account="$account"
+
+}
+
+ls-json (){
+
+#maximum of 50 results using this method will mean this will eventually not work, will need to use the ytsearch method
+
+#output video id, title, description, tags and provacy settings of all channel videos to json file.
+
+  local account="$1"
+  local path="/home/tony/GameCaptures/$account-as-is.json"
+
+  source ~/GameCaptures/ytupload/bin/activate
+  cd ~/GameCaptures/ytupload
+  
+  #query yt for uploaded playlist
+  response=$(python pyytinterface.py listvideos --account="$account" --format=json)
+
+  
+  #parse respose to just get the video_ids
+  response_id="$(echo "$response"|jq -r '.[].snippet.resourceId.videoId')"
+  
+  #remove newline from response_id and replace with comma
+  video_ids_list=${response_id//$'\n'/,}
+
+  #pass comma separated list to ls-video, parse response to get video id and tags in json string.
+  video_tags="$(ls-video $video_ids_list | jq '.[]|[{video_id: .id, tag: .snippet.tags}]')" 
+  
+  #parse $response to obtain video_id, title, description, privacy
+  video_info=$(echo $response|jq -r '.[]| [{video_id: .snippet.resourceId.videoId,title: .snippet.title,description: .snippet.description,privacy: .status.privacyStatus}]')
+
+  #combine video_tags and video_info into one json sting where all details are contained in a single object for each video and output to file
+  echo "$video_info" "$video_tags" | jq -s '[add|group_by([.video_id])|.[]|add]' > $path
+
+  echo "$path written"
+
+}
+
+ls-videostatus (){
+
+  local account="$1"
+  local video_id="$2"
+
+  source ~/GameCaptures/ytupload/bin/activate
+  cd ~/GameCaptures/ytupload
+
+  python pyytinterface.py listvideostatus --account="$account" --video_id="$video_id"
+
+}
+
+ls-video (){
+
+ # echo "here"
+
+  local account="$1"
+  local video_id="$2"
+
+  source ~/GameCaptures/ytupload/bin/activate
+  cd ~/GameCaptures/ytupload
+
+  response=$(python pyytinterface.py listvideo --acount="$account" --video_id="$video_id")
+
+  echo "$response"|jq -r '.'
+
+}
+
+manual-upload () {
+  
+  #opens youtube studio to upload for fortiesgamer and file browser at the supplied directory (first argument) 
+  
+  #local channel="$1"  
+  #TO-DO set up case to set $channel-str to open upload page for $channel
+  
+  local account="$1"
+  local dir="$2"
+
+  case $account in
+    fortiesgamer)
+      local channelid="UCxocdFJo68AAmfC3NsieKgg"
+      ;;
+    studywithtony)
+      local channelid="UCAPH_kDcoQMA5zav2OwgFng"
+      ;;
+    *)
+      echo "Whaaat?"
+      exit 1
+  
+  esac
+
+  #xdg-open "https://studio.youtube.com/channel/UCxocdFJo68AAmfC3NsieKgg/videos/upload?d=ud"
+  
+  xdg-open "https://studio.youtube.com/channel/$channelid/videos/upload?d=ud" 
+
+  nautilus --browser "$dir" &
+
+}
+
+update-video () {
+
+  #updates a single video
+
+  local account="$1"
+  local id="$2"
+  local title="$3"
+  local tags1="$4"
+  local description="$5"
+  local category="$6"
+
+  echo "Tags to update, $tags1"
+
+  source ~/GameCaptures/ytupload/bin/activate
+  cd ~/GameCaptures/ytupload
+
+  response=$(python pyytinterface.py update --acount="$account" --video_id="$id" --title="$title" --tags="$tags1" --description="$description" --category="$category")
+
+}
+
+set-privacy () {
+
+  #published video by changing privacy setting
+  local account="$1"
+  local id="$2"
+  local privacystatus="$3"
+  
+  source ~/GameCaptures/ytupload/bin/activate
+  cd ~/GameCaptures/ytupload
+
+ response=$(python pyytinterface.py setprivacy --account="$account" --video_id="$id" --privacy_status="$privacystatus")
+}
+
+set-thumbnail () {
+#needs updating to use pyytinterface.py
+
+
+  #sets thumbnail for video
+  local account="$1"
+  local id="$2"
+  local thumbnail="$3"
+
+  source ~/GameCaptures/ytupload/bin/activate
+  cd ~/GameCaptures/ytupload
+
+  response=$(python pyytinterface.py updatethumbnail --account="$account" --video_id="$id" --file="$thumbnail")
+
+}
+
+delete () {
+#working
+
+  local account="$1"
+  local id="$2"
+ 
+  local dir=$(pwd)  
+
+  source ~/GameCaptures/ytupload/bin/activate
+  cd ~/GameCaptures/ytupload
+
+  python pyytinterface.py removevideo --account="$account" --video_id="$id"
+
+  cd dir
+
+}
+
+############################## Main Command  #############################
+
+subcommand="${1-usage}"
+shift 2>/dev/null
+
+if [ -z "$subcommand" ]; then
+    usage
+    exit 1
+fi
+
+commands () {
+    echo ${commands[@]}
+}
+
+declare -a commands=(commands manual-upload update-video set-privacy set-thumbnail ls-pretty ls-json ls-videostatus ls-video delete) 
+
+for i in ${commands[@]}; do
+    if [[ "$i" == "$subcommand" ]]; then
+        "$subcommand" "$@"
+        exit 0
+    fi
+done
+
+######################### Tab Completion Context ########################
+
+# remember COMP_LINE is changed by shift
+if [ -n "$COMP_LINE" ]; then
+    for cmd in ${commands[@]}; do 
+        [[ "${cmd:0:${#1}}" == "$1" ]] && echo $cmd
+    done
+    exit 0
+fi

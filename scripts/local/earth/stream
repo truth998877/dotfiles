@@ -1,0 +1,159 @@
+#!/bin/bash
+
+foo () {
+  local first=$1
+  echo "Would foo with $first."
+}
+
+stream_ () {
+
+   local streamingstatus=$(obs-cli StartStreaming | jq -r '.[].status')
+   echo "Streaming Status - $streamingstatus"
+
+}
+
+start () {
+
+# echo "To stream to twitch and record a new video and save it in the correct directory" 
+  
+  local account="$1"
+
+  case "$account" in
+  
+    fortiesgamer)
+
+      echo "fortiesgamer" > /home/tony/currentchannel
+
+      local profile="fortiesgamer"
+      local collection="fortiesgamer"
+      #local selectedgame="$(selectagame)"
+      
+      local response="$(selectagame)"
+      local selectedgametitle="$(echo "$response" | cut -d \| -f 1 |xargs)"
+      local selectedgame="$(echo "$response" | cut -d \| -f 2 |xargs)"
+      
+      #echo "$selectedgametitle"
+      #echo "$selectedgame"
+      
+      #exit
+   
+      #TODO what if epic games store??
+      local capturedir=$(capturedir "$selectedgame")
+      checkdisc "$selectedgame"
+     
+      local twitchgameid=$(twitch gameid "$selectedgametitle")
+      read -p "Enter stream title: [$selectedgametitle]" title
+      title="${title:-$selectedgametitle}"
+      twitch updatechannel "$twitchgameid" "$title" 
+      
+      sensoroverlay
+      timeoverlay
+      sceneoverlay
+      twitch overlay
+      
+      obsrecord "$collection" "$profile" "$capturedir"
+      sleep 5   
+     
+      stream_
+ 
+      record play "$selectedgame"   
+      sleep 2
+     
+      tmuxlivegaming
+
+    ;;
+
+    studywithtony)
+      
+      echo "studywithtony" > /home/tony/currentchannel
+
+      local profile="studywithtony"
+      local collection="studywithtony"
+      local capturedir="livestudy/$(datepath)"
+#      echo $capturedir
+
+      
+      if [[ ! -d "/home/tony/GameCaptures/$capturedir" ]]; then
+        mkdir -p "/home/tony/GameCaptures/$capturedir"
+      fi 
+
+      obsrecord "$collection" "$profile" "$capturedir"
+      sleep 5   
+
+      stream_    
+      sleep 3
+
+      markerscreatefile create
+      sleep 5
+      #TODO add no promotion option  
+#      promotestream streamstart "$account"
+      
+      tmuxstreamstudy 
+    
+    ;;
+ 
+    *)
+
+      echo "Specified stream channel not recognised"
+    ;;
+
+  esac
+
+}
+
+stop () {
+
+#TODO needs different options depending on which account is streaming
+
+  echo "To gracfully switch streaming off and exit obs"
+  
+  markerfinish 
+
+  obs-cli StopStreaming
+  obs-cli StopRecording
+  echo "false" > ~/obsrecordingstatus
+
+  killoverlay
+
+
+#  killall obs
+
+}
+
+#TODO add stream restart command
+
+############################## Main Command  #############################
+
+subcommand="${1-usage}"
+shift 2>/dev/null
+
+if [ -z "$subcommand" ]; then
+    usage
+    exit 1
+fi
+
+commands () {
+    echo ${commands[@]}
+}
+
+declare -a commands=(foo commands start stop)
+
+for i in ${commands[@]}; do
+    if [[ "$i" == "$subcommand" ]]; then
+        "$subcommand" "$@"
+        exit 0
+    fi
+done
+
+######################### Tab Completion Context ########################
+
+# remember COMP_LINE is changed by shift
+if [ -n "$COMP_LINE" ]; then
+    for cmd in ${commands[@]}; do 
+        [[ "${cmd:0:${#1}}" == "$1" ]] && echo $cmd
+    done
+    exit 0
+fi
+
+
+## set up auto complate by running 'complete -C ./example ./example'

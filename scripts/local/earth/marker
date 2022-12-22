@@ -1,0 +1,31 @@
+#!/bin/bash
+
+#TODO do nothing if obs not recording
+
+
+topic="$*"
+
+#return the path of today's live study video recording(s)
+recdir="/home/tony/GameCaptures/livestudy/$(datepath)"
+
+#return the filename of the lastest video
+latestvid=$(newestvid "$recdir")
+
+#return marker file of latestvid
+markersjson="${latestvid%.*}-markers.json"
+
+#what time is is now?
+now=$(date "+%s")
+
+#add now to latest vids marker file
+mv "$markersjson" "$markersjon".tmp
+jq --arg now "$now" --arg topic "$topic"  '.markers[.markers|length]|=.+{"time": $now,"topic": $topic}' "$markersjon".tmp > "$markersjson"
+rm "$markersjon".tmp
+
+# if streaming set twitch marker
+if [[ "$(obs-cli GetStreamingStatus|jq -r '.[].streaming')" != "false" ]];then
+  twitch marker "$topic" 
+fi
+
+
+#TODO twitch mark "$topic" 

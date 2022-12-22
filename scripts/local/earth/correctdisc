@@ -1,0 +1,6 @@
+#!/bin/bash
+
+selectedgame="$1"
+disc="$2"
+
+jq -r --arg game "$selectedgame" '.[]| select(.game==$game)|.disc' ~/GameCaptures/discs.json

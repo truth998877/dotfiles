@@ -1,0 +1,120 @@
+#!/bin/bash
+
+foo () {
+  local first=$1
+  echo "Would foo with $first."
+}
+
+play () {
+
+local selectedgame="$1"
+
+  echo "Launching selected game, $selectedgame..." 
+  lutris lutris:rungame/"$selectedgame" &>/dev/null &
+
+}
+
+
+start () { 
+  
+ # echo "To record a new video and save in the correct directory"
+
+  local account="$1"
+ 
+  case "$account" in
+ 
+    fortiesgamer)
+
+      local profile="fortiesgamer"
+      local collection="fortiesgamer"
+      local response="$(selectagame)"
+      local selectedgame="$(echo "$response" | cut -d \| -f 2 |xargs)"
+      #What if epic games store?
+      local capturedir=$(capturedir "$selectedgame")
+      checkdisc "$selectedgame"
+
+      sensoroverlay
+      timeoverlay
+      sceneoverlay
+      
+      obsrecord "$collection" "$profile" "$capturedir"
+ 
+      play "$selectedgame"    
+  ;;
+
+  studywithtony)
+
+      local profile="studywithtony"
+      local collection="studywithtony"
+      local capturedir="livestudy/$(datepath)"
+      echo $capturedir
+
+      if [[ ! -d "/home/tony/GameCaptures/$capturedir" ]]; then
+        mkdir -p "/home/tony/GameCaptures/$capturedir"
+      fi
+
+      obsrecord "$collection" "$profile" "$capturedir"
+      sleep 5
+
+      markerscreatefile create
+      sleep 5
+  
+      tmuxrecordstudy
+  
+  ;;
+
+  *)
+
+    echo "Whaaat?"
+  ;;
+esac
+
+}
+
+stop () {
+
+#TODO 
+
+  #echo "To stop recording"
+  #TODO current stream
+  echo "Stopped recording - $(obs-cli StopRecording|jq -r '.[].status')"
+  killoverlay
+  #markerfinish
+}
+
+
+############################## Main Command  #############################
+
+subcommand="${1-usage}"
+shift 2>/dev/null
+
+if [ -z "$subcommand" ]; then
+    usage
+    exit 1
+fi
+
+commands () {
+    echo ${commands[@]}
+}
+
+declare -a commands=(foo commands start stop play)
+
+for i in ${commands[@]}; do
+    if [[ "$i" == "$subcommand" ]]; then
+        "$subcommand" "$@"
+        exit 0
+    fi
+done
+
+######################### Tab Completion Context ########################
+
+# remember COMP_LINE is changed by shift
+if [ -n "$COMP_LINE" ]; then
+    for cmd in ${commands[@]}; do 
+        [[ "${cmd:0:${#1}}" == "$1" ]] && echo $cmd
+    done
+    exit 0
+fi
+
+
+## set up auto complate by running 'complete -C ./example ./example'

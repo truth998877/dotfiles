@@ -1,0 +1,3 @@
+#!/bin/bash
+
+blkid -o value -s LABEL /dev/dvd

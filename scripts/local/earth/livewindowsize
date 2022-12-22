@@ -1,0 +1,29 @@
+#!/bin/bash
+
+
+#application="$1"
+
+#window=$(xdotool search --onlyvisible --name "$application")
+
+
+mouse="$(xinput --list | awk -F 'id=|\\[' '/mouse|Mouse/ {print $2}')"
+mouse="${mouse//[[:space:]]}"
+
+state="$(xinput --query-state "$mouse")"
+while [[ $state != *"button[1]=down"* ]]; do
+    state="$(xinput --query-state "$mouse")"
+done
+    
+    # If mouse 1 pressed.
+#    if [[ "$state" == *"button[1]=down"* ]]; then
+        
+    window=$(xdotool getmouselocation --shell | grep WINDOW)
+    window=${window#*=}    
+    wmctrl -ir $window -b remove,maximized_vert,maximized_horz
+    xdotool windowsize $window 1254 870
+    xdotool windowmove $window 118 79
+    
+#    fi
+
+#sleep .1s
+#done

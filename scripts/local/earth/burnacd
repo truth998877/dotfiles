@@ -1,0 +1,58 @@
+#!/bin/bash
+
+
+removespacesfromfilenames () {
+
+  mv "$f" "${f//\ /_}"
+
+}
+
+converttowav () {
+
+  local fullfilename="$1"
+  local filename="${fullfilename%.*}"
+  
+  ffmpeg -i "$fullfilename" "$filename".wav
+}
+
+burncd () {
+
+ wodim -v -nofix -eject dev='/dev/sr0' -audio-pad *.wav
+
+}
+
+normaliseaudio () {
+
+ normalize-audio -m *.wav
+
+}
+
+fixcd () {
+
+ wodim -v -fix -eject dev='/dev/sr0' 
+
+}
+
+read -p "Location of audio files?" dir
+
+mkdir "$dir"-original
+
+cd "$dir"
+
+cp * "$dir"-original 
+
+for f in *;do
+  removespacesfromfilenames
+  converttowav
+done
+
+#remove all files bar the wavs
+rm "$(ls -I "*.wav")"
+
+#TODO order the wavs into track order on cd
+
+normaliseaudio
+burncd
+fixcd
+
+

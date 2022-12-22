@@ -1,0 +1,230 @@
+#!/bin/bash
+
+#use this script to managed the current youtube channel, uses "jsonfun" to amend shouldbe and "youtube" to change things on youtube
+
+
+foo () {
+  local first=$1
+  echo "Would foo with $first."
+}
+
+manage () {
+
+  echo "To manage a yt channel by comparing a 'what it should be' json file with an 'what is it now' json file, detailing ids, titles, tags, descriptions and privacy statuses" 
+
+}
+
+set-channel () {
+
+  echo "To set the youtube channel"
+  #set and env variable which specifies which channel to work with, $YTCHANNEL
+
+  channel="$1"
+
+  case $channel in
+  fortiesgamer)
+  echo "$channel">~/repos/github.com/truth998877/dotfiles/scripts/currentchannel
+  echo "Current Channel set to $channel"
+  ;;
+  studywithtony)
+  echo "$channel">~/repos/github.com/truth998877/dotfiles/scripts/currentchannel
+  echo "Current Channel set to $channel"
+  ;;
+  *)
+  #echo "fortiesgamer">~/repos/github.com/truth998877/dotfiles/scripts/currentchannel
+  echo "Channel not recognised, channel set to default, fortiesgamer"
+  ;;
+  esac
+
+}
+
+current-channel () {
+
+  echo "$(<~/repos/github.com/truth998877/dotfiles/scripts/currentchannel)"
+
+}
+setshouldbe () {
+
+  echo "/home/tony/GameCaptures/$(current-channel)-should-be.json"
+
+}
+
+setasis () {
+
+  echo "/home/tony/GameCaptures/$(current-channel)-as-is.json"
+
+}
+
+updatechannel () {
+
+#updates entire channel en-masse
+
+  local shouldbe="$(setshouldbe)"
+  local asis="$(setasis)"
+  #TODO get these from current channel config file
+
+  echo "To update an entire channel"
+
+}
+
+setready2publish () {
+ 
+  #echo "To set a video as ready to publish"
+  
+  local shouldbe="$(setshouldbe)"
+  echo "$shouldbe"
+
+  addanother=true
+
+  until [ "$addanother" = "false" ]; do
+
+    read -p "Video ID:" video_id
+    echo "Setting Video $video_id as ready to publish..."
+    jsonfun setready2publish "$shouldbe" "$video_id"
+    
+    read -p "$video_id set as ready to publish, do another (no, else yes)?:" response
+    if [ "$response" = "no" ]; then
+      addanother=false
+    fi
+
+  done
+
+}
+
+bulkpublish () {
+
+  #echo "To publish a video"
+
+  local shouldbe="$(setshouldbe)"
+  local currentchannel="$(current-channel)"
+
+  dir=$(pwd)
+
+  while read line;do
+
+    youtube "$currentchannel" set-privacy "$line" public
+    echo "$line published"
+
+    cd "$dir"
+
+    jsonfun setpublished "$shouldbe" "$line"
+
+  done<<<$(jq -r '.[]|select((.ready2publish != null) and (.ready2publish=true) and (.published=false))|.video_id' "$shouldbe")
+
+  promotevideo main "$shouldbe" #promote on facebook page and twitter
+
+}
+
+publish () {
+#TODO
+  
+  echo "To publish one video"
+
+}
+
+delete () {
+
+#TODO rather than delete the entry for a video from the database, a deleted field has been added to shouldbe, thus when deleting a vidoe set deleted equal to true in should be.
+
+  local video_id="$1"
+  local shouldbe="$(setshouldbe)"
+  local currentchannel="$(current-channel)"
+
+  youtube "$currentchannel" delete "$video_id"
+  
+  jsonfun setdeleted "$shouldbe" "$id"
+
+} 
+
+
+newvideos () {
+
+  #processes new videos, compares two json files, should-be and as-is. should-be is how the channel should be, video titles, descriptions, tags etc, with how it actually is. find videos which have the  same title. If these videos do not have video-id set, then they are new and should be updated to reflect the details in the should be file
+
+  local shouldbe="$(setshouldbe)"
+  local asis="$(setasis)"
+  local currentchannel="$(current-channel)"
+
+  #echo "$shouldbe"
+  #echo test
+
+  youtube "$currentchannel" ls-json
+
+  local dir=$(pwd)
+
+  while read line;do
+          echo "New Video Found, title = $line"
+          echo "Looking Up video Id..."
+
+          local video_id=$(jq -r --arg line "$line" '.[]|select(.title==$line)|.video_id' $asis)
+          echo "video_id found, $video_id"
+
+          shouldbeindex=$(jsonfun addvideoid "$shouldbe" "$line" "$video_id")
+
+          #read id title tags description category from $shouldbe #TODO make this a one liner using read -r and one call to jq
+          local tags=$(jq -r --argjson shouldbeindex $shouldbeindex '.[$shouldbeindex].tags[]' "$shouldbe")
+          local descriptionraw=$(jq -r --argjson shouldbeindex $shouldbeindex '.[$shouldbeindex].description' "$shouldbe")
+          local category=$(jq -r --argjson shouldbeindex $shouldbeindex '.[$shouldbeindex].category' "$shouldbe")
+          local title=$(jq -r --argjson shouldbeindex $shouldbeindex '.[$shouldbeindex].title' "$shouldbe")
+
+          local thumbnail=$(jq -r --argjson shouldbeindex $shouldbeindex '.[$shouldbeindex].thumbnail' "$shouldbe")
+
+          description=$(echo -e "$descriptionraw")
+
+          echo "updating video, $line..."
+          until [ "$(echo $(youtube "$(current-channel)" ls-video "$video_id")|jq '.[].snippet|.tags==null')" = "false" ];do
+           youtube "$currentchannel" update-video "$video_id" "$title" "$tags" "$description" $category
+          done
+          sleep 2 #not sure if this is necessary
+          echo "done, uploading thumbnail"
+
+          cd "$dir"
+
+          youtube "$currentchannel" set-thumbnail "$video_id" "$thumbnail"
+
+          cd "$dir"
+
+  done <<<$(jq -r '.[]|select(.video_id==null)|.title' $shouldbe)
+
+  echo "All new videos updated, updating "as is json file""
+
+  youtube "$currrentchannel" ls-json
+
+}
+
+
+############################## Main Command  #############################
+
+subcommand="${1-usage}"
+shift 2>/dev/null
+
+if [ -z "$subcommand" ]; then
+    usage
+    exit 1
+fi
+
+commands () {
+    echo ${commands[@]}
+}
+
+declare -a commands=(foo commands manage update-channel setready2publish bulkpublish set-channel current-channel setshouldbe setasis newvideos delete)
+
+for i in ${commands[@]}; do
+    if [[ "$i" == "$subcommand" ]]; then
+        "$subcommand" "$@"
+        exit 0
+    fi
+done
+
+######################### Tab Completion Context ########################
+
+# remember COMP_LINE is changed by shift
+if [ -n "$COMP_LINE" ]; then
+    for cmd in ${commands[@]}; do 
+        [[ "${cmd:0:${#1}}" == "$1" ]] && echo $cmd
+    done
+    exit 0
+fi
+
+
+## set up auto complate by running 'complete -C ./example ./example'

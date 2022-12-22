@@ -1,0 +1,12 @@
+#!/bin/bash
+
+now=$(date "+%s")
+
+recdir="/home/tony/GameCaptures/livestudy/$(datepath)"
+
+latestvid=$(newestvid "$recdir")
+markersjson="${latestvid%.*}-markers.json"
+
+mv "$markersjson" "$markersjson.tmp"
+jq --arg now "$now" '.finish=$now' "$markersjson.tmp" > "$markersjson"
+rm "$markersjson.tmp"
