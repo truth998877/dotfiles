@@ -1,0 +1,88 @@
+#!/bin/bash
+
+foo () {
+  local first=$1
+  echo "Would foo with $first."
+
+}
+
+xy () {
+
+#xy, x aligned data, single plot, multiple lines, data in columns, x data in first column, y data in subsequent columns
+
+#$1 data
+#$2 title
+#$3 xlabel
+#$4 ylabel
+
+#  local terminal="$1"
+#  local output="$2"
+#  local data="$(<"$1")"
+  
+  #data must be in columns, x data in column 1,y data in subsequent columns
+  local data="$1" 
+  local title="$2"
+  local xlabel="$3"
+  local ylabel="$4"
+
+  #TODO adjust to plot all data in $data ...
+  #TODO need to determine how many columns of data are in $data
+  #TODO from 3 to the number of columns create a string which reads
+  #TODO ", '' using 1:3, '' using 1:4" ...  ($plotstr)
+
+  #TODO create a string which repeats:
+  #TODO "$data"
+  #TODO e
+  #for the number of columns ($datastr)
+
+  #TODO combine the above into the EOF markers
+  
+  #echo -e "$data"
+
+  gnuplot -p <<- EOF
+    set autoscale
+    set xlabel "$xlabel"
+    set ylabel "$ylabel"
+    set title "$title"
+    plot '-' using 1:2, '' using 1:3 
+    "$data"
+    e
+    "$data"
+EOF
+
+}
+############################## Main Command  #############################
+
+subcommand="${1-usage}"
+shift 2>/dev/null
+
+if [ -z "$subcommand" ]; then
+    usage
+    exit 1
+fi
+
+commands () {
+    echo ${commands[@]}
+}
+
+declare -a commands=(foo commands xy)
+
+for i in ${commands[@]}; do
+    if [[ "$i" == "$subcommand" ]]; then
+        "$subcommand" "$@"
+        exit 0
+    fi
+done
+
+######################### Tab Completion Context ########################
+
+# remember COMP_LINE is changed by shift
+if [ -n "$COMP_LINE" ]; then
+    for cmd in ${commands[@]}; do 
+        [[ "${cmd:0:${#1}}" == "$1" ]] && echo $cmd
+    done
+    exit 0
+fi
+
+
+## set up auto complate by running 'complete -C ./example ./example'
