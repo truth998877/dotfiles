@@ -19,7 +19,7 @@ _default-settings () {
 
 declare -gA colours; colours=( [12]=\"dark-red\" [11]=\"red\" [10]=\"orange\" [9]=\"yellow\" [8]=\"light-green\" [7]=\"green\" [6]=\"light-blue\" [5]=\"blue\" [4]=\"dark-blue\" [3]=\"purple\" [2]=\"grey\" [1]=\"black\" )
 
-declare -A markers=( [1]=\"A\" [2]=\"B\" [3]=\"C\" [4]=\"D\" [5]=\"E\" [6]=\"F\" [7]=\"G\" [8]=\"H\" [9]=\"I\" [10]=\"J\" [11]=\"K\" [12]=\"L\" )
+declare -gA markers=( [1]=\"A\" [2]=\"B\" [3]=\"C\" [4]=\"D\" [5]=\"E\" [6]=\"F\" [7]=\"G\" [8]=\"H\" [9]=\"I\" [10]=\"J\" [11]=\"K\" [12]=\"L\" )
 
 
 titlefontsize=20
@@ -30,7 +30,7 @@ linewidth=2
 
 }
 
-_set-settings () {
+_set-chosen-settings () {
 
   local settings="$1"
 
@@ -47,7 +47,6 @@ _set-settings () {
   esac
 
 }
-
 
 foo () {
   local first=$1
@@ -83,6 +82,30 @@ _setsettingsstr () {
 
 }
 
+_data2ssv () {
+
+  local data="$1"
+  local datatype="$2"
+
+  #datatype
+  case $datatype in
+    csv)
+      data="$(_csv2space "$data")"
+    ;;
+
+    space)
+    ;;
+
+    *)
+      echo datatype: $datatype unrecognised
+      exit
+    ;;
+  esac
+
+echo "$data"
+
+}
+
 _setgnuplotstr () {
 
  local settingsstr="$1"
@@ -97,9 +120,30 @@ _gnuplot () {
 
   local gnuplotstr="$1"
 
+  _save_last "$gnuplotstr"
+
   gnuplot -p <<- EOF
     $gnuplotstr
 EOF
+
+}
+
+_save_last () {
+
+  gnuplotstr="$1"
+
+  if [[ ! -d "$HOME/last_gnuplot" ]];then
+    mkdir "$HOME/last_gnuplot"
+  fi
+
+  echo "$gnuplotstr" > "$HOME/last_gnuplot/lastgnuplot"
+
+}
+
+show-previous () {
+
+  echo "$(<~/last_gnuplot/lastgnuplot)"
+
 
 }
 
@@ -126,24 +170,9 @@ xy-1x-ny () {
   local xlabel="$4"
   local ylabel="$5"
   local lines="$6"
-  local settings="${7:-normal}"
+  local chosensettings="${7:-normal}"
 
-  #datatype
-  case $datatype in
-    csv)
-      data="$(_csv2space "$data")"
-    ;;
-
-    space)
-    ;;
-
-    *)
-      echo datatype: $datatype unrecognised
-      return
-    ;;
-  esac
-
-  _set-settings "$settings"
+  local data="$(_data2ssv "$data" "$datatype")"
 
   #plotstr and datastr - will be different for each
   local datac="${data#*$'\n'}"
@@ -175,9 +204,10 @@ xy-1x-ny () {
 
   local plotstr="$plotstr1$plotstr2"$'\n'
   local datastr="$datastr1$datastr2"
-
-
+  
+  _set-chosen-settings "$chosensettings"
   local settingsstr="$(_setsettingsstr "$xlabel" "$ylabel" "$title" "$ycolumns")"
+  
   local gnuplotstr="$(_setgnuplotstr "$settingsstr" "$plotstr" "$datastr")"
   
   #echo "$gnuplotstr"
@@ -186,7 +216,72 @@ xy-1x-ny () {
   #pass gnuplotstr to gnuplot
   _gnuplot "$gnuplotstr"
 
+}
 
+xy-mx-ny () {
+
+#xy, x non aligned data, single plot, multiple lines, data in columns, x data in odd columns, y data in even columns
+
+#$1 data
+#$2 data type: space, csv
+#$2 title
+#$3 xlabel
+#$4 ylabel
+
+#  local terminal="$1"
+#  local output="$2"
+#  local data="$(<"$1")"
+  
+  #data must be in columns, x1, y1, x2, y2 etc
+  local data="$1"
+  local datatype="$2" 
+  local title="$3"
+  local xlabel="$4"
+  local ylabel="$5"
+  local lines="$6"
+  local chosensettings="${7:-normal}"
+  
+  #plotstr and datastr - will be different for each
+  local datac="${data#*$'\n'}"
+  datac="${datac%%$'\n'*}"
+  local datac2="${datac//[[:blank:]]/}"
+  local a="${#datac}"
+  local b="${#datac2}"
+  local ycolumns=$((a-b+1))  #number of series
+ 
+  local plotstr1="plot '-' using 1:2 with linespoints"
+  if [[ "$lines" == "nolines" ]];then  
+    plotstr1="plot '-' using 1:2"
+  fi
+  local datastr1="$data"$'\n'"e"$'\n'
+  local plotstr2=""
+  local datastr2=""
+
+  if [[ y-columns > 2 ]];then
+    local i
+    for ((i=3; i<=ycolumns; i+=2));do
+        if [[ "$lines" == "nolines" ]];then  
+          plotstr2="$plotstr2, '' using "$i":"$((i+1))""
+        else  
+          plotstr2="$plotstr2, '' using "$i":"$((i+1))" with linespoints"
+        fi
+        datastr2="$datastr2""$data"$'\n'"e"$'\n'
+    done
+  fi
+
+  local plotstr="$plotstr1$plotstr2"$'\n'
+  local datastr="$datastr1$datastr2"
+
+  _set-chosen-settings "$chosensettings"
+  local settingsstr="$(_setsettingsstr "$xlabel" "$ylabel" "$title" "$ycolumns")"
+  
+  local gnuplotstr="$(_setgnuplotstr "$settingsstr" "$plotstr" "$datastr")"
+  
+  #echo "$gnuplotstr"
+  #return
+  
+  #pass gnuplotstr to gnuplot
+  _gnuplot "$gnuplotstr"
 }
 
 ############################## Main Command  #############################
@@ -203,7 +298,7 @@ commands () {
     echo ${commands[@]}
 }
 
-declare -a commands=(foo commands xy-1x-ny)
+declare -a commands=(foo commands xy-1x-ny xy-mx-ny show-previous)
 
 for i in ${commands[@]}; do
     if [[ "$i" == "$subcommand" ]]; then
