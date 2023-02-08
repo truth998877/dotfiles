@@ -112,16 +112,23 @@ _setgnuplotstr () {
  local plotstr="$2"
  local datastr="$3"
 
- echo "$settingsstr"$'\n'"$plotstr $datastr"
+ _save_last "$settingsstr" "$plotstr" "$datastr"
+ local gnuplotstr="$settingsstr"$'\n'"$plotstr $datastr"
+
+ echo "$gnuplotstr"
 
 }
 
 _gnuplot () {
 
   local gnuplotstr="$1"
-
-  _save_last "$gnuplotstr"
-
+  
+  if [[ ! -z "$2" ]]; then
+    local savefilename="$2"
+    echo "$gnuplotstr" > "$savefilename"
+    echo \[plot\]\("$savefilename"\)
+  fi
+   
   gnuplot -p <<- EOF
     $gnuplotstr
 EOF
@@ -130,20 +137,56 @@ EOF
 
 _save_last () {
 
-  gnuplotstr="$1"
+  local settingsstr="$1"
+  local plotstr="$2"
+  local datastr="$3"
 
   if [[ ! -d "$HOME/last_gnuplot" ]];then
     mkdir "$HOME/last_gnuplot"
   fi
 
-  echo "$gnuplotstr" > "$HOME/last_gnuplot/lastgnuplot"
+  echo "$settingsstr" > "$HOME/last_gnuplot/lastsettingsstr"
+  echo "$plotstr" > "$HOME/last_gnuplot/lastplotstr"
+  echo "$datastr" > "$HOME/last_gnuplot/lastdatastr"
 
 }
 
-show-previous () {
+show-last () {
 
-  echo "$(<~/last_gnuplot/lastgnuplot)"
+  if [[ -e "$HOME/last_gnuplot/lastsettingsstr" ]] && [[ -e "$HOME/last_gnuplot/lastplotstr" ]] && [[ "$HOME/last_gnuplot/lastdatastr" ]]; then
+  
+    select item in settings_only plot_only settings_and_plot_only data_only all;do
 
+      case $item in
+        settings_only)
+          echo "$(<"$HOME/last_gnuplot/lastsettingsstr")"
+          break
+        ;;
+        plot_only)
+          echo "$(<"$HOME/last_gnuplot/lastplotstr")"
+          break
+        ;;
+        settings_and_plot_only)
+          echo "$(<"$HOME/last_gnuplot/lastsettingsstr")"
+          echo "$(<"$HOME/last_gnuplot/lastplotstr")"
+          break
+        ;;
+        data_only)
+          echo "$(<"$HOME/last_gnuplot/lastdatastr")"
+          break
+        ;;
+        all)
+          echo "$(<"$HOME/last_gnuplot/lastsettingstr")"
+          echo "$(<"$HOME/last_gnuplot/lastplotstr")"
+          echo "$(<"$HOME/last_gnuplot/lastdatastr")"
+          break
+       esac
+    done
+  else
+    echo "last gnu plot not set"
+  fi
+  
+  #echo "$(<~/last_gnuplot/lastgnuplot)"
 
 }
 
@@ -171,6 +214,7 @@ xy-1x-ny () {
   local ylabel="$5"
   local lines="$6"
   local chosensettings="${7:-normal}"
+  local savefilename="$8"
 
   local data="$(_data2ssv "$data" "$datatype")"
 
@@ -214,7 +258,7 @@ xy-1x-ny () {
   #return
   
   #pass gnuplotstr to gnuplot
-  _gnuplot "$gnuplotstr"
+  _gnuplot "$gnuplotstr" "$savefilename"
 
 }
 
@@ -240,6 +284,7 @@ xy-mx-ny () {
   local ylabel="$5"
   local lines="$6"
   local chosensettings="${7:-normal}"
+  local savefilename="$8"
   
   #plotstr and datastr - will be different for each
   local datac="${data#*$'\n'}"
@@ -281,7 +326,7 @@ xy-mx-ny () {
   #return
   
   #pass gnuplotstr to gnuplot
-  _gnuplot "$gnuplotstr"
+  _gnuplot "$gnuplotstr" "$savefilename"
 }
 
 ############################## Main Command  #############################
@@ -298,7 +343,7 @@ commands () {
     echo ${commands[@]}
 }
 
-declare -a commands=(foo commands xy-1x-ny xy-mx-ny show-previous)
+declare -a commands=(foo commands xy-1x-ny xy-mx-ny show-last)
 
 for i in ${commands[@]}; do
     if [[ "$i" == "$subcommand" ]]; then
