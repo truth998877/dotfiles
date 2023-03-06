@@ -34,11 +34,13 @@ export GHREPOS="$REPOS/github.com/$GITUSER"
 export DOTFILES="$GHREPOS/dotfiles"
 export SCRIPTS="$DOTFILES/scripts"
 export LOCALSCRIPTS="$DOTFILES/scripts/local/$HOSTNAME"
+export LOGBOOKS="$GHREPOS/logbooks"
+export NOTEBOOKS="$GHREPOS/notebooks"
 export SNIPPETS="$DOTFILES/snippets"
 export EDITOR=vi
 export VISUAL=vi
 
-export CDPATH=".:$GHREPOS:$DOTFILES:$REPOS:$SCRIPTS:$SNIPPETS:$LOCALSCRIPTS"
+export CDPATH=".:$LOGBOOKS:$NOTEBOOKS:$GHREPOS:$DOTFILES:$REPOS:$SCRIPTS:$SNIPPETS:$LOCALSCRIPTS"
 #export CDPATH=".:$REPOS"
 
 
@@ -161,6 +163,10 @@ alias now="date +'%A, %d %B %Y, %H:%M'"
 if [ -f ~/.bash_aliases ]; then
     . ~/.bash_aliases
 fi
+
+# logging
+
+set-clb () { . set-clb-1 "$1" ; echo logging to "$(clb-loc)" ; }
 
 # enable programmable completion features (you don't need to enable
 # this, if it's already enabled in /etc/bash.bashrc and /etc/profile

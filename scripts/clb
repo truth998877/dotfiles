@@ -1,0 +1,3 @@
+#!/bin/bash
+
+jq -r --arg jq_currentlogbook "$CURRENTLOGBOOK" '.logbooks[$jq_currentlogbook|tonumber-1] | "Logging to \(.shorttitle) (#\(.logbooknumber))"' "$LOGBOOKS/logbooks.json"

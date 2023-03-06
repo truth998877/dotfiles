@@ -1,0 +1,7 @@
+#!/bin/bash
+
+echo "
+
+"$(hnow)"
+
+"$1"" >> "$(clb-loc)"
