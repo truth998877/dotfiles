@@ -69,8 +69,15 @@ _setsettingsstr () {
   local ylabel="$2"
   local title="$3"
   local ycolumns="$4"
+  local save="$5"
+  local outputfilename="$6"
   
-  local settingsstr="set autoscale"$'\n'"set xlabel \"$xlabel\" font \","$labelfontsize"\""$'\n'"set ylabel \"$ylabel\" font \","$labelfontsize"\""$'\n'"set title \"$title\" font \","$titlefontsize"\""$'\n'"set key left box font \","$keyfontsize"\""$'\n'
+  local terminal="set terminal qt font \"Arial,12\""
+  if [[ "$save" == save ]];then
+     terminal="set terminal svg font \"Arial,12\""$'\n'"set output \"$outputfilename.svg\""
+  fi  
+
+  local settingsstr="$terminal"$'\n'"set mouse"$'\n'"set autoscale"$'\n'"set xlabel \"$xlabel\" font \","$labelfontsize"\""$'\n'"set ylabel \"$ylabel\" font \","$labelfontsize"\""$'\n'"set title \"$title\" font \","$titlefontsize"\""$'\n'"set key left box font \","$keyfontsize"\""$'\n'
 
   local settingsstr2="set linetype 1 lc rgb ${colours[1]} lw "$linewidth" pt 1"
   local i 
@@ -108,30 +115,30 @@ echo "$data"
 
 _setgnuplotstr () {
 
- local settingsstr="$1"
- local plotstr="$2"
- local datastr="$3"
+  local settingsstr="$1"
+  local plotstr="$2"
+  local datastr="$3"
 
- _save_last "$settingsstr" "$plotstr" "$datastr"
- local gnuplotstr="$settingsstr"$'\n'"$plotstr $datastr"
+  _save_last "$settingsstr" "$plotstr" "$datastr"
+  local gnuplotstr="$settingsstr"$'\n'"$plotstr $datastr; pause mouse close"
 
- echo "$gnuplotstr"
+  echo "$gnuplotstr"
 
 }
 
 _gnuplot () {
 
   local gnuplotstr="$1"
-  
-  if [[ ! -z "$2" ]]; then
-    local savefilename="$2"
-    echo "$gnuplotstr" > "$savefilename"
-    echo \[plot\]\("$savefilename"\)
-  fi
-   
+
   gnuplot -p <<- EOF
     $gnuplotstr
 EOF
+
+  if [[ ! -z "$2" ]]; then
+    local savefilename="$2"
+    echo "$gnuplotstr" > ""$savefilename"_inputs"
+    echo \[gnuplotinputs\]\(""$savefilename"_inputs"\)$'\n'[gnuplot]\(""$savefilename".svg"\)
+  fi
 
 }
 
@@ -214,7 +221,8 @@ xy-1x-ny () {
   local ylabel="$5"
   local lines="$6"
   local chosensettings="${7:-normal}"
-  local savefilename="$8"
+  local save="$8"
+  local savefilename="$9"
 
   local data="$(_data2ssv "$data" "$datatype")"
 
@@ -250,7 +258,7 @@ xy-1x-ny () {
   local datastr="$datastr1$datastr2"
   
   _set-chosen-settings "$chosensettings"
-  local settingsstr="$(_setsettingsstr "$xlabel" "$ylabel" "$title" "$ycolumns")"
+  local settingsstr="$(_setsettingsstr "$xlabel" "$ylabel" "$title" "$ycolumns" "$save" "$savefilename")"
   
   local gnuplotstr="$(_setgnuplotstr "$settingsstr" "$plotstr" "$datastr")"
   
@@ -284,7 +292,8 @@ xy-mx-ny () {
   local ylabel="$5"
   local lines="$6"
   local chosensettings="${7:-normal}"
-  local savefilename="$8"
+  local save="$8"
+  local savefilename="$9"
   
   #plotstr and datastr - will be different for each
   local datac="${data#*$'\n'}"
@@ -318,7 +327,7 @@ xy-mx-ny () {
   local datastr="$datastr1$datastr2"
 
   _set-chosen-settings "$chosensettings"
-  local settingsstr="$(_setsettingsstr "$xlabel" "$ylabel" "$title" "$ycolumns")"
+  local settingsstr="$(_setsettingsstr "$xlabel" "$ylabel" "$title" "$ycolumns" "$save" "$savefilename")"
   
   local gnuplotstr="$(_setgnuplotstr "$settingsstr" "$plotstr" "$datastr")"
   
