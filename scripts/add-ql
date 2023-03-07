@@ -1,7 +1,9 @@
 #!/bin/bash
 
+buff="${1:-$(</dev/stdin)}"
+
 echo "
 
-"$(hnow)"
+"$(hnow-l)"
 
-"$1"" >> "$(clb-loc)"
+"$buff"" >> "$(clb-loc)"

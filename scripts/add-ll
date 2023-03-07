@@ -2,7 +2,7 @@
 
 echo "
 
-"$(hnow)"
+"$(hnow-l)"
 
 " >> "$(clb-loc)"
 
