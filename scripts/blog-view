@@ -1,0 +1,5 @@
+#!/bin/bash
+
+blogfile="$HOME/repos/gitlab.com/truth998877/skippysplace-site/README.md"
+
+view "$blogfile"

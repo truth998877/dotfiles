@@ -1,0 +1,6 @@
+#!/bin/bash
+
+blogfile="$HOME/repos/gitlab.com/truth998877/skippysplace-site/README.md"
+
+
+vim "$blogfile" +11.!hnow-l -c wq;vim "$blogfile" +14
