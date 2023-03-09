@@ -167,7 +167,7 @@ fi
 
 # logging
 
-set-clb () { . set-clb-1 "$1" ; echo logging to "$(clb-loc)" ; }
+set-clb () { . set-clb-1 "$1" ; echo Now logging to "$(clb-loc)" ; }
 
 # enable programmable completion features (you don't need to enable
 # this, if it's already enabled in /etc/bash.bashrc and /etc/profile
