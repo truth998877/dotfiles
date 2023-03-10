@@ -1,0 +1,3 @@
+#!/bin/bash
+
+jq  -r '.logbooks[] | "\(.logbooknumber) - \(.shorttitle)"' "$LOGBOOKS/logbooks.json"
