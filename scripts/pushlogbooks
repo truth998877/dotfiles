@@ -1,0 +1,6 @@
+#!/bin/bash
+
+cd "$LOGBOOKS"
+git add .
+git commit -m 'updated logbooks'
+git push
