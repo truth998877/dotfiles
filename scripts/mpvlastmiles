@@ -6,7 +6,8 @@
 
 case "$1" in
   genunix)
-    mpvastream play rtmp://live.genunix.com/blastwave/
+   # mpvastream play rtmp://live.genunix.com/blastwave/
+    mpvastream play https://alpha.genunix.com:4443/blastwave/10fps496k.m3u8
   ;;
   twitch)
     mpvastream play https://www.twitch.tv/lastmiles/
