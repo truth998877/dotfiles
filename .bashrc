@@ -3,7 +3,7 @@ set +H
 
 case $HOSTNAME in
 
-   earth|jupiter|alpha|beta|gamma)
+   earth|jupiter|saturn|alpha|beta|gamma)
    PLATFORM=debian
    ;;
 
