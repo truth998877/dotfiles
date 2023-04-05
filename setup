@@ -1,14 +1,19 @@
 #!/bin/bash
-set -e
 
+#sets a system up to use the dotfiles repo
+#assumes git is installed, and dotfiles repo has been cloned into $HOME/repos/github.com/$GITUSER/dotfiles
+
+set -e
 
 if [[ -f "$HOME/alreadysetup" ]]; then
   echo "Already set up"
   exit 0
 fi
 
-#echo "Installing dependants"
-#./install-dependants
+echo "Installing dependants, if not at work!"
+if [[ $END != work ]]; then
+  ./install-dependants
+if
 
 echo "Setting up bash dot files..."
 
@@ -38,11 +43,6 @@ for i in vim tmux ssh; do
   cd $i && ./setup
   cd -
 done
-
-#echo "Setting up weechat"
-#./weechat-setup
-
-#./scripts/install-dependants
 
 echo "Setting already setup flag"
 touch $HOME/alreadysetup
