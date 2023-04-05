@@ -31,7 +31,8 @@ esac
 
 case $HOSTNAME in
 
-  earth|saturn|moon|moonbaby|macbook.local)
+  #set a virtual debian system's hostname to "frontendtest" to test frontend setup
+  earth|saturn|moon|moonbaby|macbook.local|frontendtest)
   END=front
   ;;
 
@@ -40,6 +41,7 @@ case $HOSTNAME in
   ;;
 
   *)
+  END=back
   unamestr="$(uname -sr)"
   if [[ $unamestr == CYGWIN* || $unamestr == MINGW* || $unamestr == MINGW32* || $unamestr == MSYS* ]]; then
     END=work
