@@ -43,7 +43,7 @@ case $HOSTNAME in
   *)
   END=back
   unamestr="$(uname -sr)"
-  if [[ $unamestr == CYGWIN* || $unamestr == MINGW* || $unamestr == MINGW32* || $unamestr == MSYS* ]]; then
+  if [[ $unamestr == CYGWIN* || $unamestr == MINGW* || $unamestr == MINGW32* || $unamestr == MSYS* || $HOSTNAME == work ]]; then
     END=work
   fi
   ;;
