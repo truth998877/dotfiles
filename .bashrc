@@ -19,13 +19,37 @@ case $HOSTNAME in
    PLATFORM=darwin
    ;;
 
+   pluto)
+   PLATFORM=freebsd
+   ;;
+
    *)
    echo 'Hostname not recognised, assuming debian based'
    PLATFORM=debian
 
 esac
 
+case $HOSTNAME in
+
+  earth|saturn|moon|moonbaby|macbook.local)
+  END=front
+  ;;
+
+  venus|jupiter|pluto|alpha|beta|gamma)
+  END=back
+  ;;
+
+  *)
+  unamestr="$(uname -sr)"
+  if [[ $unamestr == CYGWIN* || $unamestr == MINGW* || $unamestr == MINGW32* || $unamestr == MSYS* ]]; then
+    END=work
+  fi
+  ;;
+
+esac 
+
 export PLATFORM
+export END
 export USER="${USER:-$(whoami)}"
 export GITUSER="truth998877"
 
@@ -213,3 +237,7 @@ complete -C stream stream
 complete -C ankicli ankicli
 
 _source_if "$HOME/.bashrc.d/.bashrc_$HOSTNAME"
+
+if [[ $END == work ]]; then 
+  _source_if "$HOME/.bashrc.d/.bashrc_work"
+fi
