@@ -1,57 +1,65 @@
 
 set +H
 
-case $HOSTNAME in
+#set-end-platform  () {
+#
+#case $HOSTNAME in
+#
+#   earth|jupiter|saturn|alpha|beta|gamma)
+#   PLATFORM=debian
+#   ;;
+#
+#   moon)
+#   PLATFORM=manjaro
+#   ;;
+#
+#   moonbaby)
+#   PLATFORM=postmarketos
+#   ;;
+#
+#   macbook.local)
+#   PLATFORM=darwin
+#   ;;
+#
+#   pluto)
+#   PLATFORM=freebsd
+#   ;;
+#
+#   *)
+#   echo 'Hostname not recognised, assuming debian based'
+#   PLATFORM=debian
+#
+#esac
+#
+#case $HOSTNAME in
+#
+#  #set a virtual debian system's hostname to "frontendtest" to test frontend setup
+#  earth|saturn|moon|moonbaby|macbook.local|frontendtest)
+#  END=front
+#  ;;
+#
+#  venus|jupiter|pluto|alpha|beta|gamma)
+#  END=back
+#  ;;
+#
+#  *)
+#  END=back
+#  unamestr="$(uname -sr)"
+#  if [[ $unamestr == CYGWIN* || $unamestr == MINGW* || $unamestr == MINGW32* || $unamestr == MSYS* || $HOSTNAME == work ]]; then
+#    END=work
+#  fi
+#  ;;
+#
+#esac 
+#
+#export PLATFORM
+#export END
+#
+#}
 
-   earth|jupiter|saturn|alpha|beta|gamma)
-   PLATFORM=debian
-   ;;
+#export -f set-end-platform
 
-   moon)
-   PLATFORM=manjaro
-   ;;
 
-   moonbaby)
-   PLATFORM=postmarketos
-   ;;
-
-   macbook.local)
-   PLATFORM=darwin
-   ;;
-
-   pluto)
-   PLATFORM=freebsd
-   ;;
-
-   *)
-   echo 'Hostname not recognised, assuming debian based'
-   PLATFORM=debian
-
-esac
-
-case $HOSTNAME in
-
-  #set a virtual debian system's hostname to "frontendtest" to test frontend setup
-  earth|saturn|moon|moonbaby|macbook.local|frontendtest)
-  END=front
-  ;;
-
-  venus|jupiter|pluto|alpha|beta|gamma)
-  END=back
-  ;;
-
-  *)
-  END=back
-  unamestr="$(uname -sr)"
-  if [[ $unamestr == CYGWIN* || $unamestr == MINGW* || $unamestr == MINGW32* || $unamestr == MSYS* || $HOSTNAME == work ]]; then
-    END=work
-  fi
-  ;;
-
-esac 
-
-export PLATFORM
-export END
 export USER="${USER:-$(whoami)}"
 export GITUSER="truth998877"
 
@@ -150,6 +158,8 @@ if [ -x /usr/bin/dircolors ]; then
     #alias fgrep='fgrep --color=auto'
     #alias egrep='egrep --color=auto'
 fi
+
+set-platform-end
 
 if [[ $PLATFORM == darwin ]];then
   alias ls='ls -G'
