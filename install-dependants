@@ -1,6 +1,8 @@
 #!/bin/bash
 
 #set the packages to install depending on front or back end system
+#assumes that the dotfiles repos has been cloned to the system and the system has been configured to use the dotfiles repo by the use of 'setup' and 'exec bash -l' has been run
+
 case $END in
 
  front)
