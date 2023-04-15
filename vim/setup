@@ -1,7 +1,30 @@
 #!/bin/bash
 
 if [ -z "$(which vim)" -o -z "$(which vimtutor)" ]; then
-  echo "Warning, doesn't look like you have full Vim version."
+  echo "Warning, doesn't look like you have full Vim version, installing..."
+  case $PLATFORM in
+    debian)
+      sudo apt-get update
+      sudo apt-get upgrade
+      sudo apt-get install vim
+      ;;
+
+    darwin)
+      brew update
+      brew upgrade
+      brew install vim
+      ;;
+
+    manjaro)
+      sudo pacman -Syu vim
+      ;;
+
+    postmarketos)
+      echo apk update
+      echo apk upgrade
+      echo apk add vim
+      ;;
+  esac
 fi
 
 if [[ -f "$HOME/.vimrc" ]]; then
