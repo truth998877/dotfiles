@@ -10,11 +10,6 @@ if [[ -f "$HOME/alreadysetup" ]]; then
   exit 0
 fi
 
-echo "Installing dependants, if not at work!"
-if [[ $END != work ]]; then
-  ./install-dependants
-if
-
 echo "Setting up bash dot files..."
 
 for i in .bashrc .dircolors .profile; do
@@ -38,6 +33,10 @@ ln -sf "$PWD/templates/" "$HOME/templates"
 #ln -sf "$PWD/scripts" "$HOME/Scripts"
 
 echo "Setting up vim, tmux and ssh config"
+
+cd "$HOME/repos/truth998877/dotfiles/scripts"
+set-platform-end
+cd -
 
 for i in vim tmux ssh; do
   cd $i && ./setup
