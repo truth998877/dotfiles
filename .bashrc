@@ -159,11 +159,6 @@ if [ -x /usr/bin/dircolors ]; then
     #alias egrep='egrep --color=auto'
 fi
 
-set-platform-end
-
-if [[ $PLATFORM == darwin ]];then
-  alias ls='ls -G'
-fi
 
 _source_if() { [[ -r "$1" ]] && source "$1"; }
 
@@ -219,6 +214,12 @@ export GEM_HOME="$HOME/gems"
 export PATH="$HOME/gems/bin:$PATH"
 export PATH="/usr/local/go/bin:$PATH"
 export PATH="$HOME/repos/github.com/truth998877/dotfiles/scripts:~/repos/github.com/truth998877/dotfiles/scripts/local/$HOSTNAME:$HOME/.secrets/facebook:$PATH"
+
+_source_if "$DOTFILES/set-platform-end"
+
+if [[ $PLATFORM == darwin ]];then
+  alias ls='ls -G'
+fi
 
 #these need to be on all systems
 #export SNIPPETS="/home/tony/repos/github.com/truth998877/dotfiles/snippets"

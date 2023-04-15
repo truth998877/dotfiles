@@ -1,5 +1,3 @@
-#!/bin/bash
-
 case $HOSTNAME in
 
    earth|jupiter|saturn|alpha|beta|gamma)

@@ -34,9 +34,7 @@ ln -sf "$PWD/templates/" "$HOME/templates"
 
 echo "Setting up vim, tmux and ssh config"
 
-cd "$HOME/repos/truth998877/dotfiles/scripts"
-set-platform-end
-cd -
+source set-platform-end
 
 for i in vim tmux ssh; do
   cd $i && ./setup
