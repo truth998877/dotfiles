@@ -1,5 +1,5 @@
 #!/bin/bash
-test type tmux >/dev/null 2>&1 && echo "TMUX isn't installed. Skipping." && exit 1
+#test type tmux >/dev/null 2>&1 && echo "TMUX isn't installed. Skipping." && exit 1
 
 
 if [[ -z "$(which tmux)" ]]; then
