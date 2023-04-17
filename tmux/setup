@@ -21,12 +21,31 @@ if [[ -z "$(which vim)" ]]; then
 
   if [[ $END == work ]]; then
      echo on a \'work\' system, so ...
+
+     mkdir -p "$HOME/tmux-install"
+     cd "$HOME/tmux-install"
+
      #download https://github.com/facebook/zstd/releases/download/v1.5.5/zstd-v1.5.5-win64.zip
+     curl -o zstd-v1.5.5-win64.zip -L "https://github.com/facebook/zstd/releases/download/v1.5.5/zstd-v1.5.5-win64.zip"
      #download https://repo.msys2.org/msys/x86_64/tmux-3.3.a-1-x86_64.pkg.tar.zst
+     curl -o tmux-3.3.a-1-x86_64.pkg.tar.zst https://repo.msys2.org/msys/x86_64/tmux-3.3.a-1-x86_64.pkg.tar.zst
      #download https://repo.msys2.org/msys/x86_64/libevent-2.1.12-4-x86_64.pkg.tar.zst
-     #extract zstd
-     #use zstd to extract tmux.exe and blah to the correct folder probably same as mintty.exe    
+     curl -o libevent-2.1.12-4-x86_64.pkg.tar.zst https://repo.msys2.org/msys/x86_64/libevent-2.1.12-4-x86_64.pkg.tar.zst     
      
+
+     #extract - sort out the filenames and where the extracted files end up
+     unzip zstd-v1.5.5-win64.zip
+     
+     #extract only the files needed
+     ./zstd-v1.5.5-win64/zstd.exe -d tmux-3.3.a-1-x86_64.pkg.tar.zst
+     ./zstd-v1.5.5-win64/zstd.exe -d libevent-2.1.12-4-x86_64.pkg.tar.zst
+     
+     tar -xvf tmux-3.3.a-1-x86_64.pkg.tar --strip-components=2 usr/bin/tmux.exe
+     tar -xvf libevent-2.1.12-4-x86_64.pkg.tar --strip-components=2 usr/bin/msys-event_core-2-1-7.dll
+     
+     #copy the needed files to /usr/bin - note this wont work unless git for windows is installed in a folder which the user has write access to without admin rights
+     cp  tmux.exe /usr/bin
+     cp  msys-event_core-2-1-7.dll /usr/bin
 
   fi
 
