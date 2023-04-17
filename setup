@@ -25,7 +25,7 @@ done
 if [[ ! -d $HOME/.bashrc.d ]]; then
   mkdir -p "$HOME/.bashrc.d"
 fi
-ln -sf "$PWD/bashrc.d/" "$HOME/.bashrc.d"
+ln -sf "$PWD/.bashrc.d/" "$HOME/.bashrc.d"
 
 if [[ ! -d $HOME/templates ]]; then
   mkdir -p "$HOME/templates"
