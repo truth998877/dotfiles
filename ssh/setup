@@ -1,8 +1,9 @@
 #!/bin/bash
 
+if [[ $END != work ]]; then
+  if [[ -f "$HOME/.ssh/config" ]]; then
+    cp -p "$HOME/.ssh/config" "$HOME/.ssh/config-orig"
+  fi
 
-if [[ -f "$HOME/.ssh/config" ]]; then
-  cp -p "$HOME/.ssh/config" "$HOME/.ssh/config-orig"
+  ln -sf "$PWD/config" "$HOME/.ssh/config"
 fi
-
-ln -sf "$PWD/config" "$HOME/.ssh/config"

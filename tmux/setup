@@ -4,20 +4,32 @@
 
 if [[ -z "$(which tmux)" ]]; then
   echo "it looks like tmux is not installed, installing"
-  case $PLATFORM in
-    debian)
-      sudo apt-install tmux
-      ;;
-    darwin)
-      brew install tmux
-      ;;
-    manjaro)
-      sudo pacman -Syu tmux
-      ;;
-    postmarketos)
-      apk add tmux
-      ;;
-  esac
+  if [[ $END != work ]]; then
+    case $PLATFORM in
+      debian)
+        sudo apt-install tmux
+        ;;
+      darwin)
+        brew install tmux
+        ;;
+      manjaro)
+        sudo pacman -Syu tmux
+        ;;
+      postmarketos)
+        apk add tmux
+        ;;
+    esac
+
+  for i in .tmux.conf .tmux-in.conf .tmux.live.conf .tmux-out.conf;do
+    if [[ -f "$HOME/$i" ]]; then
+      cp -p "$HOME/$i" "$HOME/$i-orig"
+    fi
+
+    ln -sf "$PWD/$i" "$HOME/$i"
+
+  done
+ 
+  fi
 
   if [[ $END == work ]]; then
      echo on a \'work\' system, so ...
@@ -47,17 +59,8 @@ if [[ -z "$(which tmux)" ]]; then
      cp  tmux.exe /usr/bin
      cp  msys-event_core-2-1-7.dll /usr/bin
 
-  fi
 fi
 
-for i in .tmux.conf .tmux-in.conf .tmux.live.conf .tmux-out.conf;do
-  if [[ -f "$HOME/$i" ]]; then
-    cp -p "$HOME/$i" "$HOME/$i-orig"
-  fi
-
-  ln -sf "$PWD/$i" "$HOME/$i"
-
-done
 
 #ln -sf "$PWD/.tmux.conf" "$HOME/.tmux.conf"
 #ln -sf "$PWD/.tmux-in.conf" "$HOME/.tmux-in.conf"

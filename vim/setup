@@ -27,8 +27,12 @@ if [ -z "$(which vim)" -o -z "$(which vimtutor)" ]; then
   esac
 fi
 
-if [[ -f "$HOME/.vimrc" ]]; then
-  cp -p "$HOME/.vimrc" "$HOME/.vimrc-orig"
+if [[ $END != work ]]; then
+  if [[ -f "$HOME/.vimrc" ]]; then
+    cp -p "$HOME/.vimrc" "$HOME/.vimrc-orig"
+  fi
+
+  ln -sf "$PWD/.vimrc" "$HOME/.vimrc"
 fi
 
-ln -sf "$PWD/.vimrc" "$HOME/.vimrc"
+

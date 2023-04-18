@@ -49,6 +49,10 @@ for i in vim tmux ssh; do
   cd -
 done
 
+if [[ $END == work ]]; then
+  ./setup-dotfiles-git-bash
+fi
+
 echo "Setting already setup flag"
 touch $HOME/alreadysetup
 
