@@ -1,5 +1,12 @@
 #!/bin/bash
 
+_backup () {
+
+  if [[ -f $HOME/$1 ]]; then
+    mv "$HOME/$1" "$HOME/$1-old"
+  fi
+
+}
 
 _copy-from-repo () {
 
@@ -12,17 +19,20 @@ cd $HOME/repos/github.com/truth998877/dotfiles
 git pull
 
 for i in .bashrc .dircolors .profile; do
+  _backup "$i"
   _copy-from-repo "$i"
 done
 
 cd vim
 
+_backup .vimrc
 _copy-from-repo .vimrc
 
 cd -
 cd tmux
 
 for i in .tmux.conf .tmux-in.conf .tmux.live.conf .tmux-out.conf; do
+  _backup "$i"
   _copy-from-repo "$i"
 done
 
