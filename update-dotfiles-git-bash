@@ -16,6 +16,8 @@ _copy-from-repo () {
 
 cd $HOME/repos/github.com/truth998877/dotfiles
 
+git pull
+
 for i in .bashrc .dircolors .profile; do
   _backup "$i"
   _copy-from-repo "$i"
@@ -36,4 +38,4 @@ done
 
 cd -
 
-
+echo 'now run "exec bash -l"'
