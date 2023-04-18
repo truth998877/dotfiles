@@ -10,7 +10,9 @@ if [[ -f "$HOME/alreadysetup" ]]; then
   exit 0
 fi
 
-echo "Setting up bash dot files..."
+source set-platform-end
+
+if [[ $END != work ]]; then
 
 for i in .bashrc .dircolors .profile; do
   if [[ -f "$HOME/$i" ]];then
@@ -32,6 +34,8 @@ if [[ ! -d $HOME/templates ]]; then
 fi
 ln -sf "$PWD/templates/" "$HOME/templates"
 
+fi
+
 
 #ln -sf "$PWD/.bashrc" "$HOME/.bashrc"
 #ln -sf "$PWD/.dircolors" "$HOME/.dircolors"
@@ -40,9 +44,6 @@ ln -sf "$PWD/templates/" "$HOME/templates"
 #ln -sf "$PWD/.profile" "$HOME/.bash_profile"
 #ln -sf "$PWD/scripts" "$HOME/Scripts"
 
-echo "Setting up vim, tmux and ssh config"
-
-source set-platform-end
 
 for i in vim tmux ssh; do
   cd $i && ./setup
