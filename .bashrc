@@ -213,7 +213,7 @@ export PATH=/opt/flex/bin:/home/tony/.local/bin:$PATH
 export GEM_HOME="$HOME/gems"
 export PATH="$HOME/gems/bin:$PATH"
 export PATH="/usr/local/go/bin:$PATH"
-#export PATH="$HOME/repos/github.com/truth998877/dotfiles/scripts:~/repos/github.com/truth998877/dotfiles/scripts/local/$HOSTNAME:$HOME/.secrets/facebook:$PATH"
+export PATH="$HOME/repos/github.com/truth998877/dotfiles/scripts:~/repos/github.com/truth998877/dotfiles/scripts/local/$HOSTNAME:$HOME/.secrets/facebook:$PATH"
 
 _source_if "$DOTFILES/set-platform-end"
 
