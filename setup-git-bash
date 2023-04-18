@@ -29,7 +29,7 @@ _copy-from-repo .vimrc
 cd -
 cd tmux
 
-for i in .tmux.conf .tmux-in.conf .tmux-live.conf .tmux-out.conf; do
+for i in .tmux.conf .tmux-in.conf .tmux.live.conf .tmux-out.conf; do
   _backup "$i"
   _copy-from-repo "$i"
 done
