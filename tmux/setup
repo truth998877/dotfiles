@@ -59,8 +59,8 @@ if [[ -z "$(which tmux)" ]]; then
      cp  tmux.exe /usr/bin
      cp  msys-event_core-2-1-7.dll /usr/bin
 
+  fi
 fi
-
 
 #ln -sf "$PWD/.tmux.conf" "$HOME/.tmux.conf"
 #ln -sf "$PWD/.tmux-in.conf" "$HOME/.tmux-in.conf"
