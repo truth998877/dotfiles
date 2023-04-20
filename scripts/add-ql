@@ -7,3 +7,5 @@ echo "
 "$(hnow-l)"
 
 "$buff"" >> "$(clb-loc)"
+
+#TODO for logbooks which are located on github, then push the new entry automatically

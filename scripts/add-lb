@@ -1,5 +1,8 @@
 #!/bin/bash
 
+#TODO index should differentiate from local only (work) and those on github
+#TODO work notebooks should be located in a  onedrive directory
+
 read -p "Enter Short Title :> " shorttitle
 read -p "Enter Long Title :> " longtitle
 read -p "Enter location :> " location
