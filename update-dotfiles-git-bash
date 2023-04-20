@@ -7,25 +7,29 @@ _copy-from-repo () {
 
 }
 
-cd $HOME/repos/github.com/truth998877/dotfiles
+if [[ $END == work ]]; then
 
-git pull
+  cd $HOME/repos/github.com/truth998877/dotfiles
 
-for i in .bashrc .dircolors .profile; do
-  _copy-from-repo "$i"
-done
+  git pull
 
-cd vim
+  for i in .bashrc .dircolors .profile; do
+    _copy-from-repo "$i"
+  done
 
-_copy-from-repo .vimrc
+  cd vim
 
-cd -
-cd tmux
+  _copy-from-repo .vimrc
 
-for i in .tmux.conf .tmux-in.conf .tmux.live.conf .tmux-out.conf; do
-  _copy-from-repo "$i"
-done
+  cd -
+  cd tmux
 
-cd -
+  for i in .tmux.conf .tmux-in.conf .tmux.live.conf .tmux-out.conf; do
+    _copy-from-repo "$i"
+  done
 
-echo 'now run "exec bash -l"'
+  cd -
+
+  echo 'now run "exec bash -l"'
+
+fi
