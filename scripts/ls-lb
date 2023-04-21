@@ -1,3 +1,11 @@
 #!/bin/bash
 
+#TODO functionize rwxrob style, if no argument list number and short title of all log books, if the argument is title, just list the titles of each logbook
+
+_list-lb-num-title () {
+
 jq  -r '.logbooks[] | "\(.logbooknumber) - \(.shorttitle)"' "$LOGBOOKS/logbooks.json"
+
+}
+
+_list-lb-num-title

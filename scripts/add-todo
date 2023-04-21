@@ -1,0 +1,6 @@
+#!/bin/bash
+
+#for the currently set logbook add the following to the to-do section of the logbook, title: titlestring, description: description string, complete: no
+#if invoked from vim (!!), then echo "#TODO: titlestring - title description back to the file if the file from which it is invoked is the current logbook
+#if invoked from cli read title and description from stdin, give the option to set the logbook before hand
+

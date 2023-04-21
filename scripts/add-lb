@@ -3,6 +3,8 @@
 #TODO index should differentiate from local only (work) and those on github
 #TODO work notebooks should be located in a  onedrive directory
 
+#TODO logbooks.json will contain a list of todod for each logbook, thus a number of standard todo's should be added to this section when each logbook is created
+
 read -p "Enter Short Title :> " shorttitle
 read -p "Enter Long Title :> " longtitle
 read -p "Enter location :> " location
