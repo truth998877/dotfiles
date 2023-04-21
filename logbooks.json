@@ -1,0 +1,25 @@
+{
+  "logbooks": [
+    {
+      "logbooknumber": "1",
+      "shorttitle": "short title",
+      "longtitle": "long title",
+      "location": "test",
+      "status": "open"
+    },
+    {
+      "logbooknumber": "2",
+      "shorttitle": "shorter title",
+      "longtitle": "longer title",
+      "location": "testing",
+      "status": "open"
+    },
+    {
+      "logbooknumber": "3",
+      "shorttitle": "ever shorter title",
+      "longtitle": "even longer title",
+      "location": "moretesting",
+      "status": "open"
+    }
+  ]
+}
