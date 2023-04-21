@@ -2,3 +2,4 @@
 
 #TODO use bash select to select which todo to mark as complete for the current logbook
 #TODO ? allow multiple todo's to be marked as complete at the same time
+#TODO echo to the current logbook that the todo has been completed.
