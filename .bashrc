@@ -198,8 +198,8 @@ if [ -f ~/.bash_aliases ]; then
     . ~/.bash_aliases
 fi
 
-# logging
-
+## log books
+#set the current logbook
 set-clb () { . set-clb-1 "$1" ; clb ; }
 
 # enable programmable completion features (you don't need to enable
