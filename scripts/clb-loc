@@ -1,5 +1,5 @@
 #!/bin/bash
 
-dir="$(jq -r --arg jq_currentlogbook "$CURRENTLOGBOOK" '.logbooks[$jq_currentlogbook|tonumber-1]|.location' "$LOGBOOKS/logbooks.json")"
+dir="$(jq -r --arg jq_currentlogbook "$CURRENTLOGBOOK" '.logbooks[$jq_currentlogbook|tonumber-1]|.location' "$LOGBOOKSINDEX")"
 
 echo "$LOGBOOKS/$dir/README.md"

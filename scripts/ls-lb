@@ -4,7 +4,7 @@
 
 _list-lb-num-title () {
 
-jq  -r '.logbooks[] | "\(.logbooknumber) - \(.shorttitle)"' "$LOGBOOKS/logbooks.json"
+jq  -r '.logbooks[] | "\(.logbooknumber) - \(.shorttitle)"' "$LOGBOOKSINDEX"
 
 }
 
