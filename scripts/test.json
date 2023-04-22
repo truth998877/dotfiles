@@ -1,0 +1,39 @@
+{
+  "logbooks": [
+    {
+      "logbooknumber": "1",
+      "shorttitle": "short title",
+      "longtitle": "long title",
+      "location": "test",
+      "status": "open",
+      "todos": [
+        {
+          "number": "1",
+          "title": "todo 1",
+          "description": "todo 1 description",
+          "complete": "no"
+        },
+        {
+          "number": "2",
+          "title": "todo 2",
+          "description": " todo 2 description",
+          "complete": "no"
+        },
+        {
+          "number": "3",
+          "title": "title",
+          "description": "description",
+          "complete": "no"
+        }
+      ]
+    },
+    {
+      "logbooknumber": "2",
+      "shorttitle": "short title test",
+      "longtitle": "long title test",
+      "location": "todotest",
+      "status": "open",
+      "todos": []
+    }
+  ]
+}

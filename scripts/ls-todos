@@ -1,0 +1,12 @@
+#!/bin/bash
+
+#for the current logbook, list all of the incomplete todo's
+
+_ls-todo () {
+
+jq -r --arg jq_currentlogbook "$CURRENTLOGBOOK" --arg jqlogbooks "$LOGBOOKS" '.logbooks[$jq_currentlogbook|tonumber-1].todos[]|"Number: \(.number) - Title: \(.title) - Description: \(.description) - Complete: \(.complete)"' "$LOGBOOKSINDEX"
+
+}
+
+echo "Listing all todo's for the current logbook"
+_ls-todo

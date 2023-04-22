@@ -5,21 +5,21 @@
       "shorttitle": "short title",
       "longtitle": "long title",
       "location": "test",
-      "status": "open"
-    },
-    {
-      "logbooknumber": "2",
-      "shorttitle": "shorter title",
-      "longtitle": "longer title",
-      "location": "testing",
-      "status": "open"
-    },
-    {
-      "logbooknumber": "3",
-      "shorttitle": "ever shorter title",
-      "longtitle": "even longer title",
-      "location": "moretesting",
-      "status": "open"
+      "status": "open",
+      "todos": [
+        {
+          "number": "1",
+          "title": "test1",
+          "description": "",
+          "complete": "no"
+        },
+        {
+          "number": "2",
+          "title": "test2",
+          "description": "",
+          "complete": "no"
+        }
+      ]
     }
   ]
 }

@@ -4,3 +4,16 @@
 #if invoked from vim (!!), then echo "#TODO: titlestring - title description back to the file if the file from which it is invoked is the current logbook
 #if invoked from cli read title and description from stdin, give the option to set the logbook before hand, echo both to the logbook
 
+
+nexttodonumber="$(jq -r --arg jq_currentlogbook "$CURRENTLOGBOOK" '[.logbooks[$jq_currentlogbook|tonumber-1].todos[].number|tonumber]|max+1'  "$LOGBOOKSINDEX")"
+
+read -p "Enter to-do  Number ["$(echo "$nexttodonumber")"] :> " number
+read -p "Enter Title :> " title
+read -p "Enter Description :> " description
+
+cp "$LOGBOOKSINDEX" "$LOGBOOKSINDEX.tmp"
+
+jq -r --arg jq_currentlogbook "$CURRENTLOGBOOK" --arg jq_number "$number" --arg jq_title "$title" --arg jq_description "$desription" '.logbooks[$jq_currentlogbook|tonumber-1].todos += [{"number": $jq_number, "title": $jq_title, "description": $jq_description, "complete": "no"}]' "$LOGBOOKSINDEX.tmp" > "$LOGBOOKSINDEX"
+
+
+rm "$LOGBOOKSINDEX.tmp"
