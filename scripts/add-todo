@@ -15,5 +15,6 @@ cp "$LOGBOOKSINDEX" "$LOGBOOKSINDEX.tmp"
 
 jq -r --arg jq_currentlogbook "$CURRENTLOGBOOK" --arg jq_number "$number" --arg jq_title "$title" --arg jq_description "$desription" '.logbooks[$jq_currentlogbook|tonumber-1].todos += [{"number": $jq_number, "title": $jq_title, "description": $jq_description, "complete": "no"}]' "$LOGBOOKSINDEX.tmp" > "$LOGBOOKSINDEX"
 
-
 rm "$LOGBOOKSINDEX.tmp"
+
+add-ql "New to-do added, number: $number, Entitled: $title, Description: $description" 
