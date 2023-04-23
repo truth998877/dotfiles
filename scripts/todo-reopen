@@ -12,13 +12,9 @@ select todo in $todos;do
 
   cp "$LOGBOOKSINDEX" "$LOGBOOKSINDEX.tmp"
   
-  jq -r --arg jq_currentlogbook "$CURRENTLOGBOOK" --arg jq_todonumber "$REPLY" '.logbooks[$jq_currentlogbook|tonumber-1].todos[$jq_todonumber|tonumber-1].complete="yes"' "$LOGBOOKSINDEX.tmp" > "$LOGBOOKSINDEX"
+  jq -r --arg jq_currentlogbook "$CURRENTLOGBOOK" --arg jq_todonumber "$REPLY" '.logbooks[$jq_currentlogbook|tonumber-1].todos[$jq_todonumber|tonumber-1].complete="no"' "$LOGBOOKSINDEX.tmp" > "$LOGBOOKSINDEX"
 
   rm "$LOGBOOKSINDEX.tmp"
-
-  completedtodo="$(jq -r --arg jq_currentlogbook "$CURRENTLOGBOOK" --arg jq_todonumber "$REPLY" '.logbooks[$jq_currentlogbook|tonumber-1].todos[$jq_todonumber|tonumber-1]|"\(.title)"' "$LOGBOOKSINDEX")"
-  
-  add-ql "Todo number: $REPLY, Entitled: $completedtodo has been completed"
 
   break
 done
