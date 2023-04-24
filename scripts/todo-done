@@ -4,12 +4,17 @@
 #TODO ? allow multiple todo's to be marked as complete at the same time
 #TODO echo to the current logbook that the todo has been completed.
 
+saved_IFS=$IFS
+
+
 todos="$(jq -r --arg jq_currentlogbook "$CURRENTLOGBOOK" '.logbooks[$jq_currentlogbook|tonumber-1].todos[]|"\(.title)"' "$LOGBOOKSINDEX")"
 
+IFS=$'\n'
 select todo in $todos;do
   #echo $todo
   #echo "$REPLY"
-
+  
+  IFS="$saved_IFS"
   cp "$LOGBOOKSINDEX" "$LOGBOOKSINDEX.tmp"
   
   jq -r --arg jq_currentlogbook "$CURRENTLOGBOOK" --arg jq_todonumber "$REPLY" '.logbooks[$jq_currentlogbook|tonumber-1].todos[$jq_todonumber|tonumber-1].complete="yes"' "$LOGBOOKSINDEX.tmp" > "$LOGBOOKSINDEX"
