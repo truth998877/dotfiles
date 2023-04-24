@@ -188,6 +188,7 @@ alias macbook='ssh tony@macbook'
 #these need to be on every system
 alias '?'=duck
 alias '??'=google
+alias '???'=bing
 alias now="date +'%A, %d %B %Y, %H:%M'"
 
 # Alias definitions.
