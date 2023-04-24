@@ -7,7 +7,10 @@
 
 nexttodonumber="$(jq -r --arg jq_currentlogbook "$CURRENTLOGBOOK" '[.logbooks[$jq_currentlogbook|tonumber-1].todos[].number|tonumber]|max+1'  "$LOGBOOKSINDEX")"
 
-read -p "Enter to-do  Number ["$(echo "$nexttodonumber")"] :> " number
+echo "Default values in []"
+read -p "Enter to-do Number ["$nexttodonumber"] :> " number
+number="${number:-$nexttodonumber}"
+
 read -p "Enter Title :> " title
 read -p "Enter Description :> " description
 
