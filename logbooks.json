@@ -23,11 +23,32 @@
           "number": "3",
           "title": "test title 3",
           "description": "",
-          "complete": "no"
+          "complete": "yes"
         },
         {
           "number": "4",
           "title": "test title 4",
+          "description": "",
+          "complete": "no"
+        },
+        {
+          "number": "5",
+          "title": "test title 5",
+          "description": "",
+          "complete": "yes"
+        }
+      ]
+    },
+    {
+      "logbooknumber": "2",
+      "shorttitle": "short title 2",
+      "longtitle": "long title 2",
+      "location": "test2",
+      "status": "open",
+      "todos": [
+        {
+          "number": "1",
+          "title": "todo test 1",
           "description": "",
           "complete": "no"
         }
