@@ -3,6 +3,7 @@
 #TODO logbooks may not be located on the current systems, thus it shojld only be possible to set the current logbooks to logbooks which are on the current system
 #TODO if setting a logbook which is located on git hub, then on setting the current logbook to one of these, the latest version should be pulled from github automatically.
 
+#TODO only export if $1 is less than or equal to the highest logbook number in the index
 
 
 export CURRENTLOGBOOK="$1"
