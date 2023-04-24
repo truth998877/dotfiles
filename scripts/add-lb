@@ -5,14 +5,23 @@
 
 #TODO logbooks.json will contain a list of todod for each logbook, thus a number of standard todo's should be added to this section when each logbook is created
 
+echo "Default values in []"
+
 read -p "Enter Short Title :> " shorttitle
+
 read -p "Enter Long Title :> " longtitle
-read -p "Enter location :> " location
-read -p "Enter Status :> " status
+default_location="$LOGBOOKS/$shorttitle"
+
+read -p "Enter Location [$default_location] :> " location
+location="${location:-$default_location}"
+
+read -p "Enter Status [open] :> " status
+status="${status:-open}"
 
 nextlbnumber="$(jq -r '[.logbooks[].logbooknumber|tonumber]|max+1' "$LOGBOOKSINDEX")"
 
-read -p "Enter Logbook Number ["$(echo "$nextlbnumber")"] :> " number
+#read -p "Enter Logbook Number ["$(echo "$nextlbnumber")"] :> " number
+read -p "Enter Logbook Number ["$nextlbnumber"] :> " number
 
 cp "$LOGBOOKSINDEX" "$LOGBOOKSINDEX.tmp"
 
@@ -21,4 +30,8 @@ jq -r --arg jq_shorttitle "$shorttitle" --arg jq_longtitle "$longtitle" --arg jq
 rm "$LOGBOOKSINDEX.tmp"
 
 mkdir "$LOGBOOKS/$location"
-touch "$LOGBOOKS/$location/README.md" 
+touch "$LOGBOOKS/$location/README.md"
+
+set-clb-1 "$number"
+add-ql "$longtitle"
+
