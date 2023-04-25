@@ -1,34 +1,32 @@
 #!/bin/bash
 
-if [ -z "$(which vim)" -o -z "$(which vimtutor)" ]; then
-  echo "Warning, doesn't look like you have full Vim version, installing..."
-  case $PLATFORM in
-    debian)
-      sudo apt-get update
-      sudo apt-get upgrade
-      sudo apt-get install w3m
-      ;;
-
-    darwin)
-      brew update
-      brew upgrade
-      brew install w3m
-      ;;
-
-    manjaro)
-      sudo pacman -Syu w3m
-      ;;
-
-    postmarketos)
-      echo apk update
-      echo apk upgrade
-      echo apk add w3m
-      ;;
-  esac
-fi
-
 if [[ $END != work ]]; then
+  if [ -z "$(which vim)" -o -z "$(which vimtutor)" ]; then
+    echo "Warning, doesn't look like you have full Vim version, installing..."
+    case $PLATFORM in
+      debian)
+        sudo apt-get update
+        sudo apt-get upgrade
+        sudo apt-get install w3m
+        ;;
 
+      darwin)
+        brew update
+        brew upgrade
+        brew install w3m
+        ;;
+
+      manjaro)
+        sudo pacman -Syu w3m
+        ;;
+
+      postmarketos)
+        echo apk update
+        echo apk upgrade
+        echo apk add w3m
+        ;;
+    esac
+  fi
   
   for i in config keymap;do
     if [[ -f "$HOME/.w3m/$i" ]]; then
@@ -36,7 +34,10 @@ if [[ $END != work ]]; then
     fi
     ln -sf "$PWD/.w3m/$i" "$HOME/.w3m/$i"
   done
+fi
 
+if [[$END == work ]]; then
+  echo install w3m in git bash for windows
 fi
 
 
