@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [[ $END != work ]]; then
-  if [ -z "$(which vim)" -o -z "$(which vimtutor)" ]; then
+  if [[ -z "$(which w3m)" ]]; then
     echo "Warning, doesn't look like you have full Vim version, installing..."
     case $PLATFORM in
       debian)
