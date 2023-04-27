@@ -1,0 +1,13 @@
+#!/bin/bash
+
+_restore () {
+
+if [[ -f "$HOME/$1-orig" ]]; then
+   mv "$HOME/$1-orig" "$HOME/$1"
+fi
+
+}
+
+for i in .bashrc .dircolors .profile .vimrc .tmux.conf .tmux-in.conf .tmux-live.conf .tmux-out.conf .w3m/config .w3m/keymap; do
+  _restore "$i"
+done

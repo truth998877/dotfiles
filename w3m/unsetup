@@ -1,0 +1,9 @@
+#!/bin/bash
+
+for i in config keymap; do  
+  rm "$HOME/$i"
+  if [[ -z "$HOME/$i-orig" ]]; then
+    cp -p "$HOME/$i-orig" "$HOME/$i"
+  fi
+done
+

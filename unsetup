@@ -1,7 +1,9 @@
 #!/bin/bash
 set -e
 
-for i in .bashrc .dircolors .profile; do
+if [[ $END == work ]]; then
+
+for i in .bashrc .dircolors .profile logbooks.json; do
   rm "$HOME/$i"
   if [[ -f "$HOME/$i-orig" ]] ; then 
     cp -p "$HOME/$i-orig" "$HOME/$i"
@@ -10,9 +12,19 @@ for i in .bashrc .dircolors .profile; do
   fi
 done
 
-for i in vim tmux ssh;do
+if [[ -d "$HOME/.bashrc.d" ]]; then
+  rm -rf "$HOME/.bashrc.d"
+fi
+
+for i in vim tmux ssh w3m;do
   cd "$i" && ./unsetup
   cd -
 done 
+
+fi
+
+if [[ $END == work ]]; then
+  ./unsetup-dotfiles-git-bash
+fi
 
 
