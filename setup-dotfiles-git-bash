@@ -3,7 +3,7 @@
 _backup () {
 
   if [[ -f $HOME/$1 ]]; then
-    mv "$HOME/$1" "$HOME/$1-old"
+    mv "$HOME/$1" "$HOME/$1-orig"
   fi
 
 }
@@ -31,11 +31,20 @@ _copy-from-repo .vimrc
 cd -
 cd tmux
 
-for i in .tmux.conf .tmux-in.conf .tmux.live.conf .tmux-out.conf; do
+for i in .tmux.conf .tmux-in.conf .tmux-live.conf .tmux-out.conf; do
   _backup "$i"
   _copy-from-repo "$i"
 done
 
 cd -
+
+cd w3m
+
+for i in config keymap; do
+  _backup "$i"
+  _copy-from-repo "$i"
+done
+
+
 
 echo 'now run "exec bash -l"'
