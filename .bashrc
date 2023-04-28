@@ -173,7 +173,7 @@ _source_if() { [[ -r "$1" ]] && source "$1"; }
 alias venus='ssh tony@venus'
 alias earth='ssh tony@earth'
 alias moon='ssh tony@moon'
-alias moonbaby='ssh tony@moonbaby'
+alias moonbaby='ssh user@moonbaby'
 alias mars='ssh tony@mars'
 alias jupiter='ssh tony@jupiter'
 alias saturn='ssh tony@saturn'
