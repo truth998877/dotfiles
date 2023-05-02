@@ -26,8 +26,9 @@ _snip() {
 #  shift
 #  local path="$SNIPPETS/$name"
 
-  local subdir="$SNIPSUBDIR"
+  local subdir="${SNIPSUBDIR:-text}"
   local name="$1"
+#  echo "$SNIPSUBDIR - $name"
   shift
   local path="$SNIPPETS/$subdir/$name"
   
