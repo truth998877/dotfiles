@@ -2,7 +2,7 @@
 
 epoch="$(date +"%s")"
 
-case in $PLATFORM
+case $PLATFORM in
 
   darwin)
     now="$(date -j -f "%s" "$epoch" +"%A, %d %B %Y, %H:%M:%S")"
