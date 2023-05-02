@@ -2,7 +2,18 @@
 
 epoch="$(date +"%s")"
 
-now="$(date -j -f "%s" "$epoch" +"%A, %d %B %Y, %H:%M:%S")"
+case in $PLATFORM
+
+  darwin)
+    now="$(date -j -f "%s" "$epoch" +"%A, %d %B %Y, %H:%M:%S")"
+  ;;
+  debian|postmarketos)
+    now="$(date --date '@'"$epoch" +"%A, %d %B %Y, %H:%M:%S")"
+  ;;
+  *)
+    exit 1
+  ;;
+esac
 
 
 echo -e '\n## '"$now [$epoch]"'\n\n'
