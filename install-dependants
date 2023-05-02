@@ -78,10 +78,10 @@ case $PLATFORM in
 
   echo postmarketos...
 
-  echo apk update
-  echo apk upgrade
+  echo sudo apk update
+  echo sudo apk upgrade
 
-  echo apk add $packages
+  echo sudo apk add bash bash-doc bash completion util-linux pciutils usbutils coreutils binutils findutils grep iproute2 $packages
 
   ;;
 
