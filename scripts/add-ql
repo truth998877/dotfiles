@@ -1,6 +1,6 @@
 #!/bin/bash
 
-buff="${1:-$(</dev/stdin)}"
+buff="${@:-$(</dev/stdin)}"
 
 echo "
 
