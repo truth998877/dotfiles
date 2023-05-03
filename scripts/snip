@@ -52,7 +52,7 @@ _snip() {
         buf=${buf//\{1\}/"$1"}
         shift
         buf=${buf//\{2\}/"$@"}
-      else  
+      else
         local -i n=1
         for arg in $@; do
           buf=${buf//\{$n\}/$arg}
@@ -63,9 +63,9 @@ _snip() {
     else
       while IFS=$'\n' read -r argline; do
         if [[ -n $argline ]]; then
-          IFS=" " snip $name $argline
+          IFS=" " _snip $name $argline
         fi
-      done
+      done  <<< "$in"
     fi
 
   fi
