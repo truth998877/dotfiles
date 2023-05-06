@@ -3,6 +3,8 @@
     {
           "name": "test 1",
           "description": "test 2 command description",
+          "end" : "front",
+          "platform" : "darwin",
           "functions": [
             {
               "name": "test 2 function 1 name",
@@ -46,6 +48,8 @@
         {
           "name": "test 2",
           "description": "test 2 command description",
+          "end" : "front",
+          "platform" : "darwin",
           "functions": [
             {
               "name": "test 2 function 1 name",
