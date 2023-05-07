@@ -14,10 +14,17 @@ _selectcmd () {
 
 }
 
+
+echo -e "\nScripts Index"
+echo -e "-------------"
+
 echo -e "\nSelect a script:\n"
 
 cmdindex="$(_selectcmd)"
 
 
+#magenta = \u001b[35m
+#white = \u001b[37m
+
 #TODO put this in a function
-jq -r --arg jq_cmdindex "$cmdindex" '.|"\nName:\n\(.commands[$jq_cmdindex|tonumber].name)\n\n" + "Description:\n\(.commands[$jq_cmdindex|tonumber].description)\n\n" + "Platform:\n\(.commands[$jq_cmdindex|tonumber].platform)\n\n" + "End:\n\(.commands[$jq_cmdindex|tonumber].end)\n\n" + "Functions:\n\([.commands[$jq_cmdindex|tonumber].functions[].name]|join("\n"))\n\n" + "Associated Commands:\n\([.commands[$jq_cmdindex|tonumber]."associated commands"[]]|join("\n"))\n\n" + "Dependants:\n\([.commands[$jq_cmdindex|tonumber].dependants[]]|join("\n"))\n\n" + "Status:\n\(.commands[$jq_cmdindex|tonumber].status)\n\n"' "$SCRIPTSINDEX"
+jq -r --arg jq_cmdindex "$cmdindex" '.|"\n\u001b[35mName:\n\u001b[37m\(.commands[$jq_cmdindex|tonumber].name)\n\n" + "\u001b[35mDescription:\n\u001b[37m\(.commands[$jq_cmdindex|tonumber].description)\n\n" + "\u001b[35mPlatform:\n\u001b[37m\(.commands[$jq_cmdindex|tonumber].platform)\n\n" + "\u001b[35mEnd:\n\u001b[37m\(.commands[$jq_cmdindex|tonumber].end)\n\n" + "\u001b[35mFunctions:\n\u001b[37m\([.commands[$jq_cmdindex|tonumber].functions[].name]|join("\n"))\n\n" + "\u001b[35mAssociated Commands:\n\u001b[37m\([.commands[$jq_cmdindex|tonumber]."associated commands"[]]|join("\n"))\n\n" + "\u001b[35mDependants:\n\u001b[37m\([.commands[$jq_cmdindex|tonumber].dependants[]]|join("\n"))\n\n" + "\u001b[35mStatus:\n\u001b[37m\(.commands[$jq_cmdindex|tonumber].status)\n\n"' "$SCRIPTSINDEX"
