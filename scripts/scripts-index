@@ -1,0 +1,21 @@
+#!/bin/bash
+
+_selectcmd () {
+  local cmdlist=("$(jq -r '.commands[].name' "$SCRIPTSINDEX")")
+
+  local OLD_IFS=${IFS};IFS=$'\n'
+
+  select cmd in ${cmdlist[@]};do
+    local cmdindex=$(jq -r --arg jq_cmd "$cmd" '[.commands[]|.name == $jq_cmd] |index(true)' "$SCRIPTSINDEX")
+    echo "$cmdindex"
+    IFS="${OLD_IFS}"
+    break
+  done
+
+}
+
+cmdindex="$(_selectcmd)"
+
+#jq -r --arg jq_cmdindex "$cmdindex" '.commands[$jq_cmdindex|tonumber] | "Name: \(.name)\nDescription: \(.description)\nEnd: \(.end)\nPlatform: \(.platform)\nFunctions : \([.functions[0]])"' "$SCRIPTSINDEX"  
+
+jq -r --arg jq_cmdindex "$cmdindex" '.|"Name:\n \(.commands[$jq_cmdindex|tonumber].name)\n" + "Description:\n \(.commands[$jq_cmdindex|tonumber].description)\n" + "Platform:\n \(.commands[$jq_cmdindex|tonumber].platform)\n" + "End:\n \(.commands[$jq_cmdindex|tonumber].end)\n" + "Functions:\n \([.commands[$jq_cmdindex|tonumber].functions[].name]|join("\n "))\n" + "Associated Commands:\n \([.commands[$jq_cmdindex|tonumber]."associated commands"[]]|join("\n "))\n" + "Dependants:\n \([.commands[$jq_cmdindex|tonumber].dependants[]]|join("\n "))"' "$SCRIPTSINDEX"
