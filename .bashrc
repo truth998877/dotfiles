@@ -72,6 +72,7 @@ export PGM="$GHREPOS/pgm"
 export LOCALSCRIPTS="$DOTFILES/scripts/local/$HOSTNAME"
 export LOGBOOKS="$GHREPOS/logbooks"
 export LOGBOOKSINDEX="$HOME/logbooks.json"
+export SCRIPTSINDEX="$HOME/scripts-index.json"
 export NOTEBOOKS="$GHREPOS/notebooks"
 export SNIPPETS="$DOTFILES/snippets"
 export EDITOR=vi
