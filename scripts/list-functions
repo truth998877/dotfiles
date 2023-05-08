@@ -18,7 +18,6 @@ get_fcn_list () {
 }
 
 script="$1"
-echo "$script"
 
 fcn_list=$(get_fcn_list "$script")
 echo "$fcn_list"
