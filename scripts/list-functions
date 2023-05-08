@@ -1,0 +1,24 @@
+#!/usr/local/bin/bash
+
+get_fcn_list () {
+
+  local script="$1"
+  local fcn_list="$(grep '()[[:space:]]{' "$script")"
+  #echo "$fcn_list"
+  #exit 0
+  local fcn_list_out
+
+  while IFS= read -r line;do
+    #echo "${line::-5}"
+    fnc_list_out+="${line:0:-5}"$'\n'
+  done <<< "$fcn_list"  
+
+  echo "$fnc_list_out"
+
+}
+
+script="$1"
+echo "$script"
+
+fcn_list=$(get_fcn_list "$script")
+echo "$fcn_list"
