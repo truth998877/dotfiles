@@ -1,0 +1,21 @@
+#!/bin/bash
+
+
+get_script_list () {
+
+  local script_list="$(find . -maxdepth 1 -perm +111 -type f)"
+  local script_list_out
+ 
+  while IFS= read -r line;do
+    script_list_out+="${line:2}"$'\n'
+  done <<< "$script_list"
+
+
+  echo "$script_list_out"
+
+}
+
+dir="${1:-.}"
+
+scriptlist="$(get_script_list "$dir")"
+echo "$scriptlist"
