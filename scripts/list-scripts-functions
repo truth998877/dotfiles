@@ -1,0 +1,49 @@
+#!/usr/local/bin/bash
+
+
+
+echo_scripts_and_functions () {
+
+local script_list=$(list-scripts)
+
+while IFS= read -r script_list_line;do
+  echo $'\n'"$script_list_line"
+    while IFS= read -r function_list_line;do
+      echo -e "   $function_list_line"
+    done <<< $(list-functions "$script_list_line")
+done <<< $script_list
+
+}
+
+auto-add-to-index () {
+
+local script_list=$(list-scripts)
+
+while IFS= read -r script_list_line;do
+  local script_name = "$script_list_line"
+  #TODO test script name to see if already in index, if yes, skip, else add.
+  read -p "Enter Description" script_description
+  read -p "Enter End" end
+  read -p "Enter Platform" platform
+    while IFS= read -r function_list_line;do
+      local function_name="$function_list_line"
+      #TODO test id function has already been added, if yes, skip, else add
+      read -p "Enter Function description" function_decription
+      functions_string+="[{\"name\": \""$function_name",\"description\" : \""$function_description" }]"
+    done <<< $(list-functions "$script_list_line")
+  read -p "Enter Associated Commands" command_1
+  read -p "Enter Dependant" dependant_1
+  read -p "Enter Status" command_status
+  
+done <<< $script_list
+
+
+#TODO functions, associated commands &  dependants need to be in their own loop to allow multipe entries to be added to form a single string i.e. functions_string, associated_commands_string and dependants_string
+
+#TODO string in the following form needs to be constructed accounting for the loops above
+# .command += [{"name" : "$script_name","description" : "$script_description", "end" : "$end", "platform" : "$platform", "functions": [{ "name" : "$function_name", "description" : "$function_description" }], "associated commands" : [ "$command_1", "$command_2" ], "dependants" : [ "$dependant_1" , "$dependant_2" ], "status" : "$command_status"}, 
+
+
+
+
+
