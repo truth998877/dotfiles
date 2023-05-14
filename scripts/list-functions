@@ -10,7 +10,11 @@ get_fcn_list () {
 
   while IFS= read -r line;do
     #echo "${line::-5}"
-    fnc_list_out+="${line:0:-5}"$'\n'
+    if [[ -z $line ]]; then
+      fnc_list_out=""
+    else
+      fnc_list_out+="${line:0:-5}"$'\n'
+    fi
   done <<< "$fcn_list"  
 
   echo "$fnc_list_out"
