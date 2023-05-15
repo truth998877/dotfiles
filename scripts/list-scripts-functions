@@ -39,9 +39,9 @@ while IFS= read -r script_list_line<&3;do
       echo no functions found in "$script_name"
       continue
     else 
-      echo function found:"$function_name"
+      echo "function found: $function_name"
     #TODO test id function has already been added, if yes, skip, else add
-      read -p "Enter Function description" function_description
+      read -p "Enter Function description: " function_description
       functions_string+="{\"name\" : \""$function_name"\",\"description\" : \""$function_description"\" },"
     fi
   done 4<<< $(list-functions "$script_list_line")
