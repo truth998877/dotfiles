@@ -4,6 +4,7 @@
 
 echo_scripts_and_functions () {
 
+
 local script_list=$(list-scripts)
 
 while IFS= read -r script_list_line;do
@@ -15,27 +16,63 @@ done <<< $script_list
 
 }
 
-auto-add-to-index () {
+#auto-add-to-index () {
 
-local script_list=$(list-scripts)
 
-while IFS= read -r script_list_line;do
-  local script_name = "$script_list_line"
+script_list=$(list-scripts)
+
+#echo "$script_list"
+
+count=1
+
+while IFS= read -r script_list_line<&3;do
+  script_name="$script_list_line"
+  echo "$script_name" here
   #TODO test script name to see if already in index, if yes, skip, else add.
-  read -p "Enter Description" script_description
-  read -p "Enter End" end
-  read -p "Enter Platform" platform
-    while IFS= read -r function_list_line;do
-      local function_name="$function_list_line"
-      #TODO test id function has already been added, if yes, skip, else add
-      read -p "Enter Function description" function_decription
-      functions_string+="[{\"name\": \""$function_name",\"description\" : \""$function_description" }]"
-    done <<< $(list-functions "$script_list_line")
-  read -p "Enter Associated Commands" command_1
-  read -p "Enter Dependant" dependant_1
-  read -p "Enter Status" command_status
+  read -p "Enter Description: " script_description
+  read -p "Enter End: " end
+  read -p "Enter Platform: " platform
   
-done <<< $script_list
+  while IFS= read -r function_list_line<&4;do
+    function_name="$function_list_line"
+    if [[ -z $function_list_line ]]; then
+      echo no functions found in "$script_name"
+      continue
+    else 
+      echo function found:"$function_name"
+    #TODO test id function has already been added, if yes, skip, else add
+      read -p "Enter Function description" function_description
+      functions_string+="{\"name\" : \""$function_name"\",\"description\" : \""$function_description"\" },"
+    fi
+  done 4<<< $(list-functions "$script_list_line")
+  
+   
+  if [[ ! -z $functions_string ]];then
+    functions_string="[${functions_string:0:-1}]"
+    #echo "$functions_string"
+  else
+    functions_string="[]"
+  fi
+
+  read -p "Enter Associated Commands: " command_1
+  read -p "Enter Dependant: " dependant_1
+  read -p "Enter Status: " command_status
+  
+  json_string+="{\"name\" : \""$script_name"\",\"description\" : \""$script_description"\", \"end\" : \""$end"\", \"platform\" : \""$platform"\", \"functions\" : "$functions_string", \"associated commands\" : [ \""$command_1"\" ], \"dependants\" : [ \""$dependant_1"\" ], \"status\" : \""$command_status"\"},"
+
+  echo "$json_string"
+
+  unset functions_string
+((count=count+1))
+
+if [[ $count == 5 ]];then
+  break
+fi
+done 3<<< $script_list
+
+json_string="'.command += [${json_string:0:-1}]'"
+
+echo $'\n\n'"$json_string"
 
 
 #TODO functions, associated commands &  dependants need to be in their own loop to allow multipe entries to be added to form a single string i.e. functions_string, associated_commands_string and dependants_string
@@ -44,6 +81,8 @@ done <<< $script_list
 # .command += [{"name" : "$script_name","description" : "$script_description", "end" : "$end", "platform" : "$platform", "functions": [{ "name" : "$function_name", "description" : "$function_description" }], "associated commands" : [ "$command_1", "$command_2" ], "dependants" : [ "$dependant_1" , "$dependant_2" ], "status" : "$command_status"}, 
 
 
+#
 
+#test="$(auto-add-to-index)"
 
-
+echo "$test"
