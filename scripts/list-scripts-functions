@@ -27,7 +27,7 @@ count=1
 
 while IFS= read -r script_list_line<&3;do
   script_name="$script_list_line"
-  echo "$script_name" here
+  echo $'\n\n'"Script Name: \"$script_name\""$'\n'
   #TODO test script name to see if already in index, if yes, skip, else add.
   read -p "Enter Description: " script_description
   read -p "Enter End: " end
@@ -36,18 +36,19 @@ while IFS= read -r script_list_line<&3;do
   while IFS= read -r function_list_line<&4;do
     function_name="$function_list_line"
     if [[ -z $function_list_line ]]; then
-      echo no functions found in "$script_name"
+      echo -e $'\n'" * - No Functions Found in \"$script_name\" - * "$'\n'
       continue
     else 
-      echo "function found: $function_name"
+      echo $'\n'"  Function Found: \"$function_name\""
     #TODO test id function has already been added, if yes, skip, else add
-      read -p "Enter Function description: " function_description
+      read -p "  Enter Function description: " function_description
       functions_string+="{\"name\" : \""$function_name"\",\"description\" : \""$function_description"\" },"
     fi
   done 4<<< $(list-functions "$script_list_line")
   
    
   if [[ ! -z $functions_string ]];then
+    echo $'\n'* - No Further Functions Found - *$'\n'
     functions_string="[${functions_string:0:-1}]"
     #echo "$functions_string"
   else
