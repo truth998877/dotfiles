@@ -22,6 +22,7 @@ get_fcn_list () {
 }
 
 script="$1"
+dir="${2:-"$SCRIPTS"}"
 
-fcn_list=$(get_fcn_list "$script")
+fcn_list=$(get_fcn_list "$dir/$script")
 echo "$fcn_list"
