@@ -1,13 +1,15 @@
 #!/usr/local/bin/bash
 
 
-get_script_list () {
+get_script_list () { 
 
-  local script_list="$(find . -maxdepth 1 -perm +111 -type f)"
+  local local_dir="$1"
+
+  local script_list="$(find "$local_dir" -maxdepth 1 -perm +111 -type f)"
   local script_list_out
  
   while IFS= read -r line;do
-    script_list_out+="${line:2}"$'\n'
+    script_list_out+="${line##*/}"$'\n'
   done <<< "$script_list"
 
 
