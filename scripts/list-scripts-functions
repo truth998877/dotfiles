@@ -1,6 +1,10 @@
 #!/usr/local/bin/bash
 
-
+#is_script_in_index () {
+#   local script_list="$1"
+#   local script="$1"
+ 
+#   echo 
 
 echo_scripts_and_functions () {
 
@@ -20,6 +24,7 @@ done <<< $script_list
 
 
 script_list=$(list-scripts)
+script_list_index="$(jq -r '.commands[].name' "$SCRIPTSINDEX")"
 
 #echo "$script_list"
 
@@ -28,47 +33,59 @@ count=1
 while IFS= read -r script_list_line<&3;do
   script_name="$script_list_line"
   echo $'\n\n'"Script Name: \"$script_name\""$'\n'
-  #TODO test script name to see if already in index, if yes, skip, else add.
-  read -p "Enter Description: " script_description
-  read -p "Enter End: " end
-  read -p "Enter Platform: " platform
-  
-  while IFS= read -r function_list_line<&4;do
-    function_name="$function_list_line"
-    if [[ -z $function_list_line ]]; then
-      echo -e $'\n'" * - No Functions Found in \"$script_name\" - * "$'\n'
-      continue
-    else 
-      echo $'\n'"  Function Found: \"$function_name\""
-    #TODO test id function has already been added, if yes, skip, else add
-      read -p "  Enter Function description: " function_description
-      functions_string+="{\"name\" : \""$function_name"\",\"description\" : \""$function_description"\" },"
-    fi
-  done 4<<< $(list-functions "$script_list_line")
-  
-   
-  if [[ ! -z $functions_string ]];then
-    echo $'\n'* - No Further Functions Found - *$'\n'
-    functions_string="[${functions_string:0:-1}]"
-    #echo "$functions_string"
+  echo "$script_list_index"|grep -wq "$script_name"
+  if [[ $? -eq 0 ]]; then
+     echo " * - The script \"$script_name\" is already in the index, skipping! - * "
+     continue
   else
-    functions_string="[]"
+    read -p "Enter Description: " script_description
+    read -p "Enter End: " end
+    read -p "Enter Platform: " platform
+  
+    while IFS= read -r function_list_line<&4;do
+      function_name="$function_list_line"
+      if [[ -z $function_list_line ]]; then
+        echo -e $'\n'" * - No Functions Found in \"$script_name\" - * "$'\n'
+        continue
+      else 
+        echo $'\n'"  Function Found: \"$function_name\""
+        read -p "  Enter Function description: " function_description
+        functions_string+="{\"name\" : \""$function_name"\",\"description\" : \""$function_description"\" },"
+      fi
+    done 4<<< $(list-functions "$script_list_line")
+  
+    if [[ ! -z $functions_string ]]; then
+      echo $'\n'* - No Further Functions Found - *$'\n'
+      functions_string="[${functions_string:0:-1}]"
+      #echo "$functions_string"
+    else
+      functions_string="[]"
+    fi
+
+    read -p "Enter Associated Commands: " command_1
+    read -p "Enter Dependant: " dependant_1
+    read -p "Enter Status: " command_status
+  
+    json_string+="{\"name\" : \""$script_name"\",\"description\" : \""$script_description"\", \"end\" : \""$end"\", \"platform\" : \""$platform"\", \"functions\" : "$functions_string", \"associated commands\" : [ \""$command_1"\" ], \"dependants\" : [ \""$dependant_1"\" ], \"status\" : \""$command_status"\"},"
+
+    #echo "$json_string"
+
+    unset functions_string
+    #((count=count+1))
+
+    if [[ $count == 5 ]];then
+      break
+    fi
   fi
 
-  read -p "Enter Associated Commands: " command_1
-  read -p "Enter Dependant: " dependant_1
-  read -p "Enter Status: " command_status
-  
-  json_string+="{\"name\" : \""$script_name"\",\"description\" : \""$script_description"\", \"end\" : \""$end"\", \"platform\" : \""$platform"\", \"functions\" : "$functions_string", \"associated commands\" : [ \""$command_1"\" ], \"dependants\" : [ \""$dependant_1"\" ], \"status\" : \""$command_status"\"},"
+  echo $'\n'
+  read -p "\""$script_name"\" added. Add another? [y/n] " response
+  if [[ $response == y ]]; then
+    continue
+  else
+    break
+  fi
 
-  echo "$json_string"
-
-  unset functions_string
-((count=count+1))
-
-if [[ $count == 5 ]];then
-  break
-fi
 done 3<<< $script_list
 
 json_string="'.command += [${json_string:0:-1}]'"
