@@ -15,7 +15,7 @@ get_script_list () {
 
 }
 
-dir="${1:-.}"
+dir="${1:-"$SCRIPTS"}"
 
 scriptlist="$(get_script_list "$dir")"
 echo "$scriptlist"
