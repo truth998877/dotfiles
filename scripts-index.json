@@ -5,6 +5,26 @@
           "description": "test 1 command description",
           "end" : "front",
           "platform" : "darwin",
+          "environment variables" : [
+            { 
+               "name" : "test 1 env var 1",
+               "description" : "test 1 env var 1 description"
+            },
+            {
+               "name" : "test 1 env var 2",
+               "description" : "test 1 env var 2 description"
+            }
+          ],
+          "output files" : [
+            {
+              "name" : "test 1 output file 1",
+              "description" : "test 1 output file 1 description"
+            },
+            {
+              "name" : "test 1 output file 2",
+              "description" : "test 1 output file 2 description"
+            }
+          ],
           "functions": [
             {
               "name": "test 1 function 1 name",
@@ -50,6 +70,26 @@
           "description": "test 2 command description",
           "end" : "front",
           "platform" : "darwin",
+          "environment variables" : [
+            { 
+               "name" : "test 2 env var 1",
+               "description" : "test 1 env var 1 description"
+            },
+            {
+               "name" : "test 2 env var 2",
+               "description" : "test 1 env var 2 description"
+            }
+          ],
+          "output files" : [
+            {
+              "name" : "test 2 output file 1",
+              "description" : "test 1 output file 1 description"
+            },
+            {
+              "name" : "test 2 output file 2",
+              "description" : "test 1 output file 2 description"
+            }
+          ],
           "functions": [
             {
               "name": "test 2 function 1 name",
