@@ -93,12 +93,13 @@ while IFS= read -r script_list_line<&3;do
   fi
 
   echo $'\n'
-  read -p "\""$script_name"\" added. Add another? [y/n] " response
-  if [[ $response == y ]]; then
-    continue
-  else
-    break
-  fi
+  while true ;do
+    read -p "\""$script_name"\" added. Add another? [y/n] " add_another
+    case $add_another in
+      y) continue 2 ;;
+      n) break 2 ;;
+    esac
+  done
 
 done 3<<< $script_list
 
