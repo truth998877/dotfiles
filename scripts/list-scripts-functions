@@ -20,6 +20,19 @@ done <<< $script_list
 
 }
 
+get_user_input () {
+
+  local prompt="$1"
+  local response
+
+  while [[ $response  == '' ]];do
+    read -p "$prompt" response
+  done
+
+  echo "$response" 
+
+}
+
 #auto-add-to-index () {
 
 
@@ -38,9 +51,9 @@ while IFS= read -r script_list_line<&3;do
      echo " * - The script \"$script_name\" is already in the index, skipping! - * "
      continue
   else
-    read -p "Enter Description: " script_description
-    read -p "Enter End: " end
-    read -p "Enter Platform: " platform
+    script_description="$(get_user_input "Enter Description: ")"
+    end="$(get_user_input "Enter End: ")"
+    platform="$(get_user_input "Enter Platform: ")"
   
     while IFS= read -r function_list_line<&4;do
       function_name="$function_list_line"
@@ -49,7 +62,8 @@ while IFS= read -r script_list_line<&3;do
         continue
       else 
         echo $'\n'"  Function Found: \"$function_name\""
-        read -p "  Enter Function description: " function_description
+        function_description="$(get_user_input "  Enter Function Description: ")"
+        
         functions_string+="{\"name\" : \""$function_name"\",\"description\" : \""$function_description"\" },"
       fi
     done 4<<< $(list-functions "$script_list_line")
@@ -62,9 +76,9 @@ while IFS= read -r script_list_line<&3;do
       functions_string="[]"
     fi
 
-    read -p "Enter Associated Commands: " command_1
-    read -p "Enter Dependant: " dependant_1
-    read -p "Enter Status: " command_status
+    command_1="$(get_user_input "Enter Associated Commands: ")"
+    dependant_1="$(get_user_input "Enter Dependant: ")"
+    command_status="$(get_user_input "Enter Status: ")"
   
     json_string+="{\"name\" : \""$script_name"\",\"description\" : \""$script_description"\", \"end\" : \""$end"\", \"platform\" : \""$platform"\", \"functions\" : "$functions_string", \"associated commands\" : [ \""$command_1"\" ], \"dependants\" : [ \""$dependant_1"\" ], \"status\" : \""$command_status"\"},"
 
