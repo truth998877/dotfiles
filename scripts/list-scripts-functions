@@ -20,6 +20,7 @@ done <<< $script_list
 
 }
 
+
 get_user_input () {
 
   local prompt="$1"
@@ -30,6 +31,29 @@ get_user_input () {
   done
 
   echo "$response" 
+
+}
+
+keyless_array () { 
+
+  #local array_name="$1"
+  local prompt="$1"
+  
+  local array_elements
+  local response
+
+  while true;do
+    array_elements+="\""$(get_user_input "$prompt")"\", "
+    response="$(get_user_input "Add another? [y/n]: ")"
+    case $response in
+      y) continue;;
+      n) break;;
+    esac
+  done
+ 
+#  local output="\""$array_name"\" : ["$array_elements"],"
+
+  echo "${array_elements:0:-2}"
 
 }
 
@@ -75,12 +99,39 @@ while IFS= read -r script_list_line<&3;do
     else
       functions_string="[]"
     fi
+   
+    while true;do 
+      add_assoc_cmds="$(get_user_input "Add Associated Commands? [y/n] :")"
+      case $add_assoc_cmds in
+        y)
+        command_1="$(keyless_array "Enter Associated Command: ")"
+        break
+        ;;
+        n)
+        command_1=''
+        break
+        ;;
+      esac
+    done
+    echo $'\n'
+    
+    while true;do
+      add_dependants="$(get_user_input "Add Dependants? [y/n] :")"
+      case $add_dependants in
+        y)
+        dependant_1="$(keyless_array "Enter Dependant: ")"
+        break
+        ;;
+        n)
+        dependant_1=''
+        break
+      esac
+    done  
+    echo $'\n'
 
-    command_1="$(get_user_input "Enter Associated Commands: ")"
-    dependant_1="$(get_user_input "Enter Dependant: ")"
     command_status="$(get_user_input "Enter Status: ")"
   
-    json_string+="{\"name\" : \""$script_name"\",\"description\" : \""$script_description"\", \"end\" : \""$end"\", \"platform\" : \""$platform"\", \"functions\" : "$functions_string", \"associated commands\" : [ \""$command_1"\" ], \"dependants\" : [ \""$dependant_1"\" ], \"status\" : \""$command_status"\"},"
+    json_string+="{\"name\" : \""$script_name"\",\"description\" : \""$script_description"\", \"end\" : \""$end"\", \"platform\" : \""$platform"\", \"functions\" : "$functions_string", \"associated commands\" : ["$command_1"], \"dependants\" : ["$dependant_1"], \"status\" : \""$command_status"\"},"
 
     #echo "$json_string"
 
@@ -93,8 +144,8 @@ while IFS= read -r script_list_line<&3;do
   fi
 
   echo $'\n'
-  while true ;do
-    read -p "\""$script_name"\" added. Add another? [y/n] " add_another
+  while true;do
+    add_another="$(get_user_input "\""$script_name"\" added. Add another? [y/n]: ")" 
     case $add_another in
       y) continue 2 ;;
       n) break 2 ;;
@@ -106,16 +157,3 @@ done 3<<< $script_list
 json_string="'.command += [${json_string:0:-1}]'"
 
 echo $'\n\n'"$json_string"
-
-
-#TODO functions, associated commands &  dependants need to be in their own loop to allow multipe entries to be added to form a single string i.e. functions_string, associated_commands_string and dependants_string
-
-#TODO string in the following form needs to be constructed accounting for the loops above
-# .command += [{"name" : "$script_name","description" : "$script_description", "end" : "$end", "platform" : "$platform", "functions": [{ "name" : "$function_name", "description" : "$function_description" }], "associated commands" : [ "$command_1", "$command_2" ], "dependants" : [ "$dependant_1" , "$dependant_2" ], "status" : "$command_status"}, 
-
-
-#
-
-#test="$(auto-add-to-index)"
-
-echo "$test"
