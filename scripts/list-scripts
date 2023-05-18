@@ -1,11 +1,16 @@
 #!/usr/local/bin/bash
 
-
 get_script_list () { 
 
   local local_dir="$1"
-
-  local script_list="$(find "$local_dir" -maxdepth 1 -perm +111 -type f)"
+  local scripts_list
+  
+  if [[ $PLATFORM == darwin ]]; then
+    script_list="$(find "$local_dir" -maxdepth 1 -perm +111 -type f)"
+  else
+    script_list="$(find "$local_dir" -maxdepth 1 -perm /111 -type f)"
+  fi
+ 
   local script_list_out
  
   while IFS= read -r line;do
