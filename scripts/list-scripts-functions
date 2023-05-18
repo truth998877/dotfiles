@@ -59,6 +59,37 @@ keyless_array () {
 
 }
 
+keyed_array () {
+
+  local array="$1"
+  shift
+  local key_list="$@"
+  local value
+  local output1
+  local output
+  local response
+  
+  while true; do
+    for item in $key_list;do
+       value="$(get_user_input "Enter $array $item: ")"
+       output1+="\""$item"\" : \""$value"\","
+    done
+    output1="${output1:0:-1}"
+    output+="{$output1},"
+    unset output1
+    response="$(get_user_input "Add Another? [y/n]: ")"
+    case $response in
+      y) continue ;;
+      n) break ;;
+    esac
+  done
+
+  output="${output:0:-1}"
+
+  echo "$output"
+
+}
+
 #auto-add-to-index () {
 
 
@@ -81,6 +112,36 @@ while IFS= read -r script_list_line<&3;do
     end="$(get_user_input "Enter End: ")"
     platform="$(get_user_input "Enter Platform: ")"
   
+    while true;do 
+      add_env_var="$(get_user_input "Add Enviroment Variables? [y/n]: ")"
+      case $add_env_var in
+        y)
+        env_var="$(keyed_array "Environment Variable" name description)"
+        break
+        ;;
+        n)
+        env_var=''
+        break
+        ;;
+      esac
+    done
+    echo $'\n'
+    
+    while true;do 
+      add_output_file="$(get_user_input "Add Output Files? [y/n]: ")"
+      case $add_output_file in
+        y)
+        output_files="$(keyed_array "Output Files" name description)"
+        break
+        ;;
+        n)
+        output_files=''
+        break
+        ;;
+      esac
+    done
+    echo $'\n'
+    
     while IFS= read -r function_list_line<&4;do
       function_name="$function_list_line"
       if [[ -z $function_list_line ]]; then
@@ -133,7 +194,7 @@ while IFS= read -r script_list_line<&3;do
 
     command_status="$(get_user_input "Enter Status: ")"
   
-    json_string+="{\"name\" : \""$script_name"\",\"description\" : \""$script_description"\", \"end\" : \""$end"\", \"platform\" : \""$platform"\", \"functions\" : "$functions_string", \"associated commands\" : ["$command_1"], \"dependants\" : ["$dependant_1"], \"status\" : \""$command_status"\"},"
+    json_string+="{\"name\" : \""$script_name"\",\"description\" : \""$script_description"\", \"end\" : \""$end"\", \"platform\" : \""$platform"\", \"environment variables\" : ["$env_var"], \"output files\" : ["$output_files"], \"functions\" : "$functions_string", \"associated commands\" : ["$command_1"], \"dependants\" : ["$dependant_1"], \"status\" : \""$command_status"\"},"
 
     #echo "$json_string"
 
@@ -156,6 +217,11 @@ while IFS= read -r script_list_line<&3;do
 
 done 3<<< $script_list
 
-json_string="'.command += [${json_string:0:-1}]'"
+#json_string="'.command += [${json_string:0:-1}]'"
+json_string="[${json_string:0:-1}]"
 
-echo $'\n\n'"$json_string"
+echo $'\n\n'"$json_string" > t.json
+
+#cp "$SCRIPTSINDEX" "$SCRIPTSINDEX".tmp
+
+jq -r --argjson jq_json_string "$json_string" '.commands += $jq_json_string' "$SCRIPTSINDEX".tmp
