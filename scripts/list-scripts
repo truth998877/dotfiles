@@ -1,4 +1,6 @@
-#!/usr/local/bin/bash
+#!/usr/bin/env bash
+
+##!/bin/bash
 
 get_script_list () { 
 

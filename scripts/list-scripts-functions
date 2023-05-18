@@ -1,4 +1,6 @@
-#!/usr/local/bin/bash
+#!/usr/bin/env bash
+
+##!/bin/bash
 
 #is_script_in_index () {
 #   local script_list="$1"
