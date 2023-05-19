@@ -11,17 +11,16 @@
 echo_scripts_and_functions () {
 
 
-local script_list=$(list-scripts)
+  local script_list=$(list-scripts)
 
-while IFS= read -r script_list_line;do
-  echo $'\n'"$script_list_line"
-    while IFS= read -r function_list_line;do
-      echo -e "   $function_list_line"
-    done <<< $(list-functions "$script_list_line")
-done <<< $script_list
+  while IFS= read -r script_list_line;do
+    echo $'\n'"$script_list_line"
+      while IFS= read -r function_list_line;do
+        echo -e "   $function_list_line"
+      done <<< $(list-functions "$script_list_line")
+  done <<< $script_list
 
 }
-
 
 get_user_input () {
 
@@ -71,8 +70,8 @@ keyed_array () {
   
   while true; do
     for item in $key_list;do
-       value="$(get_user_input "Enter $array $item: ")"
-       output1+="\""$item"\" : \""$value"\","
+      value="$(get_user_input "Enter $array $item: ")"
+      output1+="\""$item"\" : \""$value"\","
     done
     output1="${output1:0:-1}"
     output+="{$output1},"
@@ -90,8 +89,19 @@ keyed_array () {
 
 }
 
-#auto-add-to-index () {
+select_logbook () {
+  
+  local logbook_titles=("$(ls-lb-num-title)")
+  logbook_titles+=("None")
+  local OLD_IFS=${IFS};IFS=$'\n'
+ 
+  select logbook in ${logbook_titles[@]};do
+    echo "$logbook"
+    IFS="${OLD_IFS}"
+    break
+  done
 
+}
 
 script_list=$(list-scripts)
 script_list_index="$(jq -r '.commands[].name' "$SCRIPTSINDEX")"
@@ -191,10 +201,12 @@ while IFS= read -r script_list_line<&3;do
       esac
     done  
     echo $'\n'
-
+    
+    echo "Select Logbook..."
+    logfile="$(select_logbook)"
     command_status="$(get_user_input "Enter Status: ")"
   
-    json_string+="{\"name\" : \""$script_name"\",\"description\" : \""$script_description"\", \"end\" : \""$end"\", \"platform\" : \""$platform"\", \"environment variables\" : ["$env_var"], \"output files\" : ["$output_files"], \"functions\" : "$functions_string", \"associated commands\" : ["$command_1"], \"dependants\" : ["$dependant_1"], \"status\" : \""$command_status"\"},"
+    json_string+="{\"name\" : \""$script_name"\",\"description\" : \""$script_description"\", \"end\" : \""$end"\", \"platform\" : \""$platform"\", \"environment variables\" : ["$env_var"], \"output files\" : ["$output_files"], \"functions\" : "$functions_string", \"associated commands\" : ["$command_1"], \"dependants\" : ["$dependant_1"], \"logfile\" : \""$logfile"\", \"status\" : \""$command_status"\"},"
 
     #echo "$json_string"
 
@@ -220,8 +232,8 @@ done 3<<< $script_list
 #json_string="'.command += [${json_string:0:-1}]'"
 json_string="[${json_string:0:-1}]"
 
-echo $'\n\n'"$json_string" > t.json
+#echo $'\n\n'"$json_string" > t.json
 
-#cp "$SCRIPTSINDEX" "$SCRIPTSINDEX".tmp
+cp "$SCRIPTSINDEX" "$SCRIPTSINDEX".tmp
 
-jq -r --argjson jq_json_string "$json_string" '.commands += $jq_json_string' "$SCRIPTSINDEX".tmp
+jq -r --argjson jq_json_string "$json_string" '.commands += $jq_json_string' "$SCRIPTSINDEX".tmp 
