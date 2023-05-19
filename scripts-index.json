@@ -63,6 +63,7 @@
             "test 1 dependant 1",
             "test 1 dependant 2"
           ],
+          "logfile" : "test 1 log file",
           "status" : "test 1 status"
         },
         {
@@ -128,6 +129,7 @@
             "test 2 dependant 1",
             "test 2 dependant 2"
           ],
+          "logfile" : "test 2 log file",
           "status" : "test 2 status"
         }
       ]
