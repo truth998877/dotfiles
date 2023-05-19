@@ -1,0 +1,11 @@
+#!/bin/bash
+
+#TODO functionize rwxrob style, if no argument list number and short title of all log books, if the argument is title, just list the titles of each logbook
+
+_list-lb-num-title () {
+
+jq  -r --arg  jq_logbooks "$LOGBOOKS"  '.logbooks[] | "\(.shorttitle)"' "$LOGBOOKSINDEX"
+
+}
+
+_list-lb-num-title
