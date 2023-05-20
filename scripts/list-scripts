@@ -6,7 +6,7 @@ get_script_list () {
 
   local local_dir="$1"
   local scripts_list
-  
+  #TODO place in for loop to loop through each dir in the passed dir-list
   if [[ $PLATFORM == darwin ]]; then
     script_list="$(find "$local_dir" -maxdepth 1 -perm +111 -type f)"
   else
@@ -24,6 +24,7 @@ get_script_list () {
 
 }
 
+#TODO adjust so that an array of dirs can be used, if no list is used then use $SCRIPTS, if $#=0; the dir_list[0]=$SCRIPTS
 dir="${1:-"$SCRIPTS"}"
 
 scriptlist="$(get_script_list "$dir")"
