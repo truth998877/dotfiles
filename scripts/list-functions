@@ -5,7 +5,10 @@
 get_fcn_list () {
 
   local script="$1"
+  #TODO read a language label
+  #TODO move grep.. into a find functions command which will find functions defined in different languages depending on the read in language label 
   local fcn_list="$(grep '()[[:space:]]{' "$script")"
+  #TODO complie and alternate function list from the function labels within the script and amalgamate with fcn list, no duplicates
   #echo "$fcn_list"
   #exit 0
   local fcn_list_out
