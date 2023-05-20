@@ -1,0 +1,12 @@
+# * Function: {1} *
+{1} ()  {
+
+# * Arguments: *
+#local var="$n"
+ 
+  local {2}="$1"
+
+#*Code:
+
+
+}
