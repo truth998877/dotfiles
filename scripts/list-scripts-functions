@@ -103,7 +103,7 @@ select_logbook () {
 
 }
 
-script_list=$(list-scripts)
+script_list=$(list-scripts "$@")
 script_list_index="$(jq -r '.commands[].name' "$SCRIPTSINDEX")"
 
 #echo "$script_list"
