@@ -121,7 +121,8 @@ while IFS= read -r script_list_line<&3;do
     script_description="$(get_user_input "Enter Description: ")"
     end="$(get_user_input "Enter End: ")"
     platform="$(get_user_input "Enter Platform: ")"
-  
+    locality="$(get_user_input "Enter Locality (Is \"$script_name\" only meant to run on a specifi system?): ")" 
+ 
     while true;do 
       add_env_var="$(get_user_input "Add Enviroment Variables? [y/n]: ")"
       case $add_env_var in
@@ -206,7 +207,7 @@ while IFS= read -r script_list_line<&3;do
     logfile="$(select_logbook)"
     command_status="$(get_user_input "Enter Status: ")"
   
-    json_string+="{\"name\" : \""$script_name"\",\"description\" : \""$script_description"\", \"end\" : \""$end"\", \"platform\" : \""$platform"\", \"environment variables\" : ["$env_var"], \"output files\" : ["$output_files"], \"functions\" : "$functions_string", \"associated commands\" : ["$command_1"], \"dependants\" : ["$dependant_1"], \"logfile\" : \""$logfile"\", \"status\" : \""$command_status"\"},"
+    json_string+="{\"name\" : \""$script_name"\",\"description\" : \""$script_description"\", \"end\" : \""$end"\", \"platform\" : \""$platform"\", \"locality\" : \""$locality"\", \"environment variables\" : ["$env_var"], \"output files\" : ["$output_files"], \"functions\" : "$functions_string", \"associated commands\" : ["$command_1"], \"dependants\" : ["$dependant_1"], \"logfile\" : \""$logfile"\", \"status\" : \""$command_status"\"},"
 
     #echo "$json_string"
 
