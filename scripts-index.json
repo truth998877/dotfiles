@@ -5,6 +5,7 @@
           "description": "test 1 command description",
           "end" : "front",
           "platform" : "darwin",
+          "locality" : "none",
           "environment variables" : [
             { 
                "name" : "test 1 env var 1",
@@ -71,6 +72,7 @@
           "description": "test 2 command description",
           "end" : "front",
           "platform" : "darwin",
+          "locality" : "none",
           "environment variables" : [
             { 
                "name" : "test 2 env var 1",
