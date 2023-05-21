@@ -121,7 +121,7 @@ while IFS= read -r script_list_line<&3;do
     script_description="$(get_user_input "Enter Description: ")"
     end="$(get_user_input "Enter End: ")"
     platform="$(get_user_input "Enter Platform: ")"
-    locality="$(get_user_input "Enter Locality (Is \"$script_name\" only meant to run on a specifi system?): ")" 
+    locality="$(get_user_input "Enter Locality (Is \"$script_name\" only meant to run on a specific system?): ")" 
  
     while true;do 
       add_env_var="$(get_user_input "Add Enviroment Variables? [y/n]: ")"
