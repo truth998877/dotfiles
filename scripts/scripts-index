@@ -1,39 +1,456 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-_selectcmd () {
-  local cmdlist=("$(jq -r '.commands[].name' "$SCRIPTSINDEX")")
+foo () {
+  local first=$1
+  echo "Would foo with $first."
+}
 
+
+#!/usr/bin/env bash
+
+##!/bin/bash
+
+#is_script_in_index () {
+#   local script_list="$1"
+#   local script="$1"
+ 
+#   echo 
+
+echo_scripts_and_functions () {
+
+  local script_list=$(list-scripts)
+
+  while IFS= read -r script_list_line;do
+    echo $'\n'"$script_list_line"
+      while IFS= read -r function_list_line;do
+        echo -e "   $function_list_line"
+      done <<< $(list-functions "$script_list_line")
+  done <<< $script_list
+
+}
+
+get_user_input () {
+
+  local prompt="$1"
+  local response
+
+  while [[ $response  == '' ]];do
+    read -p "$prompt" response
+  done
+
+  echo "$response" 
+
+}
+
+keyless_array () { 
+
+  #local array_name="$1"
+  local prompt="$1"
+  
+  local array_elements
+  local response
+
+  while true;do
+    array_elements+="\""$(get_user_input "$prompt")"\", "
+    response="$(get_user_input "Add another? [y/n]: ")"
+    case $response in
+      y) continue;;
+      n) break;;
+    esac
+  done
+ 
+#  local output="\""$array_name"\" : ["$array_elements"],"
+
+  echo "${array_elements:0:-2}"
+
+}
+
+keyed_array () {
+
+  local array="$1"
+  shift
+  local key_list="$@"
+  local value
+  local output1
+  local output
+  local response
+  
+  while true; do
+    for item in $key_list;do
+      value="$(get_user_input "Enter $array $item: ")"
+      output1+="\""$item"\" : \""$value"\","
+    done
+    output1="${output1:0:-1}"
+    output+="{$output1},"
+    unset output1
+    response="$(get_user_input "Add Another? [y/n]: ")"
+    case $response in
+      y) continue ;;
+      n) break ;;
+    esac
+  done
+
+  output="${output:0:-1}"
+
+  echo "$output"
+
+}
+
+select_logbook () {
+  
+  local logbook_titles=("$(ls-lb-num-title)")
+  logbook_titles+=("None")
   local OLD_IFS=${IFS};IFS=$'\n'
-
-  select cmd in ${cmdlist[@]};do
-    local cmdindex=$(jq -r --arg jq_cmd "$cmd" '[.commands[]|.name == $jq_cmd] |index(true)' "$SCRIPTSINDEX")
-    echo "$cmdindex"
+ 
+  select logbook in ${logbook_titles[@]};do
+    echo "$logbook"
     IFS="${OLD_IFS}"
     break
   done
 
 }
 
-_out () {
-
-  #magenta = \u001b[35m
-  #white = \u001b[37m
+# * Function select-script-from-index: *
+select-script-from-index () {
   
-  local cmdindex="$1"
+  script_list=("$(jq -r '.commands[].name' "$SCRIPTSINDEX")")
 
-#TODO add "environment variables" and "output files"
+  local OLD_IFS=${IFS};IFS=$'\n'
 
-  jq -r --arg jq_cmdindex "$cmdindex" '.|"\n\u001b[35mName:\n\u001b[37m\(.commands[$jq_cmdindex|tonumber].name)\n\n" + "\u001b[35mDescription:\n\u001b[37m\(.commands[$jq_cmdindex|tonumber].description)\n\n" + "\u001b[35mPlatform:\n\u001b[37m\(.commands[$jq_cmdindex|tonumber].platform)\n\n" + "\u001b[35mLocality:\n\u001b[37m\(.commands[$jq_cmdindex|tonumber].locality)\n\n"+ "\u001b[35mEnd:\n\u001b[37m\(.commands[$jq_cmdindex|tonumber].end)\n\n" + "\u001b[35mEnvironment Variables:\n\u001b[37m\([.commands[$jq_cmdindex|tonumber]."environment variables"[].name]|join("\n"))\n\n" + "\u001b[35mOutput Files:\n\u001b[37m\([.commands[$jq_cmdindex|tonumber]."output files"[].name]|join("\n"))\n\n" + "\u001b[35mFunctions:\n\u001b[37m\([.commands[$jq_cmdindex|tonumber].functions[].name]|join("\n"))\n\n" + "\u001b[35mAssociated Commands:\n\u001b[37m\([.commands[$jq_cmdindex|tonumber]."associated commands"[]]|join("\n"))\n\n" + "\u001b[35mDependants:\n\u001b[37m\([.commands[$jq_cmdindex|tonumber].dependants[]]|join("\n"))\n\n" + "\u001b[35mLog File:\n\u001b[37m\(.commands[$jq_cmdindex|tonumber]."logfile")\n\n"+ "\u001b[35mStatus:\n\u001b[37m\(.commands[$jq_cmdindex|tonumber].status)\n\n"' "$SCRIPTSINDEX"
+  select cmd in ${script_list[@]};do
+    local scriptindex=$(jq -r --arg jq_cmd "$cmd" '[.commands[]|.name == $jq_cmd] |index(true)' "$SCRIPTSINDEX")
+    echo "$scriptindex"
+    IFS="${OLD_IFS}"
+    break
+  done
 
 }
 
-echo -e "\nScripts Index"
-echo -e "-------------"
 
-echo -e "\nSelect a script:\n"
+# * Function: update *
+update ()  {
 
-cmdindex="$(_selectcmd)"
+# * Arguments: *
+#local var="$n"
+ 
+ # local {2}="$1"
 
-_out "$cmdindex"
+#*Code:
+  
+  while true;do
+
+    local script_index="$(select-script-from-index)"
+    local key_list=("$(jq -r '[.commands[]|keys[]]|unique[]' $SCRIPTSINDEX)")
+    
+    local OLD_IFS=${IFS};IFS=$'\n'
+    
+    local selected_key
+    select selected_key in ${key_list[@]};do
+      echo Selected key = "$selected_key"
+      break
+    done
+    
+    IFS="${OLD_IFS}"
+    
+    local value
+    case $selected_key in
+      name|description|end|platform|locality|logfile|status)
+        value="$(get_user_input "Enter new "$selected_key": ")"
+      ;;
+      *)
+        echo Not Yet Supprted
+        exit 0
+      ;;
+    esac
+   
+    #This may have to be moved into the case above to allow case specific jq commands to update the index 
+    cp "$SCRIPTSINDEX" "$SCRIPTSINDEX".tmp
+    jq --arg jq_script_index "$script_index" --arg jq_selected_key "$selected_key" --arg jq_value "$value"  '.commands[$jq_script_index|tonumber]|.[$jq_selected_key] = $jq_value' "$SCRIPTSINDEX".tmp
+
+    local response
+    read -p "Update Another?: [y/n] " response
+    case $response in
+      y) continue ;;
+      n) break ;;
+    esac
+  done
+}
 
 
+
+# * Function: show *
+show ()  {
+
+# * Arguments: *
+#local var="$n"
+ 
+
+#*Code:
+
+  script_index="$(select-script-from-index)"
+
+  jq -r --arg jq_cmdindex "$script_index" '.|"\n\u001b[35mName:\n\u001b[37m\(.commands[$jq_cmdindex|tonumber].name)\n\n" + "\u001b[35mDescription:\n\u001b[37m\(.commands[$jq_cmdindex|tonumber].description)\n\n" + "\u001b[35mPlatform:\n\u001b[37m\(.commands[$jq_cmdindex|tonumber].platform)\n\n" + "\u001b[35mLocality:\n\u001b[37m\(.commands[$jq_cmdindex|tonumber].locality)\n\n"+ "\u001b[35mEnd:\n\u001b[37m\(.commands[$jq_cmdindex|tonumber].end)\n\n" + "\u001b[35mEnvironment Variables:\n\u001b[37m\([.commands[$jq_cmdindex|tonumber]."environment variables"[].name]|join("\n"))\n\n" + "\u001b[35mOutput Files:\n\u001b[37m\([.commands[$jq_cmdindex|tonumber]."output files"[].name]|join("\n"))\n\n" + "\u001b[35mFunctions:\n\u001b[37m\([.commands[$jq_cmdindex|tonumber].functions[].name]|join("\n"))\n\n" + "\u001b[35mAssociated Commands:\n\u001b[37m\([.commands[$jq_cmdindex|tonumber]."associated commands"[]]|join("\n"))\n\n" + "\u001b[35mDependants:\n\u001b[37m\([.commands[$jq_cmdindex|tonumber].dependants[]]|join("\n"))\n\n" + "\u001b[35mLog File:\n\u001b[37m\(.commands[$jq_cmdindex|tonumber]."logfile")\n\n"+ "\u001b[35mStatus:\n\u001b[37m\(.commands[$jq_cmdindex|tonumber].status)\n\n"' "$SCRIPTSINDEX"
+
+}
+
+
+
+_list-scripts-on-disk () { 
+
+  local local_dir_list=("$@")
+  local scripts_list
+  #TODO place in for loop to loop through each dir in the passed dir-list
+  for local_dir in ${local_dir_list[@]};do
+    if [[ $PLATFORM == darwin ]]; then
+      script_list="$(find "$local_dir" -maxdepth 1 -perm +111 -type f)"
+    else
+      script_list="$(find "$local_dir" -maxdepth 1 -perm /111 -type f)"
+    fi
+  done
+
+  local script_list_out
+ 
+  while IFS= read -r line;do
+    script_list_out+="${line##*/}"$'\n'
+  done <<< "$script_list"
+
+
+  echo "$script_list_out"
+
+}
+
+list-scripts-on-disk () {
+  dir_list="$@"
+  if [[ $# == 0 ]]; then
+    dir_list=$SCRIPTS
+  fi
+
+  local scriptsondisk="$(_list-scripts-on-disk "$dir_list")"
+
+  echo "$scriptsondisk"
+
+}
+
+# * Function: list-functions-in-scripts-on-disk *
+list-functions-in-a-script-on-disk ()  {
+
+# * Arguments: *
+ 
+  local script="$1"
+  local dir="${2:-"$SCRIPTS"}"
+
+#*Code:
+
+  #TODO read a language label
+  #TODO move grep.. into a find functions command which will find functions defined in different languages depending on the read in language label 
+  local fcn_list="$(grep '()[[:space:]]{' "$script")"
+  #TODO complie and alternate function list from the function labels within the script and amalgamate with fcn list, no duplicates
+  #echo "$fcn_list"
+  #exit 0
+  local fcn_list_out
+
+  while IFS= read -r line;do
+    #echo "${line::-5}"
+    if [[ -z $line ]]; then
+      fnc_list_out=""
+    else
+      fnc_list_out+="${line:0:-5}"$'\n'
+    fi
+  done <<< "$fcn_list"  
+
+  echo "$fnc_list_out"
+
+}
+
+
+# * Function auto-add: *
+auto-add () {
+  
+  local script_list=$(list-scripts-on-disk "$@")
+  local script_list_index="$(jq -r '.commands[].name' "$SCRIPTSINDEX")"
+  
+  #echo "$script_list"
+  
+  local count=1
+  
+  local script_name
+  while IFS= read -r script_list_line<&3;do
+    script_name="$script_list_line"
+    echo $'\n\n'"Script Name: \"$script_name\""$'\n'
+    echo "$script_list_index"|grep -wq "$script_name"
+    if [[ $? -eq 0 ]]; then
+       echo " * - The script \"$script_name\" is already in the index, skipping! - * "
+       continue
+    else
+      local script_description="$(get_user_input "Enter Description: ")"
+      local end="$(get_user_input "Enter End: ")"
+      local platform="$(get_user_input "Enter Platform: ")"
+      local locality="$(get_user_input "Enter Locality (Is \"$script_name\" only meant to run on a specific system?): ")" 
+      
+      local env_var
+      while true;do 
+        local add_env_var="$(get_user_input "Add Enviroment Variables? [y/n]: ")"
+        case $add_env_var in
+          y)
+          env_var="$(keyed_array "Environment Variable" name description)"
+          break
+          ;;
+          n)
+          env_var=''
+          break
+          ;;
+        esac
+      done
+      echo $'\n'
+      
+      local add_out_file
+      local output_files
+      while true;do 
+        add_output_file="$(get_user_input "Add Output Files? [y/n]: ")"
+        case $add_output_file in
+          y)
+          output_files="$(keyed_array "Output Files" name description)"
+          break
+          ;;
+          n)
+          output_files=''
+          break
+          ;;
+        esac
+      done
+      echo $'\n'
+      
+      local function_name
+      local function_description
+      local functions_string
+      while IFS= read -r function_list_line<&4;do
+        function_name="$function_list_line"
+        if [[ -z $function_list_line ]]; then
+          echo -e $'\n'" * - No Functions Found in \"$script_name\" - * "$'\n'
+          continue
+        else 
+          echo $'\n'"  Function Found: \"$function_name\""
+          function_description="$(get_user_input "  Enter Function Description: ")"
+          
+          functions_string+="{\"name\" : \""$function_name"\",\"description\" : \""$function_description"\" },"
+        fi
+      done 4<<< $(list-functions-in-a-script-on-disk "$script_list_line")
+    
+      if [[ ! -z $functions_string ]]; then
+        echo $'\n'* - No Further Functions Found - *$'\n'
+        functions_string="[${functions_string:0:-1}]"
+        #echo "$functions_string"
+      else
+        functions_string="[]"
+      fi
+      
+      local add_assoc_cmds
+      local command_1
+      while true;do 
+        add_assoc_cmds="$(get_user_input "Add Associated Commands? [y/n] :")"
+        case $add_assoc_cmds in
+          y)
+          command_1="$(keyless_array "Enter Associated Command: ")"
+          break
+          ;;
+          n)
+          command_1=''
+          break
+          ;;
+        esac
+      done
+      echo $'\n'
+      
+      local add_dependants
+      local dependant_1
+      while true;do
+        add_dependants="$(get_user_input "Add Dependants? [y/n] :")"
+        case $add_dependants in
+          y)
+          dependant_1="$(keyless_array "Enter Dependant: ")"
+          break
+          ;;
+          n)
+          dependant_1=''
+          break
+        esac
+      done  
+      echo $'\n'
+      
+      echo "Select Logbook..."
+      local logfile="$(select_logbook)"
+      
+      local command_status="$(get_user_input "Enter Status: ")"
+      
+      #json_string - deliberately global 
+      json_string+="{\"name\" : \""$script_name"\",\"description\" : \""$script_description"\", \"end\" : \""$end"\", \"platform\" : \""$platform"\", \"locality\" : \""$locality"\", \"environment variables\" : ["$env_var"], \"output files\" : ["$output_files"], \"functions\" : "$functions_string", \"associated commands\" : ["$command_1"], \"dependants\" : ["$dependant_1"], \"logfile\" : \""$logfile"\", \"status\" : \""$command_status"\"},"
+  
+      #echo "$json_string"
+  
+      unset functions_string
+      #((count=count+1))
+  
+      if [[ $count == 5 ]];then
+        break
+      fi
+    fi
+  
+    echo $'\n'
+    local add_another
+    while true;do
+      add_another="$(get_user_input "\""$script_name"\" added. Add another? [y/n]: ")" 
+      case $add_another in
+        y) continue 2 ;;
+        n) break 2 ;;
+      esac
+    done
+  
+  done 3<<< $script_list
+  
+  #json_string="'.command += [${json_string:0:-1}]'"
+  json_string="[${json_string:0:-1}]"
+  
+
+  #echo $'\n\n'"$json_string" #> t.json
+
+  cp "$SCRIPTSINDEX" "$SCRIPTSINDEX".tmp
+  jq -r --argjson jq_json_string "$json_string" '.commands += $jq_json_string' "$SCRIPTSINDEX".tmp 
+
+}
+
+
+############################## Main Command  #############################
+
+subcommand="${1-usage}"
+shift 2>/dev/null
+
+if [ -z "$subcommand" ]; then
+    usage
+    exit 1
+fi
+
+commands () {
+    echo ${commands[@]}
+}
+
+declare -a commands=(foo commands auto-add update show list-scripts-on-disk list-functions-in-a-script-on-disk)
+
+for i in ${commands[@]}; do
+    if [[ "$i" == "$subcommand" ]]; then
+        "$subcommand" "$@"
+        exit 0
+    fi
+done
+
+######################### Tab Completion Context ########################
+
+# remember COMP_LINE is changed by shift
+if [ -n "$COMP_LINE" ]; then
+    for cmd in ${commands[@]}; do 
+        [[ "${cmd:0:${#1}}" == "$1" ]] && echo $cmd
+    done
+    exit 0
+fi
+
+
+## set up auto complate by running 'complete -C ./example ./example'
