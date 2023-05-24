@@ -265,7 +265,7 @@ list-functions-in-a-script-on-disk ()  {
 
 # * Function auto-add: *
 auto-add () {
-  
+ #TODO split into two functions auto-add use all scripts in the specified dirs or the default dir which can then be passed to an add function. This allow an add function to add a single/handful of scripts which are manually supplied or the results from auto add 
   local script_list=$(list-scripts-on-disk "$@")
   local script_list_index="$(jq -r '.commands[].name' "$SCRIPTSINDEX")"
   
