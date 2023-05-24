@@ -419,6 +419,22 @@ auto-add () {
 }
 
 
+
+
+# * Function: delete *
+delete ()  {
+
+# * Arguments: *
+ 
+
+#*Code:
+
+  script_index="$(select-script-from-index)"
+
+  jq --arg jq_script_index "$script_index" 'del(.commands[$jq_script_index|tonumber])' $SCRIPTSINDEX
+
+}
+
 ############################## Main Command  #############################
 
 subcommand="${1-usage}"
@@ -433,7 +449,7 @@ commands () {
     echo ${commands[@]}
 }
 
-declare -a commands=(foo commands auto-add update show list-scripts-on-disk list-functions-in-a-script-on-disk)
+declare -a commands=(foo commands auto-add update show list-scripts-on-disk list-functions-in-a-script-on-disk delete)
 
 for i in ${commands[@]}; do
     if [[ "$i" == "$subcommand" ]]; then
