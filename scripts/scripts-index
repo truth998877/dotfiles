@@ -5,17 +5,6 @@ foo () {
   echo "Would foo with $first."
 }
 
-
-#!/usr/bin/env bash
-
-##!/bin/bash
-
-#is_script_in_index () {
-#   local script_list="$1"
-#   local script="$1"
- 
-#   echo 
-
 echo_scripts_and_functions () {
 
   local script_list=$(list-scripts)
@@ -126,14 +115,11 @@ select-script-from-index () {
 
 }
 
-
 # * Function: update *
 update ()  {
 
 # * Arguments: *
-#local var="$n"
  
- # local {2}="$1"
 
 #*Code:
   
@@ -156,16 +142,14 @@ update ()  {
     case $selected_key in
       name|description|end|platform|locality|logfile|status)
         value="$(get_user_input "Enter new "$selected_key": ")"
+        cp "$SCRIPTSINDEX" "$SCRIPTSINDEX".tmp
+        jq --arg jq_script_index "$script_index" --arg jq_selected_key "$selected_key" --arg jq_value "$value"  '.commands[$jq_script_index|tonumber]|.[$jq_selected_key] = $jq_value' "$SCRIPTSINDEX".tmp
       ;;
       *)
         echo Not Yet Supprted
         exit 0
       ;;
     esac
-   
-    #This may have to be moved into the case above to allow case specific jq commands to update the index 
-    cp "$SCRIPTSINDEX" "$SCRIPTSINDEX".tmp
-    jq --arg jq_script_index "$script_index" --arg jq_selected_key "$selected_key" --arg jq_value "$value"  '.commands[$jq_script_index|tonumber]|.[$jq_selected_key] = $jq_value' "$SCRIPTSINDEX".tmp
 
     local response
     read -p "Update Another?: [y/n] " response
@@ -193,8 +177,6 @@ show ()  {
 
 }
 
-
-
 _list-scripts-on-disk () { 
 
   local local_dir_list=("$@")
@@ -213,7 +195,6 @@ _list-scripts-on-disk () {
   while IFS= read -r line;do
     script_list_out+="${line##*/}"$'\n'
   done <<< "$script_list"
-
 
   echo "$script_list_out"
 
@@ -262,7 +243,6 @@ list-functions-in-a-script-on-disk ()  {
 
 }
 
-
 # * Function auto-add: *
 auto-add () {
  #TODO split into two functions auto-add use all scripts in the specified dirs or the default dir which can then be passed to an add function. This allow an add function to add a single/handful of scripts which are manually supplied or the results from auto add 
@@ -271,8 +251,6 @@ auto-add () {
   add "$script_list"
 
 }
-
-
 
 # * Function: add *
 add ()  {
@@ -430,19 +408,12 @@ add ()  {
     fi
   done 3<<< $script_list
   
-  #json_string="'.command += [${json_string:0:-1}]'"
   json_string="[${json_string:0:-1}]"
-  
-
-  #echo $'\n\n'"$json_string" #> t.json
 
   cp "$SCRIPTSINDEX" "$SCRIPTSINDEX".tmp
   jq -r --argjson jq_json_string "$json_string" '.commands += $jq_json_string' "$SCRIPTSINDEX".tmp 
 
 }
-
-
-
 
 # * Function: delete *
 delete ()  {
