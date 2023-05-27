@@ -267,14 +267,36 @@ list-functions-in-a-script-on-disk ()  {
 auto-add () {
  #TODO split into two functions auto-add use all scripts in the specified dirs or the default dir which can then be passed to an add function. This allow an add function to add a single/handful of scripts which are manually supplied or the results from auto add 
   local script_list=$(list-scripts-on-disk "$@")
+ 
+  add "$script_list"
+
+}
+
+
+
+# * Function: add *
+add ()  {
+
+# * Arguments: *
+#local var="$n"
+ 
+  local script_list="$1"
+  local dir="${2:-$SCRIPTS}"
+
+#*Code:
+
+  local script_list_lines_left="$(echo "$script_list"|wc -l)"
   local script_list_index="$(jq -r '.commands[].name' "$SCRIPTSINDEX")"
-  
-  #echo "$script_list"
-  
   local count=1
   
+  if [[ $script_list_lines_left -eq 1 ]] && [[ ! -z $dir/$script_list ]]; then
+    echo "Script $script_list is not found in $dir"
+    exit
+  fi
+
   local script_name
   while IFS= read -r script_list_line<&3;do
+    ((script_list_lines_left=script_list_lines_left-1)) 
     script_name="$script_list_line"
     echo $'\n\n'"Script Name: \"$script_name\""$'\n'
     echo "$script_list_index"|grep -wq "$script_name"
@@ -396,15 +418,16 @@ auto-add () {
     fi
   
     echo $'\n'
-    local add_another
-    while true;do
-      add_another="$(get_user_input "\""$script_name"\" added. Add another? [y/n]: ")" 
-      case $add_another in
-        y) continue 2 ;;
-        n) break 2 ;;
-      esac
-    done
-  
+    if [[ $script_list_lines_left > 0 ]];then
+      local add_another
+      while true;do
+        add_another="$(get_user_input "\""$script_name"\" added. Add another? [y/n]: ")" 
+        case $add_another in
+          y) continue 2 ;;
+          n) break 2 ;;
+        esac
+      done
+    fi
   done 3<<< $script_list
   
   #json_string="'.command += [${json_string:0:-1}]'"
@@ -449,7 +472,7 @@ commands () {
     echo ${commands[@]}
 }
 
-declare -a commands=(foo commands auto-add update show list-scripts-on-disk list-functions-in-a-script-on-disk delete)
+declare -a commands=(foo commands auto-add add update show list-scripts-on-disk list-functions-in-a-script-on-disk delete)
 
 for i in ${commands[@]}; do
     if [[ "$i" == "$subcommand" ]]; then
