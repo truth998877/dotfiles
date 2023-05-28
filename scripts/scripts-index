@@ -138,13 +138,30 @@ update ()  {
     
     IFS="${OLD_IFS}"
     
-    local value
+    cp "$SCRIPTSINDEX" "$SCRIPTSINDEX".tmp
     case $selected_key in
+      
       name|description|end|platform|locality|logfile|status)
+        local value
         value="$(get_user_input "Enter new "$selected_key": ")"
-        cp "$SCRIPTSINDEX" "$SCRIPTSINDEX".tmp
         jq --arg jq_script_index "$script_index" --arg jq_selected_key "$selected_key" --arg jq_value "$value"  '.commands[$jq_script_index|tonumber]|.[$jq_selected_key] = $jq_value' "$SCRIPTSINDEX".tmp
       ;;
+      
+      "associated commands"|dependants)
+        local selected_value
+        local values=("$(jq -r  --arg jq_script_index "$script_index" --arg jq_selected_key "$selected_key" '.commands[$jq_script_index|tonumber]|.[$jq_selected_key][]' "$SCRIPTSINDEX".tmp)")
+        #echo "$values"
+        local OLD_IFS=${IFS};IFS=$'\n'
+        select selected_value in ${values[@]};do
+          local value_index="$(jq -r --arg jq_script_index "$script_index" --arg jq_selected_key "$selected_key" --arg jq_selected_value "$selected_value"  '[.commands[$jq_script_index|tonumber]|.[$jq_selected_key][] == $jq_selected_value]|index(true)' "$SCRIPTSINDEX".tmp)"
+          echo $selected_value selected
+          #echo Value Index = "$value_index"
+          local new_value=$(get_user_input "Enter new value: ")
+          jq --arg jq_script_index "$script_index" --arg jq_selected_key "$selected_key" --arg jq_value_index "$value_index" --arg jq_new_value "$new_value" '.commands[$jq_script_index|tonumber]|.[$jq_selected_key][$jq_value_index|tonumber] = $jq_new_value' "$SCRIPTSINDEX".tmp
+          break
+        done 
+      ;;
+      
       *)
         echo Not Yet Supprted
         exit 0
