@@ -157,7 +157,7 @@ update ()  {
     
     case $selected_key in
       
-      name|description|end|platform|locality|logfile|status)
+      name|description|end|platform|locality|status)
         local value
         value="$(get_user_input "Enter new "$selected_key": ")"
         jq --arg jq_script_index "$script_index" --arg jq_selected_key "$selected_key" --arg jq_value "$value"  '.commands[$jq_script_index|tonumber]|.[$jq_selected_key] = $jq_value' "$SCRIPTSINDEX".tmp
@@ -194,6 +194,12 @@ update ()  {
           jq -r --arg jq_script_index "$script_index" --arg jq_selected_key "$selected_key" --arg jq_name_index "$name_index" --arg jq_new_name "$new_name" --arg jq_new_description "$new_description" '(.commands[$jq_script_index|tonumber]|.[$jq_selected_key][$jq_name_index|tonumber].name) = $jq_new_name |(.commands[$jq_script_index|tonumber]|.[$jq_selected_key][$jq_name_index|tonumber].description) = $jq_new_description' "$SCRIPTSINDEX".tmp
           break
         done
+      ;;
+
+      logfile)
+
+        local selected_logbook=$(select_logbook)
+        jq -r --arg jq_script_index "$script_index" --arg jq_selected_key "$selected_key" --arg jq_selected_logbook "$selected_logbook" '.commands[$jq_script_index|tonumber]|.[$jq_selected_key] = $jq_selected_logbook' "$SCRIPTSINDEX".tmp
       ;;
  
       *)
