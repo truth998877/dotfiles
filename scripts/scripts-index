@@ -18,6 +18,21 @@ echo_scripts_and_functions () {
 
 }
 
+get_user_input_default () {
+
+  local prompt="$1"
+  local default="$2"
+
+  read -p "$prompt" response
+
+  if [[ $response == ''  ]];then
+    response="$default"
+  fi
+
+  echo "$response"
+
+}
+
 get_user_input () {
 
   local prompt="$1"
@@ -139,6 +154,7 @@ update ()  {
     IFS="${OLD_IFS}"
     
     cp "$SCRIPTSINDEX" "$SCRIPTSINDEX".tmp
+    
     case $selected_key in
       
       name|description|end|platform|locality|logfile|status)
@@ -161,7 +177,25 @@ update ()  {
           break
         done 
       ;;
-      
+
+      "environment variables"|"output files")
+        local names="$(jq -r --arg jq_script_index "$script_index" --arg jq_selected_key "$selected_key" '.commands[$jq_script_index|tonumber]|.[$jq_selected_key][].name' "$SCRIPTSINDEX".tmp)"  
+        #echo "$names"
+        local selected_name
+        local OLD_IFS=${IFS};IFS=$'\n'
+        select selected_name in ${names[@]};do
+          local name_index="$(jq -r --arg jq_script_index "$script_index" --arg jq_selected_key "$selected_key" --arg jq_selected_name "$selected_name" '[.commands[$jq_script_index|tonumber]|.[$jq_selected_key][].name == $jq_selected_name]|index(true)' "$SCRIPTSINDEX".tmp)"
+          echo $name_index
+          local name_default="$(jq -r --arg jq_script_index "$script_index" --arg jq_selected_key "$selected_key" --arg jq_name_index "$name_index" '.commands[$jq_script_index|tonumber]|.[$jq_selected_key][$jq_name_index|tonumber].name' "$SCRIPTSINDEX".tmp)"
+          local description_default="$(jq -r --arg jq_script_index "$script_index" --arg jq_selected_key "$selected_key" --arg jq_name_index "$name_index" '.commands[$jq_script_index|tonumber]|.[$jq_selected_key][$jq_name_index|tonumber].description'  "$SCRIPTSINDEX".tmp)"
+          local new_name="$(get_user_input_default "Enter New Name: " "$name_default")"
+          local new_description="$(get_user_input_default "Enter New Description: " "$description_default")"
+          echo New name = "$new_name"
+          jq -r --arg jq_script_index "$script_index" --arg jq_selected_key "$selected_key" --arg jq_name_index "$name_index" --arg jq_new_name "$new_name" --arg jq_new_description "$new_description" '(.commands[$jq_script_index|tonumber]|.[$jq_selected_key][$jq_name_index|tonumber].name) = $jq_new_name |(.commands[$jq_script_index|tonumber]|.[$jq_selected_key][$jq_name_index|tonumber].description) = $jq_new_description' "$SCRIPTSINDEX".tmp
+          break
+        done
+      ;;
+ 
       *)
         echo Not Yet Supprted
         exit 0
