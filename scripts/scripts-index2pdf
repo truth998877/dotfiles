@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+scripts-index show md > $HOME/script-index.md
+pandoc $HOME/script-index.md -o $HOME/script-index.pdf
