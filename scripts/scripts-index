@@ -178,7 +178,7 @@ update ()  {
         done 
       ;;
 
-      "environment variables"|"output files")
+      "environment variables"|"output files"|functions)
         local names="$(jq -r --arg jq_script_index "$script_index" --arg jq_selected_key "$selected_key" '.commands[$jq_script_index|tonumber]|.[$jq_selected_key][].name' "$SCRIPTSINDEX".tmp)"  
         #echo "$names"
         local selected_name
