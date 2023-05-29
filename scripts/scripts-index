@@ -227,10 +227,58 @@ show ()  {
  
 
 #*Code:
+   
+  case $1 in
 
-  script_index="$(select-script-from-index)"
+    all)
+      jq -r '.commands[]|"\n\u001b[35mName:\n\u001b[37m\(.name)\n\n" + 
+"\u001b[35mDescription:\n\u001b[37m\(.description)\n\n" +
+"\u001b[35mPlatform:\n\u001b[37m\(.platform)\n\n" +
+"\u001b[35mLocality:\n\u001b[37m\(.locality)\n\n" +
+"\u001b[35mEnd:\n\u001b[37m\(.end)\n\n" + 
+"\u001b[35mEnvironment Variables:\n\u001b[37m\([."environment variables"[].name]|join("\n"))\n\n" +
+"\u001b[35mOutput Files:\n\u001b[37m\([."output files"[].name]|join("\n"))\n\n" + 
+"\u001b[35mFunctions:\n\u001b[37m\([.functions[].name]|join("\n"))\n\n" + 
+"\u001b[35mAssocciated Commands:\n\u001b[37m\([."associated commands"[]]|join("\n"))\n\n" +
+"\u001b[35mDependants:\n\u001b[37m\([.dependants[]]|join("\n"))\n\n" +
+"\u001b[35mLog file:\n\u001b[37m\(.logfile)\n\n" + 
+"\u001b[35mStatus:\n\u001b[37m\(.status)"' "$SCRIPTSINDEX"
+    ;;
+   
+    md)
+      jq -r '.commands[]|"# Scripts Index\n\n## Name\n\(.name)\n\n" + 
+"### Description\n\(.description)\n\n" +
+"### Platform\n\(.platform)\n\n" +
+"### Locality\n\(.locality)\n\n" +
+"### End\n\(.end)\n\n" + 
+"### Environment Variables\n\([."environment variables"[].name]|join(", "))\n\n" +
+"### Output Files\n\([."output files"[].name]|join(", "))\n\n" + 
+"### Functions\n\([.functions[].name]|join(", "))\n\n" + 
+"### Assocciated Commands\n\([."associated commands"[]]|join(", "))\n\n" +
+"### Dependants\n\([.dependants[]]|join(", "))\n\n" +
+"### Log file\n\(.logfile)\n\n" + 
+"### Status\n\(.status)"' "$SCRIPTSINDEX"
+    ;;
 
-  jq -r --arg jq_cmdindex "$script_index" '.|"\n\u001b[35mName:\n\u001b[37m\(.commands[$jq_cmdindex|tonumber].name)\n\n" + "\u001b[35mDescription:\n\u001b[37m\(.commands[$jq_cmdindex|tonumber].description)\n\n" + "\u001b[35mPlatform:\n\u001b[37m\(.commands[$jq_cmdindex|tonumber].platform)\n\n" + "\u001b[35mLocality:\n\u001b[37m\(.commands[$jq_cmdindex|tonumber].locality)\n\n"+ "\u001b[35mEnd:\n\u001b[37m\(.commands[$jq_cmdindex|tonumber].end)\n\n" + "\u001b[35mEnvironment Variables:\n\u001b[37m\([.commands[$jq_cmdindex|tonumber]."environment variables"[].name]|join("\n"))\n\n" + "\u001b[35mOutput Files:\n\u001b[37m\([.commands[$jq_cmdindex|tonumber]."output files"[].name]|join("\n"))\n\n" + "\u001b[35mFunctions:\n\u001b[37m\([.commands[$jq_cmdindex|tonumber].functions[].name]|join("\n"))\n\n" + "\u001b[35mAssociated Commands:\n\u001b[37m\([.commands[$jq_cmdindex|tonumber]."associated commands"[]]|join("\n"))\n\n" + "\u001b[35mDependants:\n\u001b[37m\([.commands[$jq_cmdindex|tonumber].dependants[]]|join("\n"))\n\n" + "\u001b[35mLog File:\n\u001b[37m\(.commands[$jq_cmdindex|tonumber]."logfile")\n\n"+ "\u001b[35mStatus:\n\u001b[37m\(.commands[$jq_cmdindex|tonumber].status)\n\n"' "$SCRIPTSINDEX"
+    *)    
+      script_index="$(select-script-from-index)"
+      jq -r --arg jq_cmdindex "$script_index" '.commands[$jq_cmdindex|tonumber]|"\n\u001b[35mName:\n\u001b[37m\(.name)\n\n" + 
+"\u001b[35mDescription:\n\u001b[37m\(.description)\n\n" +
+"\u001b[35mPlatform:\n\u001b[37m\(.platform)\n\n" +
+"\u001b[35mLocality:\n\u001b[37m\(.locality)\n\n" +
+"\u001b[35mEnd:\n\u001b[37m\(.end)\n\n" + 
+"\u001b[35mEnvironment Variables:\n\u001b[37m\([."environment variables"[].name]|join("\n"))\n\n" +
+"\u001b[35mOutput Files:\n\u001b[37m\([."output files"[].name]|join("\n"))\n\n" + 
+"\u001b[35mFunctions:\n\u001b[37m\([.functions[].name]|join("\n"))\n\n" + 
+"\u001b[35mAssocciated Commands:\n\u001b[37m\([."associated commands"[]]|join("\n"))\n\n" +
+"\u001b[35mDependants:\n\u001b[37m\([.dependants[]]|join("\n"))\n\n" +
+"\u001b[35mLog file:\n\u001b[37m\(.logfile)\n\n" + 
+"\u001b[35mStatus:\n\u001b[37m\(.status)"' "$SCRIPTSINDEX"
+    ;;
+  esac
+  
+
+#  jq -r --arg jq_cmdindex "$script_index" '.|"\n\u001b[35mName:\n\u001b[37m\(.commands[$jq_cmdindex|tonumber].name)\n\n" + "\u001b[35mDescription:\n\u001b[37m\(.commands[$jq_cmdindex|tonumber].description)\n\n" + "\u001b[35mPlatform:\n\u001b[37m\(.commands[$jq_cmdindex|tonumber].platform)\n\n" + "\u001b[35mLocality:\n\u001b[37m\(.commands[$jq_cmdindex|tonumber].locality)\n\n"+ "\u001b[35mEnd:\n\u001b[37m\(.commands[$jq_cmdindex|tonumber].end)\n\n" + "\u001b[35mEnvironment Variables:\n\u001b[37m\([.commands[$jq_cmdindex|tonumber]."environment variables"[].name]|join("\n"))\n\n" + "\u001b[35mOutput Files:\n\u001b[37m\([.commands[$jq_cmdindex|tonumber]."output files"[].name]|join("\n"))\n\n" + "\u001b[35mFunctions:\n\u001b[37m\([.commands[$jq_cmdindex|tonumber].functions[].name]|join("\n"))\n\n" + "\u001b[35mAssociated Commands:\n\u001b[37m\([.commands[$jq_cmdindex|tonumber]."associated commands"[]]|join("\n"))\n\n" + "\u001b[35mDependants:\n\u001b[37m\([.commands[$jq_cmdindex|tonumber].dependants[]]|join("\n"))\n\n" + "\u001b[35mLog File:\n\u001b[37m\(.commands[$jq_cmdindex|tonumber]."logfile")\n\n"+ "\u001b[35mStatus:\n\u001b[37m\(.commands[$jq_cmdindex|tonumber].status)\n\n"' "$SCRIPTSINDEX"
 
 }
 
