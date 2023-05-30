@@ -381,7 +381,7 @@ add ()  {
   while IFS= read -r script_list_line<&3;do
     ((script_list_lines_left=script_list_lines_left-1)) 
     script_name="$script_list_line"
-    echo $'\n\n'"Script Name: \"$script_name\""$'\n'
+    echo $'\n'"Script Name: \"$script_name\""$'\n'
     echo "$script_list_index"|grep -wq "$script_name"
     if [[ $? -eq 0 ]]; then
        echo " * - The script \"$script_name\" is already in the index, skipping! - * "
@@ -406,7 +406,7 @@ add ()  {
           ;;
         esac
       done
-      echo $'\n'
+      #echo $'\n'
       
       local add_out_file
       local output_files
@@ -423,7 +423,7 @@ add ()  {
           ;;
         esac
       done
-      echo $'\n'
+      #echo $'\n'
       
       local function_name
       local function_description
@@ -464,7 +464,7 @@ add ()  {
           ;;
         esac
       done
-      echo $'\n'
+      #echo $'\n'
       
       local add_dependants
       local dependant_1
@@ -480,11 +480,11 @@ add ()  {
           break
         esac
       done  
-      echo $'\n'
+      #echo $'\n'
       
-      echo "Select Logbook..."
+      echo $'\n'"Enter Logbook"$'\n'"Select..."
       local logfile="$(select_logbook)"
-      
+      echo " " 
       local command_status="$(get_user_input "Enter Status: ")"
       
       #json_string - deliberately global 
@@ -500,7 +500,7 @@ add ()  {
       fi
     fi
   
-    echo $'\n'
+    echo " "
     if [[ $script_list_lines_left > 0 ]];then
       local add_another
       while true;do
