@@ -1,5 +1,33 @@
 #!/usr/bin/env bash
 
+echo here
+
+testing=1
+
+indexfile="$SCRIPTSINDEX"
+
+if [[ $testing == 1 ]]; then
+  indexfile="${SCRIPTSINDEX%.*}-testing.json"
+  testing_str=$'\n'"* - This is a test - *"
+  echo "$testing_str"
+  echo "* - index file = "$indexfile" - *"
+fi
+
+cp "$indexfile" "$indexfile".tmp
+
+rm_tmp_indexfile () {
+
+  rm "$indexfile".tmp
+
+}
+
+copy-schema-to-testing () {
+
+cp "${SCRIPTSINDEX%.*}-schema.json" "${SCRIPTSINDEX%.*}-testing.json"
+
+}
+
+
 foo () {
   local first=$1
   echo "Would foo with $first."
@@ -117,12 +145,12 @@ select_logbook () {
 # * Function select-script-from-index: *
 select-script-from-index () {
   
-  script_list=("$(jq -r '.commands[].name' "$SCRIPTSINDEX")")
+  script_list=("$(jq -r '.commands[].name' "$indexfile".tmp)")
 
   local OLD_IFS=${IFS};IFS=$'\n'
 
   select cmd in ${script_list[@]};do
-    local scriptindex=$(jq -r --arg jq_cmd "$cmd" '[.commands[]|.name == $jq_cmd] |index(true)' "$SCRIPTSINDEX")
+    local scriptindex=$(jq -r --arg jq_cmd "$cmd" '[.commands[]|.name == $jq_cmd] |index(true)' "$indexfile".tmp)
     echo "$scriptindex"
     IFS="${OLD_IFS}"
     break
@@ -141,7 +169,7 @@ update ()  {
   while true;do
 
     local script_index="$(select-script-from-index)"
-    local key_list=("$(jq -r '[.commands[]|keys[]]|unique[]' $SCRIPTSINDEX)")
+    local key_list=("$(jq -r '[.commands[]|keys[]]|unique[]' "$indexfile".tmp)")
     
     local OLD_IFS=${IFS};IFS=$'\n'
     
@@ -153,45 +181,48 @@ update ()  {
     
     IFS="${OLD_IFS}"
     
-    cp "$SCRIPTSINDEX" "$SCRIPTSINDEX".tmp
+    cp "$indexfile".tmp "$indexfile".tmp
     
     case $selected_key in
       
       name|description|end|platform|locality|status)
         local value
         value="$(get_user_input "Enter new "$selected_key": ")"
-        jq --arg jq_script_index "$script_index" --arg jq_selected_key "$selected_key" --arg jq_value "$value"  '.commands[$jq_script_index|tonumber]|.[$jq_selected_key] = $jq_value' "$SCRIPTSINDEX".tmp
+        jq --arg jq_script_index "$script_index" --arg jq_selected_key "$selected_key" --arg jq_value "$value"  '.commands[$jq_script_index|tonumber]|.[$jq_selected_key] = $jq_value' "$indexfile".tmp > "$indexfile"
+        rm_tmp_indexfile
       ;;
       
       "associated commands"|dependants)
         local selected_value
-        local values=("$(jq -r  --arg jq_script_index "$script_index" --arg jq_selected_key "$selected_key" '.commands[$jq_script_index|tonumber]|.[$jq_selected_key][]' "$SCRIPTSINDEX".tmp)")
+        local values=("$(jq -r  --arg jq_script_index "$script_index" --arg jq_selected_key "$selected_key" '.commands[$jq_script_index|tonumber]|.[$jq_selected_key][]' "$indexfile".tmp)")
         #echo "$values"
         local OLD_IFS=${IFS};IFS=$'\n'
         select selected_value in ${values[@]};do
-          local value_index="$(jq -r --arg jq_script_index "$script_index" --arg jq_selected_key "$selected_key" --arg jq_selected_value "$selected_value"  '[.commands[$jq_script_index|tonumber]|.[$jq_selected_key][] == $jq_selected_value]|index(true)' "$SCRIPTSINDEX".tmp)"
+          local value_index="$(jq -r --arg jq_script_index "$script_index" --arg jq_selected_key "$selected_key" --arg jq_selected_value "$selected_value"  '[.commands[$jq_script_index|tonumber]|.[$jq_selected_key][] == $jq_selected_value]|index(true)' "$indexfile".tmp)"
           echo $selected_value selected
           #echo Value Index = "$value_index"
           local new_value=$(get_user_input "Enter new value: ")
-          jq --arg jq_script_index "$script_index" --arg jq_selected_key "$selected_key" --arg jq_value_index "$value_index" --arg jq_new_value "$new_value" '.commands[$jq_script_index|tonumber]|.[$jq_selected_key][$jq_value_index|tonumber] = $jq_new_value' "$SCRIPTSINDEX".tmp
+          jq --arg jq_script_index "$script_index" --arg jq_selected_key "$selected_key" --arg jq_value_index "$value_index" --arg jq_new_value "$new_value" '.commands[$jq_script_index|tonumber]|.[$jq_selected_key][$jq_value_index|tonumber] = $jq_new_value' "$indexfile".tmp > "$indexfile"
+          rm_tmp_indexfile
           break
         done 
       ;;
 
       "environment variables"|"output files"|functions)
-        local names="$(jq -r --arg jq_script_index "$script_index" --arg jq_selected_key "$selected_key" '.commands[$jq_script_index|tonumber]|.[$jq_selected_key][].name' "$SCRIPTSINDEX".tmp)"  
+        local names="$(jq -r --arg jq_script_index "$script_index" --arg jq_selected_key "$selected_key" '.commands[$jq_script_index|tonumber]|.[$jq_selected_key][].name' "$indexfile".tmp)"  
         #echo "$names"
         local selected_name
         local OLD_IFS=${IFS};IFS=$'\n'
         select selected_name in ${names[@]};do
-          local name_index="$(jq -r --arg jq_script_index "$script_index" --arg jq_selected_key "$selected_key" --arg jq_selected_name "$selected_name" '[.commands[$jq_script_index|tonumber]|.[$jq_selected_key][].name == $jq_selected_name]|index(true)' "$SCRIPTSINDEX".tmp)"
+          local name_index="$(jq -r --arg jq_script_index "$script_index" --arg jq_selected_key "$selected_key" --arg jq_selected_name "$selected_name" '[.commands[$jq_script_index|tonumber]|.[$jq_selected_key][].name == $jq_selected_name]|index(true)' "$indexfile".tmp)"
           echo $name_index
-          local name_default="$(jq -r --arg jq_script_index "$script_index" --arg jq_selected_key "$selected_key" --arg jq_name_index "$name_index" '.commands[$jq_script_index|tonumber]|.[$jq_selected_key][$jq_name_index|tonumber].name' "$SCRIPTSINDEX".tmp)"
-          local description_default="$(jq -r --arg jq_script_index "$script_index" --arg jq_selected_key "$selected_key" --arg jq_name_index "$name_index" '.commands[$jq_script_index|tonumber]|.[$jq_selected_key][$jq_name_index|tonumber].description'  "$SCRIPTSINDEX".tmp)"
+          local name_default="$(jq -r --arg jq_script_index "$script_index" --arg jq_selected_key "$selected_key" --arg jq_name_index "$name_index" '.commands[$jq_script_index|tonumber]|.[$jq_selected_key][$jq_name_index|tonumber].name' "$indexfile".tmp)"
+          local description_default="$(jq -r --arg jq_script_index "$script_index" --arg jq_selected_key "$selected_key" --arg jq_name_index "$name_index" '.commands[$jq_script_index|tonumber]|.[$jq_selected_key][$jq_name_index|tonumber].description'  "$indexfile".tmp)"
           local new_name="$(get_user_input_default "Enter New Name: " "$name_default")"
           local new_description="$(get_user_input_default "Enter New Description: " "$description_default")"
           echo New name = "$new_name"
-          jq -r --arg jq_script_index "$script_index" --arg jq_selected_key "$selected_key" --arg jq_name_index "$name_index" --arg jq_new_name "$new_name" --arg jq_new_description "$new_description" '(.commands[$jq_script_index|tonumber]|.[$jq_selected_key][$jq_name_index|tonumber].name) = $jq_new_name |(.commands[$jq_script_index|tonumber]|.[$jq_selected_key][$jq_name_index|tonumber].description) = $jq_new_description' "$SCRIPTSINDEX".tmp
+          jq -r --arg jq_script_index "$script_index" --arg jq_selected_key "$selected_key" --arg jq_name_index "$name_index" --arg jq_new_name "$new_name" --arg jq_new_description "$new_description" '(.commands[$jq_script_index|tonumber]|.[$jq_selected_key][$jq_name_index|tonumber].name) = $jq_new_name |(.commands[$jq_script_index|tonumber]|.[$jq_selected_key][$jq_name_index|tonumber].description) = $jq_new_description' "$indexfile".tmp > "$indexfile"
+          rm_tmp_indexfile
           break
         done
       ;;
@@ -199,7 +230,8 @@ update ()  {
       logfile)
 
         local selected_logbook=$(select_logbook)
-        jq -r --arg jq_script_index "$script_index" --arg jq_selected_key "$selected_key" --arg jq_selected_logbook "$selected_logbook" '.commands[$jq_script_index|tonumber]|.[$jq_selected_key] = $jq_selected_logbook' "$SCRIPTSINDEX".tmp
+        jq -r --arg jq_script_index "$script_index" --arg jq_selected_key "$selected_key" --arg jq_selected_logbook "$selected_logbook" '.commands[$jq_script_index|tonumber]|.[$jq_selected_key] = $jq_selected_logbook' "$indexfile".tmp > "$indexfile"
+        rm_tmp_indexfile
       ;;
  
       *)
@@ -242,7 +274,7 @@ show ()  {
 "\u001b[35mAssocciated Commands:\n\u001b[37m\([."associated commands"[]]|join("\n"))\n\n" +
 "\u001b[35mDependants:\n\u001b[37m\([.dependants[]]|join("\n"))\n\n" +
 "\u001b[35mLog file:\n\u001b[37m\(.logfile)\n\n" + 
-"\u001b[35mStatus:\n\u001b[37m\(.status)"' "$SCRIPTSINDEX"
+"\u001b[35mStatus:\n\u001b[37m\(.status)"' "$indexfile".tmp
     ;;
    
     md)
@@ -257,7 +289,7 @@ show ()  {
 "### Assocciated Commands\n\([."associated commands"[]]|join(", "))\n\n" +
 "### Dependants\n\([.dependants[]]|join(", "))\n\n" +
 "### Log file\n\(.logfile)\n\n" + 
-"### Status\n\(.status)"' "$SCRIPTSINDEX"
+"### Status\n\(.status)"' "$indexfile".tmp
     ;;
 
     *)    
@@ -273,12 +305,12 @@ show ()  {
 "\u001b[35mAssocciated Commands:\n\u001b[37m\([."associated commands"[]]|join("\n"))\n\n" +
 "\u001b[35mDependants:\n\u001b[37m\([.dependants[]]|join("\n"))\n\n" +
 "\u001b[35mLog file:\n\u001b[37m\(.logfile)\n\n" + 
-"\u001b[35mStatus:\n\u001b[37m\(.status)"' "$SCRIPTSINDEX"
+"\u001b[35mStatus:\n\u001b[37m\(.status)"' "$indexfile".tmp
     ;;
   esac
   
 
-#  jq -r --arg jq_cmdindex "$script_index" '.|"\n\u001b[35mName:\n\u001b[37m\(.commands[$jq_cmdindex|tonumber].name)\n\n" + "\u001b[35mDescription:\n\u001b[37m\(.commands[$jq_cmdindex|tonumber].description)\n\n" + "\u001b[35mPlatform:\n\u001b[37m\(.commands[$jq_cmdindex|tonumber].platform)\n\n" + "\u001b[35mLocality:\n\u001b[37m\(.commands[$jq_cmdindex|tonumber].locality)\n\n"+ "\u001b[35mEnd:\n\u001b[37m\(.commands[$jq_cmdindex|tonumber].end)\n\n" + "\u001b[35mEnvironment Variables:\n\u001b[37m\([.commands[$jq_cmdindex|tonumber]."environment variables"[].name]|join("\n"))\n\n" + "\u001b[35mOutput Files:\n\u001b[37m\([.commands[$jq_cmdindex|tonumber]."output files"[].name]|join("\n"))\n\n" + "\u001b[35mFunctions:\n\u001b[37m\([.commands[$jq_cmdindex|tonumber].functions[].name]|join("\n"))\n\n" + "\u001b[35mAssociated Commands:\n\u001b[37m\([.commands[$jq_cmdindex|tonumber]."associated commands"[]]|join("\n"))\n\n" + "\u001b[35mDependants:\n\u001b[37m\([.commands[$jq_cmdindex|tonumber].dependants[]]|join("\n"))\n\n" + "\u001b[35mLog File:\n\u001b[37m\(.commands[$jq_cmdindex|tonumber]."logfile")\n\n"+ "\u001b[35mStatus:\n\u001b[37m\(.commands[$jq_cmdindex|tonumber].status)\n\n"' "$SCRIPTSINDEX"
+#  jq -r --arg jq_cmdindex "$script_index" '.|"\n\u001b[35mName:\n\u001b[37m\(.commands[$jq_cmdindex|tonumber].name)\n\n" + "\u001b[35mDescription:\n\u001b[37m\(.commands[$jq_cmdindex|tonumber].description)\n\n" + "\u001b[35mPlatform:\n\u001b[37m\(.commands[$jq_cmdindex|tonumber].platform)\n\n" + "\u001b[35mLocality:\n\u001b[37m\(.commands[$jq_cmdindex|tonumber].locality)\n\n"+ "\u001b[35mEnd:\n\u001b[37m\(.commands[$jq_cmdindex|tonumber].end)\n\n" + "\u001b[35mEnvironment Variables:\n\u001b[37m\([.commands[$jq_cmdindex|tonumber]."environment variables"[].name]|join("\n"))\n\n" + "\u001b[35mOutput Files:\n\u001b[37m\([.commands[$jq_cmdindex|tonumber]."output files"[].name]|join("\n"))\n\n" + "\u001b[35mFunctions:\n\u001b[37m\([.commands[$jq_cmdindex|tonumber].functions[].name]|join("\n"))\n\n" + "\u001b[35mAssociated Commands:\n\u001b[37m\([.commands[$jq_cmdindex|tonumber]."associated commands"[]]|join("\n"))\n\n" + "\u001b[35mDependants:\n\u001b[37m\([.commands[$jq_cmdindex|tonumber].dependants[]]|join("\n"))\n\n" + "\u001b[35mLog File:\n\u001b[37m\(.commands[$jq_cmdindex|tonumber]."logfile")\n\n"+ "\u001b[35mStatus:\n\u001b[37m\(.commands[$jq_cmdindex|tonumber].status)\n\n"' "$indexfile".tmp
 
 }
 
@@ -369,7 +401,7 @@ add ()  {
 #*Code:
 
   local script_list_lines_left="$(echo "$script_list"|wc -l)"
-  local script_list_index="$(jq -r '.commands[].name' "$SCRIPTSINDEX")"
+  local script_list_index="$(jq -r '.commands[].name' "$indexfile".tmp)"
   local count=1
   
   if [[ $script_list_lines_left -eq 1 ]] && [[ ! -z $dir/$script_list ]]; then
@@ -515,8 +547,9 @@ add ()  {
   
   json_string="[${json_string:0:-1}]"
 
-  cp "$SCRIPTSINDEX" "$SCRIPTSINDEX".tmp
-  jq -r --argjson jq_json_string "$json_string" '.commands += $jq_json_string' "$SCRIPTSINDEX".tmp 
+  cp "$indexfile".tmp "$indexfile".tmp
+  jq -r --argjson jq_json_string "$json_string" '.commands += $jq_json_string' "$indexfile".tmp > "$indexfile"
+  rm_tmp_indexfile
 
 }
 
@@ -530,7 +563,8 @@ delete ()  {
 
   script_index="$(select-script-from-index)"
 
-  jq --arg jq_script_index "$script_index" 'del(.commands[$jq_script_index|tonumber])' $SCRIPTSINDEX
+  jq --arg jq_script_index "$script_index" 'del(.commands[$jq_script_index|tonumber])' "$indexfile".tmp > "$indexfile"
+  rm_tmp_indexfile
 
 }
 
@@ -548,7 +582,7 @@ commands () {
     echo ${commands[@]}
 }
 
-declare -a commands=(foo commands auto-add add update show list-scripts-on-disk list-functions-in-a-script-on-disk delete)
+declare -a commands=(foo commands auto-add add update show list-scripts-on-disk list-functions-in-a-script-on-disk delete copy-schema-to-testing)
 
 for i in ${commands[@]}; do
     if [[ "$i" == "$subcommand" ]]; then
