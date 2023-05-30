@@ -1,0 +1,138 @@
+{
+  "commands": [
+    {
+          "name": "test 1",
+          "description": "test 1 command description",
+          "end" : "front",
+          "platform" : "darwin",
+          "locality" : "none",
+          "environment variables" : [
+            { 
+               "name" : "test 1 env var 1",
+               "description" : "test 1 env var 1 description"
+            },
+            {
+               "name" : "test 1 env var 2",
+               "description" : "test 1 env var 2 description"
+            }
+          ],
+          "output files" : [
+            {
+              "name" : "test 1 output file 1",
+              "description" : "test 1 output file 1 description"
+            },
+            {
+              "name" : "test 1 output file 2",
+              "description" : "test 1 output file 2 description"
+            }
+          ],
+          "functions": [
+            {
+              "name": "test 1 function 1 name",
+              "description": "test 1 function 1 description",
+              "input arguments": [
+                {
+                  "argument": "test 1 function 1 argument 1",
+                  "description": "test 1 function 1 argument 1  description"
+                },
+                {
+                  "argument": "test 1 function 1 argument 2",
+                  "description": "test 1 function 1 argument 2 description"
+                }
+              ]
+            },
+            {
+              "name": "test 1 function 2 name",
+              "description": "test 1 function 2 description",
+              "input arguments": [
+                {
+                  "argument": "test 1 function 2 argument 1",
+                  "description": "test 1 function 2 argument 1  description"
+                },
+                {
+                  "argument": "test 1 function 2 argument 2",
+                  "description": "test 1 function 2 argument 2 description"
+                }
+              ]
+            }
+          ],
+          "associated commands": [
+            "test 1 command 1",
+            "test 1 command 2"
+          ],
+          "dependants": [
+            "test 1 dependant 1",
+            "test 1 dependant 2"
+          ],
+          "logfile" : "test 1 log file",
+          "status" : "test 1 status"
+        },
+        {
+          "name": "test 2",
+          "description": "test 2 command description",
+          "end" : "front",
+          "platform" : "darwin",
+          "locality" : "none",
+          "environment variables" : [
+            { 
+               "name" : "test 2 env var 1",
+               "description" : "test 1 env var 1 description"
+            },
+            {
+               "name" : "test 2 env var 2",
+               "description" : "test 1 env var 2 description"
+            }
+          ],
+          "output files" : [
+            {
+              "name" : "test 2 output file 1",
+              "description" : "test 1 output file 1 description"
+            },
+            {
+              "name" : "test 2 output file 2",
+              "description" : "test 1 output file 2 description"
+            }
+          ],
+          "functions": [
+            {
+              "name": "test 2 function 1 name",
+              "description": "test 2 function 1 description",
+              "input arguments": [
+                {
+                  "argument": "test 2 function 1 argument 1",
+                  "description": "test 2 function 1 argument 1  description"
+                },
+                {
+                  "argument": "test 2 function 1 argument 2",
+                  "description": "test 2 function 1 argument 2 description"
+                }
+              ]
+            },
+            {
+              "name": "test 2 function 2 name",
+              "description": "test 2 function 2 description",
+              "input arguments": [
+                {
+                  "argument": "test 2 function 2  argument 1",
+                  "description": "test 2 function 2  argument 1  description"
+                },
+                {
+                  "argument": "test 2 function 2 argument 2",
+                  "description": "test 2 function 2  argument 2 description"
+                }
+              ]
+            }
+          ],
+          "associated commands": [
+            "test 2 command 1",
+            "test 2 command 2"
+          ],
+          "dependants": [
+            "test 2 dependant 1",
+            "test 2 dependant 2"
+          ],
+          "logfile" : "test 2 log file",
+          "status" : "test 2 status"
+        }
+      ]
+}
