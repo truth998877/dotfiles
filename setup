@@ -14,7 +14,7 @@ source set-platform-end
 
 if [[ $END != work ]]; then
 
-for i in .bashrc .dircolors .profile logbooks.json; do
+for i in .bashrc .dircolors .profile logbooks.json scripts-index.json scripts-index-testing.json scripts-index-schema.json; do
   if [[ -f "$HOME/$i" ]];then
     cp -p "$HOME/$i" "$HOME/$i-orig"
   else
