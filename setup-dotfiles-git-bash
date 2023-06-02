@@ -18,7 +18,7 @@ cd $HOME/repos/github.com/truth998877/dotfiles
 
 git pull
 
-for i in .bashrc .dircolors .profile; do
+for i in .bashrc .dircolors .profile logbooks.json scripts-index.json scripts-index-testing.json; do
   _backup "$i"
   _copy-from-repo "$i"
 done
