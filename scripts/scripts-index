@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-echo here
-
 testing=1
 
 indexfile="$SCRIPTSINDEX"
@@ -169,6 +167,7 @@ update ()  {
   while true;do
 
     local script_index="$(select-script-from-index)"
+    #TODO this needs to be only keys which have values
     local key_list=("$(jq -r '[.commands[]|keys[]]|unique[]' "$indexfile".tmp)")
     
     local OLD_IFS=${IFS};IFS=$'\n'
@@ -181,14 +180,12 @@ update ()  {
     
     IFS="${OLD_IFS}"
     
-    cp "$indexfile".tmp "$indexfile".tmp
-    
     case $selected_key in
       
       name|description|end|platform|locality|status)
         local value
         value="$(get_user_input "Enter new "$selected_key": ")"
-        jq --arg jq_script_index "$script_index" --arg jq_selected_key "$selected_key" --arg jq_value "$value"  '.commands[$jq_script_index|tonumber]|.[$jq_selected_key] = $jq_value' "$indexfile".tmp > "$indexfile"
+        jq --arg jq_script_index "$script_index" --arg jq_selected_key "$selected_key" --arg jq_value "$value"  '(.commands[$jq_script_index|tonumber]|.[$jq_selected_key]) |= $jq_value' "$indexfile".tmp > "$indexfile"
         rm_tmp_indexfile
       ;;
       
@@ -202,7 +199,7 @@ update ()  {
           echo $selected_value selected
           #echo Value Index = "$value_index"
           local new_value=$(get_user_input "Enter new value: ")
-          jq --arg jq_script_index "$script_index" --arg jq_selected_key "$selected_key" --arg jq_value_index "$value_index" --arg jq_new_value "$new_value" '.commands[$jq_script_index|tonumber]|.[$jq_selected_key][$jq_value_index|tonumber] = $jq_new_value' "$indexfile".tmp > "$indexfile"
+          jq --arg jq_script_index "$script_index" --arg jq_selected_key "$selected_key" --arg jq_value_index "$value_index" --arg jq_new_value "$new_value" '(.commands[$jq_script_index|tonumber]|.[$jq_selected_key][$jq_value_index|tonumber]) |= $jq_new_value' "$indexfile".tmp > "$indexfile"
           rm_tmp_indexfile
           break
         done 
@@ -221,7 +218,7 @@ update ()  {
           local new_name="$(get_user_input_default "Enter New Name: " "$name_default")"
           local new_description="$(get_user_input_default "Enter New Description: " "$description_default")"
           echo New name = "$new_name"
-          jq -r --arg jq_script_index "$script_index" --arg jq_selected_key "$selected_key" --arg jq_name_index "$name_index" --arg jq_new_name "$new_name" --arg jq_new_description "$new_description" '(.commands[$jq_script_index|tonumber]|.[$jq_selected_key][$jq_name_index|tonumber].name) = $jq_new_name |(.commands[$jq_script_index|tonumber]|.[$jq_selected_key][$jq_name_index|tonumber].description) = $jq_new_description' "$indexfile".tmp > "$indexfile"
+          jq -r --arg jq_script_index "$script_index" --arg jq_selected_key "$selected_key" --arg jq_name_index "$name_index" --arg jq_new_name "$new_name" --arg jq_new_description "$new_description" '(.commands[$jq_script_index|tonumber]|.[$jq_selected_key][$jq_name_index|tonumber].name) = $jq_new_name |(.commands[$jq_script_index|tonumber]|.[$jq_selected_key][$jq_name_index|tonumber].description) |= $jq_new_description' "$indexfile".tmp > "$indexfile"
           rm_tmp_indexfile
           break
         done
@@ -230,7 +227,7 @@ update ()  {
       logfile)
 
         local selected_logbook=$(select_logbook)
-        jq -r --arg jq_script_index "$script_index" --arg jq_selected_key "$selected_key" --arg jq_selected_logbook "$selected_logbook" '.commands[$jq_script_index|tonumber]|.[$jq_selected_key] = $jq_selected_logbook' "$indexfile".tmp > "$indexfile"
+        jq -r --arg jq_script_index "$script_index" --arg jq_selected_key "$selected_key" --arg jq_selected_logbook "$selected_logbook" '(.commands[$jq_script_index|tonumber]|.[$jq_selected_key]) |= $jq_selected_logbook' "$indexfile".tmp > "$indexfile"
         rm_tmp_indexfile
       ;;
  
@@ -547,7 +544,6 @@ add ()  {
   
   json_string="[${json_string:0:-1}]"
 
-  cp "$indexfile".tmp "$indexfile".tmp
   jq -r --argjson jq_json_string "$json_string" '.commands += $jq_json_string' "$indexfile".tmp > "$indexfile"
   rm_tmp_indexfile
 
