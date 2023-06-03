@@ -36,7 +36,7 @@ if [[ $END != work ]]; then
   done
 fi
 
-if [[$END == work ]]; then
+if [[ $END == work ]]; then
   echo install w3m in git bash for windows
 fi
 
