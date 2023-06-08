@@ -6,7 +6,7 @@ delete-box ()  {
 # * Arguments: *
 #local var="$n"
  
-  local machine="$1"
+  local machine="$1 Clone"
 
 #*Code:
 
