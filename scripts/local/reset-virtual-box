@@ -1,0 +1,40 @@
+#!/bin/bash
+
+# * Function: delete-box *
+delete-box ()  {
+
+# * Arguments: *
+#local var="$n"
+ 
+  local machine="$1"
+
+#*Code:
+
+  VBoxManage unregistervm --delete "$machine"
+
+}
+
+# * Function: clone *
+clone-box ()  {
+
+# * Arguments: *
+#local var="$n"
+ 
+  local machine="$1"
+
+#*Code:
+
+
+  VBoxManage clonevm "$machine" --name="$machine Clone" --options=KeepAllMACs --options=KeepHwUUIDs --register
+
+}
+
+boxes=("$@")
+
+for i in "${boxes[@]}";do
+
+  delete-box "$i"
+  clone-box "$i"
+
+done
+
