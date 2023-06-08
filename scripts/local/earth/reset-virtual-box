@@ -9,12 +9,12 @@ delete-box ()  {
   local machine="$1 Clone"
 
 #*Code:
-
+  echo "Deleting \"$1 Clone\"..."
   VBoxManage unregistervm --delete "$machine"
-
+  echo $'\n'
 }
 
-# * Function: clone *
+# * Function: clone-box *
 clone-box ()  {
 
 # * Arguments: *
@@ -24,7 +24,8 @@ clone-box ()  {
 
 #*Code:
 
-
+  echo "Cloning \"$machine\" into \"$machine Clone\"..."
+  echo "This may take some time..."
   VBoxManage clonevm "$machine" --name="$machine Clone" --options=KeepAllMACs --options=KeepHwUUIDs --register
 
 }
