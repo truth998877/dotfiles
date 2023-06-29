@@ -253,6 +253,7 @@ complete -C fbsecrets fbsecrets
 complete -C twitch twitch
 complete -C stream stream
 complete -C ankicli ankicli
+complete -C scripts-index scripts-index
 
 _source_if "$HOME/.bashrc.d/.bashrc_$HOSTNAME"
 
