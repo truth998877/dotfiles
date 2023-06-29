@@ -14,4 +14,7 @@ case "$1" in
   twitch)
     mpvastream play https://www.twitch.tv/lastmiles/
   ;;
+  kick)
+    mpvastream play https://kick.com/genunix
+  ;;
 esac
