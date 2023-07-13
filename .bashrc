@@ -185,6 +185,7 @@ alias alpha='ssh -X tony@alpha'
 alias beta='ssh -X tony@beta'
 alias gamma='ssh -X tony@gamma'
 alias macbook='ssh tony@macbook'
+alias minecraftpi='ssh tony@minecraftpi'
 
 #these need to be on every system
 alias '?'=duck

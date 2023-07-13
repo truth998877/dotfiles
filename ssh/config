@@ -52,4 +52,7 @@ Host macbook
      Hostname 192.168.0.15
     Protocol 2
 
+Host minecraftpi
+     Hosename 192.168.0.99
+    Protocol 2
 
