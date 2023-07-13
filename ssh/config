@@ -41,7 +41,7 @@ Host gamma
     Protocol 2
 
 Host moon
-     Hostname 192.168.0.13
+     Hostname 192.168.0.33
     Protocol 2
 
 Host moonbaby
