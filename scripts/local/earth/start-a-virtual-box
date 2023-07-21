@@ -1,0 +1,14 @@
+#!/bin/bash
+
+machines="$(VBoxManage list vms)"
+OLD_IFS=${IFS};IFS=$'\n'
+
+machines=($machines)
+
+machines=("${machines[@]% \{*}")
+machines=("${machines[@]//\"/}")
+select machine in ${machines[@]};do
+  VBoxManage startvm "$machine" --type headless  
+  IFS="${OLD_IFS}"
+  break
+done
