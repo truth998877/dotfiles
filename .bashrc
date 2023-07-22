@@ -172,6 +172,7 @@ _source_if() { [[ -r "$1" ]] && source "$1"; }
 
 #these can be on other systems if ~/.ssh/config is shared across systems
 alias venus='ssh tony@venus'
+alias oldvenus='ssh tony@oldvenus'
 alias earth='ssh tony@earth'
 alias moon='ssh tony@moon'
 alias moonbaby='ssh user@moonbaby'
