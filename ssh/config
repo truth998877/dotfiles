@@ -1,6 +1,9 @@
 Host oldvenus
      Hostname 192.168.0.16
     Protocol 2
+Host venus
+     Hostname 192.168.0.2
+    Protocol 2
 Host earth
      Hostname 192.168.0.3
     Protocol 2
