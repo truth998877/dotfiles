@@ -336,6 +336,23 @@
       "dependants": [],
       "logfile": "None",
       "status": "functional"
+    },
+    {
+      "name": "mpvdonho",
+      "description": "brings up don ho's twitch stream in mpv using mpvastream",
+      "end": "fron",
+      "platform": "all",
+      "locality": "none",
+      "environment variables": [],
+      "output files": [],
+      "functions": [],
+      "associated commands": [
+        "mpvastream",
+        "mpv*"
+      ],
+      "dependants": [],
+      "logfile": "None",
+      "status": "functional"
     }
   ]
 }
