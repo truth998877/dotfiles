@@ -353,6 +353,103 @@
       "dependants": [],
       "logfile": "None",
       "status": "functional"
+    },
+    {
+      "name": "clb-loc",
+      "description": "echoes the file path to the current log file currently selected on the system used",
+      "end": "front",
+      "platform": "all",
+      "locality": "none",
+      "environment variables": [
+        {
+          "name": "CURRENTLOGBOOK",
+          "description": "the currently selected logbook"
+        },
+        {
+          "name": "LOGBOOKINDEX",
+          "description": "the current log book index in use"
+        }
+      ],
+      "output files": [],
+      "functions": [],
+      "associated commands": [],
+      "dependants": [],
+      "logfile": "None",
+      "status": "functional"
+    },
+    {
+      "name": "mdfigure-dev",
+      "description": "mdfigure developement code",
+      "end": "front",
+      "platform": "all",
+      "locality": "none",
+      "environment variables": [],
+      "output files": [],
+      "functions": [
+        {
+          "name": "figure_",
+          "description": "echoes the figures filename"
+        },
+        {
+          "name": "figuresnip_",
+          "description": "when called from vim, creates a figure using the vim line upon which it is called, launches inkscape and the dev version of inkscape shell in a tmux pane"
+        }
+      ],
+      "associated commands": [
+        "snip",
+        "inkscape-shell",
+        "inkscape-shell-dev",
+        "snip-dev"
+      ],
+      "dependants": [
+        "inkscape",
+        "wmctrl",
+        "tmux"
+      ],
+      "logfile": "None",
+      "status": "developement code"
+    },
+    {
+      "name": "tmuxratbarf",
+      "description": "brings up Dennis's stealth twitch stream",
+      "end": "front",
+      "platform": "all",
+      "locality": "none",
+      "environment variables": [],
+      "output files": [],
+      "functions": [],
+      "associated commands": [],
+      "dependants": [],
+      "logfile": "None",
+      "status": "functional"
+    },
+    {
+      "name": "tmuxnico",
+      "description": "brings up nico's live stream, his irc channel in weechat arranged in a tmux window",
+      "end": "front",
+      "platform": "all",
+      "locality": "none",
+      "environment variables": [
+        {
+          "name": "WEECHATTMUXY",
+          "description": "number of lines allocated to the tmux pane containing weechat"
+        },
+        {
+          "name": "WEECHATMUXX",
+          "description": "number of columns allocated to the tmux pane containing weechat"
+        }
+      ],
+      "output files": [],
+      "functions": [],
+      "associated commands": [
+        "tmux*"
+      ],
+      "dependants": [
+        "tmux",
+        "weechat"
+      ],
+      "logfile": "None",
+      "status": "the required arguments needs to be added to mpvnico to bring up the stream from either twitch or genunix, which ever is desired"
     }
   ]
 }
