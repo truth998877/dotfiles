@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-testing=1
+testing=0
 
 indexfile="$SCRIPTSINDEX"
 
@@ -157,7 +157,7 @@ select-script-from-index () {
 }
 
 # * Function: update *
-update ()  {
+update () {
 
 # * Arguments: *
  
@@ -358,7 +358,7 @@ list-functions-in-a-script-on-disk ()  {
 
   #TODO read a language label
   #TODO move grep.. into a find functions command which will find functions defined in different languages depending on the read in language label 
-  local fcn_list="$(grep '()[[:space:]]{' "$script")"
+  local fcn_list="$(grep '()[[:space:]]{' "$dir/$script")"
   #TODO complie and alternate function list from the function labels within the script and amalgamate with fcn list, no duplicates
   #echo "$fcn_list"
   #exit 0
