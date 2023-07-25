@@ -450,6 +450,77 @@
       ],
       "logfile": "None",
       "status": "the required arguments needs to be added to mpvnico to bring up the stream from either twitch or genunix, which ever is desired"
+    },
+    {
+      "name": "mpvfreckledscience",
+      "description": "brings up freckledscience's twitch stream in mpv using mpvastream",
+      "end": "front",
+      "platform": "all",
+      "locality": "none",
+      "environment variables": [],
+      "output files": [],
+      "functions": [],
+      "associated commands": [
+        "mpv*",
+        "mpvastream"
+      ],
+      "dependants": [],
+      "logfile": "None",
+      "status": "functional"
+    },
+    {
+      "name": "mpvratbarf",
+      "description": "brings up Dennis's stealth twitch stream in mpv using mpvastream",
+      "end": "front",
+      "platform": "all",
+      "locality": "none",
+      "environment variables": [],
+      "output files": [],
+      "functions": [],
+      "associated commands": [
+        "mpv*",
+        "mpvastream"
+      ],
+      "dependants": [],
+      "logfile": "None",
+      "status": "functional"
+    },
+    {
+      "name": "hnow",
+      "description": "echoes the date and time in a level 2 md heading",
+      "end": "front",
+      "platform": "all",
+      "locality": "none",
+      "environment variables": [],
+      "output files": [],
+      "functions": [],
+      "associated commands": [
+        "hnow-l"
+      ],
+      "dependants": [
+        "date"
+      ],
+      "logfile": "None",
+      "status": "functional"
+    },
+    {
+      "name": "add-ll",
+      "description": "adds a long log by opening the current logbook in vim having echoed the date and time into a level 2 md heading (hnow-l)",
+      "end": "front",
+      "platform": "all",
+      "locality": "none",
+      "environment variables": [],
+      "output files": [],
+      "functions": [],
+      "associated commands": [
+        "hnow-l",
+        "clb-loc"
+      ],
+      "dependants": [
+        "vim"
+      ],
+      "logfile": "None",
+      "status": "functional"
     }
   ]
 }
