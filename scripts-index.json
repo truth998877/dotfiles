@@ -1,138 +1,341 @@
 {
   "commands": [
     {
-          "name": "test 1",
-          "description": "test 1 command description",
-          "end" : "front",
-          "platform" : "darwin",
-          "locality" : "none",
-          "environment variables" : [
-            { 
-               "name" : "test 1 env var 1",
-               "description" : "test 1 env var 1 description"
-            },
-            {
-               "name" : "test 1 env var 2",
-               "description" : "test 1 env var 2 description"
-            }
-          ],
-          "output files" : [
-            {
-              "name" : "test 1 output file 1",
-              "description" : "test 1 output file 1 description"
-            },
-            {
-              "name" : "test 1 output file 2",
-              "description" : "test 1 output file 2 description"
-            }
-          ],
-          "functions": [
-            {
-              "name": "test 1 function 1 name",
-              "description": "test 1 function 1 description",
-              "input arguments": [
-                {
-                  "argument": "test 1 function 1 argument 1",
-                  "description": "test 1 function 1 argument 1  description"
-                },
-                {
-                  "argument": "test 1 function 1 argument 2",
-                  "description": "test 1 function 1 argument 2 description"
-                }
-              ]
-            },
-            {
-              "name": "test 1 function 2 name",
-              "description": "test 1 function 2 description",
-              "input arguments": [
-                {
-                  "argument": "test 1 function 2 argument 1",
-                  "description": "test 1 function 2 argument 1  description"
-                },
-                {
-                  "argument": "test 1 function 2 argument 2",
-                  "description": "test 1 function 2 argument 2 description"
-                }
-              ]
-            }
-          ],
-          "associated commands": [
-            "test 1 command 1",
-            "test 1 command 2"
-          ],
-          "dependants": [
-            "test 1 dependant 1",
-            "test 1 dependant 2"
-          ],
-          "logfile" : "test 1 log file",
-          "status" : "test 1 status"
+      "name": "test 1",
+      "description": "test 1 command description",
+      "end": "front",
+      "platform": "darwin",
+      "locality": "none",
+      "environment variables": [
+        {
+          "name": "test 1 env var 1",
+          "description": "test 1 env var 1 description"
         },
         {
-          "name": "test 2",
-          "description": "test 2 command description",
-          "end" : "front",
-          "platform" : "darwin",
-          "locality" : "none",
-          "environment variables" : [
-            { 
-               "name" : "test 2 env var 1",
-               "description" : "test 1 env var 1 description"
-            },
-            {
-               "name" : "test 2 env var 2",
-               "description" : "test 1 env var 2 description"
-            }
-          ],
-          "output files" : [
-            {
-              "name" : "test 2 output file 1",
-              "description" : "test 1 output file 1 description"
-            },
-            {
-              "name" : "test 2 output file 2",
-              "description" : "test 1 output file 2 description"
-            }
-          ],
-          "functions": [
-            {
-              "name": "test 2 function 1 name",
-              "description": "test 2 function 1 description",
-              "input arguments": [
-                {
-                  "argument": "test 2 function 1 argument 1",
-                  "description": "test 2 function 1 argument 1  description"
-                },
-                {
-                  "argument": "test 2 function 1 argument 2",
-                  "description": "test 2 function 1 argument 2 description"
-                }
-              ]
-            },
-            {
-              "name": "test 2 function 2 name",
-              "description": "test 2 function 2 description",
-              "input arguments": [
-                {
-                  "argument": "test 2 function 2  argument 1",
-                  "description": "test 2 function 2  argument 1  description"
-                },
-                {
-                  "argument": "test 2 function 2 argument 2",
-                  "description": "test 2 function 2  argument 2 description"
-                }
-              ]
-            }
-          ],
-          "associated commands": [
-            "test 2 command 1",
-            "test 2 command 2"
-          ],
-          "dependants": [
-            "test 2 dependant 1",
-            "test 2 dependant 2"
-          ],
-          "logfile" : "test 2 log file",
-          "status" : "test 2 status"
+          "name": "test 1 env var 2",
+          "description": "test 1 env var 2 description"
         }
-      ]
+      ],
+      "output files": [
+        {
+          "name": "test 1 output file 1",
+          "description": "test 1 output file 1 description"
+        },
+        {
+          "name": "test 1 output file 2",
+          "description": "test 1 output file 2 description"
+        }
+      ],
+      "functions": [
+        {
+          "name": "test 1 function 1 name",
+          "description": "test 1 function 1 description",
+          "input arguments": [
+            {
+              "argument": "test 1 function 1 argument 1",
+              "description": "test 1 function 1 argument 1  description"
+            },
+            {
+              "argument": "test 1 function 1 argument 2",
+              "description": "test 1 function 1 argument 2 description"
+            }
+          ]
+        },
+        {
+          "name": "test 1 function 2 name",
+          "description": "test 1 function 2 description",
+          "input arguments": [
+            {
+              "argument": "test 1 function 2 argument 1",
+              "description": "test 1 function 2 argument 1  description"
+            },
+            {
+              "argument": "test 1 function 2 argument 2",
+              "description": "test 1 function 2 argument 2 description"
+            }
+          ]
+        }
+      ],
+      "associated commands": [
+        "test 1 command 1",
+        "test 1 command 2"
+      ],
+      "dependants": [
+        "test 1 dependant 1",
+        "test 1 dependant 2"
+      ],
+      "logfile": "test 1 log file",
+      "status": "test 1 status"
+    },
+    {
+      "name": "test 2",
+      "description": "test 2 command description",
+      "end": "front",
+      "platform": "darwin",
+      "locality": "none",
+      "environment variables": [
+        {
+          "name": "test 2 env var 1",
+          "description": "test 1 env var 1 description"
+        },
+        {
+          "name": "test 2 env var 2",
+          "description": "test 1 env var 2 description"
+        }
+      ],
+      "output files": [
+        {
+          "name": "test 2 output file 1",
+          "description": "test 1 output file 1 description"
+        },
+        {
+          "name": "test 2 output file 2",
+          "description": "test 1 output file 2 description"
+        }
+      ],
+      "functions": [
+        {
+          "name": "test 2 function 1 name",
+          "description": "test 2 function 1 description",
+          "input arguments": [
+            {
+              "argument": "test 2 function 1 argument 1",
+              "description": "test 2 function 1 argument 1  description"
+            },
+            {
+              "argument": "test 2 function 1 argument 2",
+              "description": "test 2 function 1 argument 2 description"
+            }
+          ]
+        },
+        {
+          "name": "test 2 function 2 name",
+          "description": "test 2 function 2 description",
+          "input arguments": [
+            {
+              "argument": "test 2 function 2  argument 1",
+              "description": "test 2 function 2  argument 1  description"
+            },
+            {
+              "argument": "test 2 function 2 argument 2",
+              "description": "test 2 function 2  argument 2 description"
+            }
+          ]
+        }
+      ],
+      "associated commands": [
+        "test 2 command 1",
+        "test 2 command 2"
+      ],
+      "dependants": [
+        "test 2 dependant 1",
+        "test 2 dependant 2"
+      ],
+      "logfile": "test 2 log file",
+      "status": "test 2 status"
+    },
+    {
+      "name": "todo-done",
+      "description": "marks a 'to-do' as done in the current log book",
+      "end": "front",
+      "platform": "all",
+      "locality": "none",
+      "environment variables": [
+        {
+          "name": "CURRENTLOGBOOK",
+          "description": "the log book currently selected"
+        },
+        {
+          "name": "LOGBOOKSINDEX",
+          "description": "the log books index file currently in use"
+        }
+      ],
+      "output files": [],
+      "functions": [],
+      "associated commands": [],
+      "dependants": [],
+      "logfile": "None",
+      "status": "functional"
+    },
+    {
+      "name": "tmuxblastwave",
+      "description": "brings up blastwave's irc channel in weechat using a tmux pane",
+      "end": "front",
+      "platform": "all",
+      "locality": "none",
+      "environment variables": [],
+      "output files": [],
+      "functions": [],
+      "associated commands": [],
+      "dependants": [
+        "tmux",
+        "weechat"
+      ],
+      "logfile": "None",
+      "status": "functioning"
+    },
+    {
+      "name": "timeofday",
+      "description": "echoes Morning, Afternoon or evening depending on the current hour",
+      "end": "front",
+      "platform": "all",
+      "locality": "none",
+      "environment variables": [],
+      "output files": [],
+      "functions": [],
+      "associated commands": [],
+      "dependants": [
+        "date"
+      ],
+      "logfile": "None",
+      "status": "functional"
+    },
+    {
+      "name": "picedit",
+      "description": "convert front end to carry out commonly used picture edits",
+      "end": "front",
+      "platform": "all",
+      "locality": "none",
+      "environment variables": [],
+      "output files": [
+        {
+          "name": "depends on function called",
+          "description": "depends on function called"
+        }
+      ],
+      "functions": [
+        {
+          "name": "foo",
+          "description": "bash completion example function"
+        },
+        {
+          "name": "tile",
+          "description": "time supplied image file according to the second (x) and third (y) arguments"
+        },
+        {
+          "name": "overlay",
+          "description": "removes the background of the given image file and makes it transparent for use on top of a video or live stream"
+        },
+        {
+          "name": "fbprofilepic",
+          "description": "sizes the given picture file according to th ecurrent facebook profile picture size requirements"
+        },
+        {
+          "name": "fbbannerpic",
+          "description": "sizes the given picutre file accoding to the current facebook banner picture size requirements"
+        },
+        {
+          "name": "twitchprofilepic",
+          "description": "sizes the given picture file according to the current twitter profile picture size requirements"
+        },
+        {
+          "name": "twitchbannerpic",
+          "description": "sizes the given picture file to the current twitch banner picture size requirements"
+        },
+        {
+          "name": "twitterbannerpic",
+          "description": "sizes the gen picture file to the crrent twitter banner picture size requirements"
+        },
+        {
+          "name": "twitterprofilepic",
+          "description": "sizes the given picture file to the current twitter profile picture size requirements"
+        },
+        {
+          "name": "ytprofilepic",
+          "description": "sizes the gien picture file to the current youtube profile picture size requirements"
+        },
+        {
+          "name": "ytbannerpic ",
+          "description": "sizes the given picture file to the current youtube banner picture size requirements"
+        },
+        {
+          "name": "allbanners",
+          "description": "takes the supplied picture file and passes it to all of the banner picture sizing functions"
+        },
+        {
+          "name": "shadowannotate",
+          "description": "adds added up to two lines of shadowed text (a2 line 1, a3 line 2) to the supplied picture file (a1) using the supplied font (a4) and font size(a5) in a given position (a6) using a given stroke colour (a7) and fill colour (a8) to a given output filename (a9)"
+        },
+        {
+          "name": "bubbletext ",
+          "description": "create a bubble text image using the supplied text (a1), the font (a2), the font size (a3), the fill colour (a4), the line colour (a5) and outputs to the filename given in a6"
+        },
+        {
+          "name": "hozappend",
+          "description": "appends two picture files horizontally, a1 left picture, a2 right picture, output filename a3"
+        },
+        {
+          "name": "vertappend",
+          "description": "appends to picture file vertically, a1 top imange, a2 bottom images, a3 output filename"
+        },
+        {
+          "name": "rb-radial-gradient",
+          "description": "creates a radial gradient suitable for use on redbubble, a1 colour 1, a2 colour 2"
+        },
+        {
+          "name": "rb-tile",
+          "description": "tiles an image suitable for use on redbubble, a1 filename, output file ...-rb-tiled.png"
+        },
+        {
+          "name": "commands",
+          "description": "bash tab completion function"
+        }
+      ],
+      "associated commands": [],
+      "dependants": [
+        "convert"
+      ],
+      "logfile": "None",
+      "status": "all functions functioning"
+    },
+    {
+      "name": "mpvnico",
+      "description": "brings up nico stream either on genunix or twitch (a1)",
+      "end": "front",
+      "platform": "all",
+      "locality": "none",
+      "environment variables": [],
+      "output files": [],
+      "functions": [],
+      "associated commands": [
+        "mpv*"
+      ],
+      "dependants": [],
+      "logfile": "None",
+      "status": "functioning"
+    },
+    {
+      "name": "mpvlana_lux",
+      "description": "brings up lana_lux's twitch stream using mpvastream",
+      "end": "front",
+      "platform": "all",
+      "locality": "none",
+      "environment variables": [],
+      "output files": [],
+      "functions": [],
+      "associated commands": [
+        "mpvastream",
+        "mpv*"
+      ],
+      "dependants": [],
+      "logfile": "None",
+      "status": "functioning"
+    },
+    {
+      "name": "blankpane",
+      "description": "blanks a tmux pane",
+      "end": "front",
+      "platform": "all",
+      "locality": "none",
+      "environment variables": [],
+      "output files": [],
+      "functions": [],
+      "associated commands": [
+        "hidecursor"
+      ],
+      "dependants": [],
+      "logfile": "None",
+      "status": "functional"
+    }
+  ]
 }
