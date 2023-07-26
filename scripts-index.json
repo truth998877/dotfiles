@@ -521,6 +521,122 @@
       ],
       "logfile": "None",
       "status": "functional"
+    },
+    {
+      "name": "add-lb",
+      "description": "adds a new logbook, sets the new logbook to the current logbook and echoes its title to it",
+      "end": "front",
+      "platform": "al",
+      "locality": "none",
+      "environment variables": [
+        {
+          "name": "LOGBOOKS",
+          "description": "root directory of the logbooks currently in use"
+        },
+        {
+          "name": "LOGBOOKSINDEX",
+          "description": "log book index file currently in use"
+        }
+      ],
+      "output files": [
+        {
+          "name": "$LOGBOOKS/$location/README.md",
+          "description": "log book file"
+        }
+      ],
+      "functions": [],
+      "associated commands": [
+        "set-clb-1",
+        "add-ql"
+      ],
+      "dependants": [
+        "jq"
+      ],
+      "logfile": "None",
+      "status": "functional"
+    },
+    {
+      "name": "plot",
+      "description": "gnuplot front end",
+      "end": "front",
+      "platform": "all",
+      "locality": "none",
+      "environment variables": [
+        {
+          "name": "HOME",
+          "description": "home directory"
+        }
+      ],
+      "output files": [
+        {
+          "name": "various",
+          "description": "various"
+        }
+      ],
+      "functions": [
+        {
+          "name": "_normal-settings",
+          "description": "applys normal settings to colours, markers, title font size, label font size, key font size and line width"
+        },
+        {
+          "name": "_default-settings",
+          "description": "applys the default settings to colours, markers, title font size, label font size, key font size and line width"
+        },
+        {
+          "name": "_set-chosen-settings",
+          "description": "sets the chosen settings, normal or default"
+        },
+        {
+          "name": "foo",
+          "description": "bash tab completion example function"
+        },
+        {
+          "name": "_csv2space",
+          "description": "converts data format to space separated variable, currently only the conversion from csv to ssv is supported"
+        },
+        {
+          "name": "_setsettingsstr",
+          "description": "sets the settings strings"
+        },
+        {
+          "name": "_data2ssv",
+          "description": "as _csv2space"
+        },
+        {
+          "name": "_setgnuplotstr",
+          "description": "sets the gnuplotstr string"
+        },
+        {
+          "name": "_gnuplot",
+          "description": "passes the gnuplotstr string to gnuplot, echos gnuplotstr to $savefilename_inputs to keep a record of how savefilename was generted, echoes a link to the savefilename_inputs and a link to the gnuplot output ($savefilename.svg)"
+        },
+        {
+          "name": "_save_last",
+          "description": "save the last gnuplot settings to ~/last_gnuplot to allow rapid reuse"
+        },
+        {
+          "name": "show-last",
+          "description": "echoes the last settings used"
+        },
+        {
+          "name": "xy-1x-ny",
+          "description": "generates an multiline xy scatter plots where all the lines have the same x-values $1 data, $2 datatype, $3 plot title, $4 xlabel, $5 ylabel, $6 lines, $7 chosensettings, $8 save, $9 savefilename"
+        },
+        {
+          "name": "xy-mx-ny",
+          "description": "generates an multiline xy scatter plot where all the lines do not need to have the same x values, $1 data, $2 datatype $3 title, $4 xlabel, $5 ylabel, $6 lines, $7 chosensettings, $8 save, %9 savefilename"
+        },
+        {
+          "name": "commands",
+          "description": "bash tab completion function"
+        }
+      ],
+      "associated commands": [],
+      "dependants": [
+        "gnuplot"
+      ],
+      "logfile": "None",
+      "status": "functional"
     }
   ]
 }
