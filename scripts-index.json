@@ -637,6 +637,151 @@
       ],
       "logfile": "None",
       "status": "functional"
+    },
+    {
+      "name": "pinterest",
+      "description": "pinterest cli interface",
+      "end": "front",
+      "platform": "al",
+      "locality": "none",
+      "environment variables": [],
+      "output files": [],
+      "functions": [
+        {
+          "name": "foo",
+          "description": "bash tab completion example function"
+        },
+        {
+          "name": "commands",
+          "description": "bash tab completion function"
+        }
+      ],
+      "associated commands": [],
+      "dependants": [],
+      "logfile": "None",
+      "status": "Development not started"
+    },
+    {
+      "name": "snip-dev",
+      "description": "snip tool developement code",
+      "end": "front",
+      "platform": "all",
+      "locality": "none",
+      "environment variables": [],
+      "output files": [],
+      "functions": [
+        {
+          "name": "_echostuff",
+          "description": "echoes stuff"
+        },
+        {
+          "name": "_snippe",
+          "description": "echoes the last snippet used"
+        },
+        {
+          "name": "_sni",
+          "description": "main function, searches for the snippet, if the snippet exists it executes the snippet using the suppled settings, which are dependent on the snippet being used. The results depends on how the snip tools is called. if called from the command line with no arguments the snip is echoed, if called from the command line with arguments the snippet is appied to the aruments given, if called from within vim the snippet is applied using the line in the vim buffer from which the nippet is called"
+        }
+      ],
+      "associated commands": [
+        "snip"
+      ],
+      "dependants": [],
+      "logfile": "None",
+      "status": "functional"
+    },
+    {
+      "name": "whattodo",
+      "description": "opens a things to do list in vim",
+      "end": "front",
+      "platform": "all",
+      "locality": "none",
+      "environment variables": [],
+      "output files": [],
+      "functions": [],
+      "associated commands": [],
+      "dependants": [],
+      "logfile": "None",
+      "status": "not currently in use"
+    },
+    {
+      "name": "ankicli",
+      "description": "anki cli interface",
+      "end": "front",
+      "platform": "all",
+      "locality": "none",
+      "environment variables": [
+        {
+          "name": "CURRENTANKIDECK",
+          "description": "the anki deck currently selected"
+        }
+      ],
+      "output files": [],
+      "functions": [
+        {
+          "name": "_curl",
+          "description": "post to the anki url and port the formed arguments, formed depending on the function used"
+        },
+        {
+          "name": "set-deck",
+          "description": "select a deck to carry out actions upon"
+        },
+        {
+          "name": "ls-decks",
+          "description": "list all the deck found"
+        },
+        {
+          "name": "touch-deck",
+          "description": "creates a new deck"
+        },
+        {
+          "name": "rm-deck",
+          "description": "removes a deck"
+        },
+        {
+          "name": "deck-info",
+          "description": "returns the deck information"
+        },
+        {
+          "name": "deck-stats ",
+          "description": "returns the deck statistics"
+        },
+        {
+          "name": "current-deck",
+          "description": "echoes the current deck selected"
+        },
+        {
+          "name": "model-names",
+          "description": "echoes the model-names"
+        },
+        {
+          "name": "select-model",
+          "description": "selects the desired model"
+        },
+        {
+          "name": "model-fieldnames",
+          "description": "echoes the fieldnames of a model"
+        },
+        {
+          "name": "add-note",
+          "description": "adds cards to the deck (guided)"
+        },
+        {
+          "name": "find-cards",
+          "description": "finds cards in the deck"
+        },
+        {
+          "name": "commands",
+          "description": "bash tab completion function"
+        }
+      ],
+      "associated commands": [],
+      "dependants": [
+        "anki",
+        "curl"
+      ],
+      "logfile": "None",
+      "status": "functional"
     }
   ]
 }
