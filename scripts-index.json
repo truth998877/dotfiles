@@ -967,6 +967,134 @@
       ],
       "logfile": "None",
       "status": "functional"
+    },
+    {
+      "name": "list-functions-old",
+      "description": "left over code from developement of scripts-index",
+      "end": "front",
+      "platform": "all",
+      "locality": "none",
+      "environment variables": [],
+      "output files": [],
+      "functions": [
+        {
+          "name": "get_fcn_list",
+          "description": "gets a list of functions contained within a bash script"
+        }
+      ],
+      "associated commands": [],
+      "dependants": [],
+      "logfile": "None",
+      "status": "old, redundent code"
+    },
+    {
+      "name": "setup",
+      "description": "old bash tab completion set up code",
+      "end": "front",
+      "platform": "all",
+      "locality": "none",
+      "environment variables": [],
+      "output files": [],
+      "functions": [],
+      "associated commands": [],
+      "dependants": [],
+      "logfile": "None",
+      "status": "old code"
+    },
+    {
+      "name": "mpvkatdoesmaths",
+      "description": "brings up katdoesmath's twitch stream using mpvastream",
+      "end": "front",
+      "platform": "all",
+      "locality": "none",
+      "environment variables": [],
+      "output files": [],
+      "functions": [],
+      "associated commands": [
+        "mpv*"
+      ],
+      "dependants": [],
+      "logfile": "None",
+      "status": "functional"
+    },
+    {
+      "name": "list-scripts-old",
+      "description": "old code left over from the developement of scripts-index",
+      "end": "front",
+      "platform": "all",
+      "locality": "none",
+      "environment variables": [],
+      "output files": [],
+      "functions": [
+        {
+          "name": "get_script_list ",
+          "description": "gets a list of scripts from a directory"
+        }
+      ],
+      "associated commands": [
+        "scripts-index"
+      ],
+      "dependants": [],
+      "logfile": "None",
+      "status": "old code"
+    },
+    {
+      "name": "pulldotfiles",
+      "description": "pulls the dotfiles from github",
+      "end": "front",
+      "platform": "all",
+      "locality": "none",
+      "environment variables": [
+        {
+          "name": "DOTFILES",
+          "description": "dotfiles path"
+        }
+      ],
+      "output files": [],
+      "functions": [],
+      "associated commands": [],
+      "dependants": [
+        "git"
+      ],
+      "logfile": "None",
+      "status": "functioanl"
+    },
+    {
+      "name": "hidecursor",
+      "description": "hides the cursor. for use inconjunction with blankpane",
+      "end": "front",
+      "platform": "all",
+      "locality": "none",
+      "environment variables": [],
+      "output files": [],
+      "functions": [],
+      "associated commands": [
+        "blankpane"
+      ],
+      "dependants": [],
+      "logfile": "None",
+      "status": "functional"
+    },
+    {
+      "name": "pushlogbooks",
+      "description": "pushes the log books to github",
+      "end": "front",
+      "platform": "all",
+      "locality": "none",
+      "environment variables": [
+        {
+          "name": "LOGBOOKS",
+          "description": "logbook directory currently in use"
+        }
+      ],
+      "output files": [],
+      "functions": [],
+      "associated commands": [],
+      "dependants": [
+        "git"
+      ],
+      "logfile": "None",
+      "status": "functional"
     }
   ]
 }
