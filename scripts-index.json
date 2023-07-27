@@ -1095,6 +1095,135 @@
       ],
       "logfile": "None",
       "status": "functional"
+    },
+    {
+      "name": "tmuxrwxrob",
+      "description": "brings up rwxrob's twitch stream in mpv using mpvastream",
+      "end": "front",
+      "platform": "all",
+      "locality": "none",
+      "environment variables": [],
+      "output files": [],
+      "functions": [],
+      "associated commands": [
+        "mpv*"
+      ],
+      "dependants": [],
+      "logfile": "None",
+      "status": "functional"
+    },
+    {
+      "name": "ls-lb-num-title",
+      "description": "displays the number of title of the log books in the logbooks index currently in use",
+      "end": "front",
+      "platform": "all",
+      "locality": "none",
+      "environment variables": [
+        {
+          "name": "LOGBOOKSINDEX",
+          "description": "the logbooks index file currently in use"
+        },
+        {
+          "name": "LOGBOOKS",
+          "description": "logbooks directory currently in use"
+        }
+      ],
+      "output files": [],
+      "functions": [
+        {
+          "name": "_list-lb-num-title",
+          "description": "list the numbers and the title of the logs in the logobooks index current in use"
+        }
+      ],
+      "associated commands": [],
+      "dependants": [
+        "jq"
+      ],
+      "logfile": "None",
+      "status": "functional"
+    },
+    {
+      "name": "systemstate",
+      "description": "echoes the platform and end set for the current system",
+      "end": "front",
+      "platform": "all",
+      "locality": "none",
+      "environment variables": [
+        {
+          "name": "PLATFORM",
+          "description": "the platform setting of the current system, debian, darwin etc"
+        },
+        {
+          "name": "the end setting for the current system, front or back",
+          "description": "the end setting of the current system front or back"
+        }
+      ],
+      "output files": [],
+      "functions": [],
+      "associated commands": [],
+      "dependants": [],
+      "logfile": "None",
+      "status": "functional"
+    },
+    {
+      "name": "ls-lb",
+      "description": "list the logbooks in the currently selected logbooks index",
+      "end": "front",
+      "platform": "all",
+      "locality": "none",
+      "environment variables": [
+        {
+          "name": "LOGBOOKS",
+          "description": "currently selected logbook directory"
+        },
+        {
+          "name": "LOGBOOKSINDEX",
+          "description": "currently selected logbooks index file"
+        }
+      ],
+      "output files": [],
+      "functions": [
+        {
+          "name": "_list-lb-num-title",
+          "description": "list the logbooks in the currently selected logbooks index"
+        }
+      ],
+      "associated commands": [],
+      "dependants": [
+        "jq"
+      ],
+      "logfile": "None",
+      "status": "functional"
+    },
+    {
+      "name": "scripts-index-old",
+      "description": "left over code from the development of scripts-index",
+      "end": "front",
+      "platform": "all",
+      "locality": "none",
+      "environment variables": [
+        {
+          "name": "SCRIPTSINDEX",
+          "description": "the currently selected scripts index file"
+        }
+      ],
+      "output files": [],
+      "functions": [
+        {
+          "name": "_selectcmd",
+          "description": "old code"
+        },
+        {
+          "name": "_out",
+          "description": "old code"
+        }
+      ],
+      "associated commands": [],
+      "dependants": [
+        "jq"
+      ],
+      "logfile": "None",
+      "status": "old code"
     }
   ]
 }
