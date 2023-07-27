@@ -1224,6 +1224,22 @@
       ],
       "logfile": "None",
       "status": "old code"
+    },
+    {
+      "name": "s",
+      "description": "passes the input arguments to weechat",
+      "end": "front",
+      "platform": "all",
+      "locality": "none",
+      "environment variables": [],
+      "output files": [],
+      "functions": [],
+      "associated commands": [],
+      "dependants": [
+        "weechat"
+      ],
+      "logfile": "None",
+      "status": "functional, albeit attention needed to eliminate the use of quote marrks when using special characters"
     }
   ]
 }
