@@ -883,6 +883,90 @@
       ],
       "logfile": "None",
       "status": "functional"
+    },
+    {
+      "name": "bing",
+      "description": "sends a search query to bing using w3m",
+      "end": "front",
+      "platform": "all",
+      "locality": "none",
+      "environment variables": [],
+      "output files": [],
+      "functions": [],
+      "associated commands": [
+        "google",
+        "duck"
+      ],
+      "dependants": [
+        "w3m"
+      ],
+      "logfile": "None",
+      "status": "functional"
+    },
+    {
+      "name": "duck",
+      "description": "sends a search query to duckduckgo",
+      "end": "front",
+      "platform": "all",
+      "locality": "none",
+      "environment variables": [],
+      "output files": [],
+      "functions": [],
+      "associated commands": [
+        "bing",
+        "google"
+      ],
+      "dependants": [],
+      "logfile": "None",
+      "status": "functional"
+    },
+    {
+      "name": "mpvastream",
+      "description": "opens live stream in mpv using a platform dependant position",
+      "end": "front",
+      "platform": "all",
+      "locality": "none",
+      "environment variables": [
+        {
+          "name": "MPVX",
+          "description": "horizontal position of the mpv window"
+        },
+        {
+          "name": "MPVY",
+          "description": "vertical position of the mpv window"
+        }
+      ],
+      "output files": [],
+      "functions": [
+        {
+          "name": "foo",
+          "description": "bash tab completion example function"
+        },
+        {
+          "name": "play",
+          "description": "plays a stream"
+        },
+        {
+          "name": "record",
+          "description": "records and plays a stream"
+        },
+        {
+          "name": "twitch",
+          "description": "open the twich stream of a twitch user ($1)"
+        },
+        {
+          "name": "commands",
+          "description": "bash tab completion function"
+        }
+      ],
+      "associated commands": [
+        "mpv*"
+      ],
+      "dependants": [
+        "mpv"
+      ],
+      "logfile": "None",
+      "status": "functional"
     }
   ]
 }
