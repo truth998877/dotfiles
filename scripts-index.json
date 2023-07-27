@@ -782,6 +782,107 @@
       ],
       "logfile": "None",
       "status": "functional"
+    },
+    {
+      "name": "pushscriptsindex",
+      "description": "pushes the script index to github",
+      "end": "front",
+      "platform": "all",
+      "locality": "non",
+      "environment variables": [],
+      "output files": [],
+      "functions": [],
+      "associated commands": [],
+      "dependants": [
+        "git"
+      ],
+      "logfile": "None",
+      "status": "functional, however, the filename beign used is hardcoded and doesn;t allow for situations where an alternative scripts index file is in use"
+    },
+    {
+      "name": "example",
+      "description": "bash tab completion example script",
+      "end": "front",
+      "platform": "all",
+      "locality": "none",
+      "environment variables": [],
+      "output files": [],
+      "functions": [
+        {
+          "name": "foo",
+          "description": "bash tab completion example function"
+        },
+        {
+          "name": "commands",
+          "description": "bash tab completion function"
+        }
+      ],
+      "associated commands": [],
+      "dependants": [],
+      "logfile": "None",
+      "status": "functional"
+    },
+    {
+      "name": "google",
+      "description": "sends a search query to google using w3m",
+      "end": "front",
+      "platform": "all",
+      "locality": "none",
+      "environment variables": [],
+      "output files": [],
+      "functions": [],
+      "associated commands": [
+        "duck",
+        "bing"
+      ],
+      "dependants": [
+        "urlencode",
+        "w3m"
+      ],
+      "logfile": "None",
+      "status": "functional"
+    },
+    {
+      "name": "figure",
+      "description": "developement code for figure snippet",
+      "end": "front",
+      "platform": "all",
+      "locality": "none",
+      "environment variables": [],
+      "output files": [],
+      "functions": [
+        {
+          "name": "figure_",
+          "description": "developement code"
+        }
+      ],
+      "associated commands": [],
+      "dependants": [
+        "inkscape"
+      ],
+      "logfile": "None",
+      "status": "developement code, probably not in use"
+    },
+    {
+      "name": "open-lb-index",
+      "description": "opens the current logbook index in use using vim",
+      "end": "front",
+      "platform": "all",
+      "locality": "none",
+      "environment variables": [
+        {
+          "name": "LOGBOOKSINDEX",
+          "description": "path to the logbooks index currently in use"
+        }
+      ],
+      "output files": [],
+      "functions": [],
+      "associated commands": [],
+      "dependants": [
+        "vim"
+      ],
+      "logfile": "None",
+      "status": "functional"
     }
   ]
 }
