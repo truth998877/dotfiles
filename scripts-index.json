@@ -1240,6 +1240,148 @@
       ],
       "logfile": "None",
       "status": "functional, albeit attention needed to eliminate the use of quote marrks when using special characters"
+    },
+    {
+      "name": "colours",
+      "description": "echoes list of all colour combinations of a colour list in the supplied file ($1)",
+      "end": "front",
+      "platform": "all",
+      "locality": "none",
+      "environment variables": [],
+      "output files": [],
+      "functions": [],
+      "associated commands": [],
+      "dependants": [],
+      "logfile": "None",
+      "status": "functional"
+    },
+    {
+      "name": "blog",
+      "description": "opens the blog file to include a new post placing the time and date on line 11 of the file using hnow-l and moves the cursor to line 14",
+      "end": "fron",
+      "platform": "all",
+      "locality": "none",
+      "environment variables": [
+        {
+          "name": "HOME",
+          "description": "home directory"
+        }
+      ],
+      "output files": [
+        {
+          "name": "$HOME/repos/gitlab.com/truth998877/skippysplace-site/README.md",
+          "description": "blog file"
+        }
+      ],
+      "functions": [],
+      "associated commands": [
+        "hnow-l"
+      ],
+      "dependants": [
+        "vim"
+      ],
+      "logfile": "None",
+      "status": "functional"
+    },
+    {
+      "name": "scripts-index2pdf",
+      "description": "generated a pdf version of the scripts index at $HOME/script-index.md outputinging $HOME/script-index.pdf",
+      "end": "front",
+      "platform": "all",
+      "locality": "none",
+      "environment variables": [
+        {
+          "name": "HOME",
+          "description": "home directory"
+        }
+      ],
+      "output files": [
+        {
+          "name": "$HOME/script-index.pdf",
+          "description": "pdf verison of $HOME/script-index.md"
+        }
+      ],
+      "functions": [],
+      "associated commands": [
+        "scripts-index show md"
+      ],
+      "dependants": [
+        "pandoc"
+      ],
+      "logfile": "None",
+      "status": "functional"
+    },
+    {
+      "name": "ls-todos",
+      "description": "displays a list of to-do's in the currently slected logbook",
+      "end": "front",
+      "platform": "al",
+      "locality": "none",
+      "environment variables": [
+        {
+          "name": "CURRENTLOGBOOK",
+          "description": "currently selected logbook"
+        }
+      ],
+      "output files": [],
+      "functions": [
+        {
+          "name": "_ls-todo",
+          "description": "displays a list of to-do's in the currently selected logbook"
+        }
+      ],
+      "associated commands": [],
+      "dependants": [
+        "jq"
+      ],
+      "logfile": "None",
+      "status": "functional"
+    },
+    {
+      "name": "datepath",
+      "description": "proint the current data in the form of a path, allow the creation of a directory struction chronologically",
+      "end": "front",
+      "platform": "all",
+      "locality": "none",
+      "environment variables": [],
+      "output files": [],
+      "functions": [],
+      "associated commands": [],
+      "dependants": [
+        "date"
+      ],
+      "logfile": "None",
+      "status": "functional"
+    },
+    {
+      "name": "snipold",
+      "description": "old snippets tool code",
+      "end": "front",
+      "platform": "all",
+      "locality": "none",
+      "environment variables": [
+        {
+          "name": "SNIPPETS",
+          "description": "snippets location"
+        }
+      ],
+      "output files": [],
+      "functions": [
+        {
+          "name": "snippe",
+          "description": "echos the last snippet used to $SNIPPETS/last"
+        },
+        {
+          "name": "sni",
+          "description": "snip main function"
+        }
+      ],
+      "associated commands": [
+        "snip"
+      ],
+      "dependants": [],
+      "logfile": "None",
+      "status": "old code"
     }
   ]
 }
