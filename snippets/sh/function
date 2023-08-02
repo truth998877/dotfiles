@@ -1,7 +1,7 @@
 
 
 # * Function: {1} *
-{1} ()  {
+{1} () {
 
 # * Arguments: *
 #local var="$n"
