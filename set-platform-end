@@ -1,6 +1,6 @@
 case $HOSTNAME in
 
-   earth|jupiter|saturn|alpha|beta|gamma)
+   earth|jupiter|saturn|alpha|beta|gamma|oldvenus)
    PLATFORM=debian
    ;;
 
@@ -33,7 +33,7 @@ case $HOSTNAME in
   END=front
   ;;
 
-  venus|jupiter|pluto|alpha|beta|gamma)
+  venus|oldvenus|jupiter|pluto|alpha|beta|gamma)
   END=back
   ;;
 
