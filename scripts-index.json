@@ -1382,6 +1382,92 @@
       "dependants": [],
       "logfile": "None",
       "status": "old code"
+    },
+    {
+      "name": "pulllogbooks",
+      "description": "pulls the logbooks from github",
+      "end": "front",
+      "platform": "all",
+      "locality": "none",
+      "environment variables": [
+        {
+          "name": "LOGBOOKS",
+          "description": "path to the logbooks"
+        }
+      ],
+      "output files": [],
+      "functions": [],
+      "associated commands": [],
+      "dependants": [
+        "git"
+      ],
+      "logfile": "None",
+      "status": "functional"
+    },
+    {
+      "name": "mpvchristitustech",
+      "description": "brings up chris titus tech's twitch stream in mpv using mpvastrem",
+      "end": "front",
+      "platform": "all",
+      "locality": "none",
+      "environment variables": [],
+      "output files": [],
+      "functions": [],
+      "associated commands": [
+        "mpv*"
+      ],
+      "dependants": [],
+      "logfile": "None",
+      "status": "functional"
+    },
+    {
+      "name": "add-ql",
+      "description": "adds a logbook entry directly from the command propt",
+      "end": "front",
+      "platform": "all",
+      "locality": "none",
+      "environment variables": [],
+      "output files": [],
+      "functions": [],
+      "associated commands": [
+        "hnow-l",
+        "clb-loc"
+      ],
+      "dependants": [],
+      "logfile": "None",
+      "status": "functional"
+    },
+    {
+      "name": "chesslastmiles",
+      "description": "open Dennis lichess page using the default browser",
+      "end": "front",
+      "platform": "all",
+      "locality": "none",
+      "environment variables": [],
+      "output files": [],
+      "functions": [],
+      "associated commands": [],
+      "dependants": [
+        "xdg-open"
+      ],
+      "logfile": "None",
+      "status": "functional"
+    },
+    {
+      "name": "now",
+      "description": "returns the time and date, eg Wednesday, 02 August 2023, 22:27",
+      "end": "front",
+      "platform": "all",
+      "locality": "none",
+      "environment variables": [],
+      "output files": [],
+      "functions": [],
+      "associated commands": [],
+      "dependants": [
+        "date"
+      ],
+      "logfile": "None",
+      "status": "functional"
     }
   ]
 }
