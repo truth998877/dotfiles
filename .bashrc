@@ -164,7 +164,7 @@ fi
 
 
 _source_if() { [[ -r "$1" ]] && source "$1"; }
-boot() { ssh tony@oldvenus "'boot ""$@""'"; }
+boot() { ssh tony@oldvenus "/home/tony/bootsystem \"$@\""; }
 
 # some more ls aliases
 #alias ll='ls -l'
