@@ -1,0 +1,55 @@
+#!/usr/local/bin/bash
+
+#if [[ -z $CURRENTLOGBOOK ]]; then 
+#  echo "A logbook is not currently set"
+#  exit 1
+#fi
+
+logbook=$(clb)
+
+if [[ $logbook == "No logbook set" ]];then
+  echo "$logbook"
+  exit
+else
+  echo "$logbook"
+fi
+
+read -p "The above logbook is currently set. [y to Continue]: " response
+
+while true;do
+  if [[ $response == y ]]; then
+    break;
+  else
+    echo Exiting
+    exit 1
+  fi
+done
+
+logbookloc="$(clb-loc)"
+logbookdir="${logbookloc%/*}"
+
+if [[ ! -d "$logbookdir/handwrittennotes" ]];then
+  mkdir -p "$logbookdir/handwrittennotes"
+fi
+#IFS='
+#'
+#files=("$(ls -U "/Users/tony/Library/Mobile Documents/com~apple~CloudDocs/Write/")")
+#echo "${files[@]}"
+#echo "${files[0]}"
+#exit
+
+
+#for file in "$(ls -U "/Users/tony/Library/Mobile Documents/com~apple~CloudDocs/Write/")";do
+
+while IFS= read -r  file;do
+  cdate="$(stat -f %B "$file")"
+  filename="${file##*/}"
+  caption="${filename%.*}"
+  mv "$file" "$logbookdir/handwrittennotes/$cdate.svg.gz"
+  gzip -d -f -S svg "$logbookdir/handwrittennotes/$cdate.svg.gz"
+  echo -e '\n## '"$(date -j -f "%s" "$cdate" +"%A, %d %B %Y, %H:%M:%S")  [$cdate]"'\n\n'"![$caption](./handwrittennotes/$cdate.svg)" >> "$(clb-loc)"
+done < <(find "/Users/tony/Library/Mobile Documents/com~apple~CloudDocs/Write/"* -maxdepth 1 -type f -exec ls -U {} +)
+
+
+
+
