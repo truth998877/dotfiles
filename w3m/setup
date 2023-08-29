@@ -28,11 +28,15 @@ if [[ $END != work ]]; then
     esac
   fi
   
+  if [[ ! -d "$HOME/.w3m" ]]; then
+    mkdir -p "$HOME/.w3m"
+  fi
+  
   for i in config keymap;do
     if [[ -f "$HOME/.w3m/$i" ]]; then
       cp -p "$HOME/.w3m/$i" "$HOME/.w3m/$i.orig"
     fi
-    ln -sf "$PWD/.w3m/$i" "$HOME/.w3m/$i"
+    ln -sf "$PWD/$i" "$HOME/.w3m/$i"
   done
 fi
 
