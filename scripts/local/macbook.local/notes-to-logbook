@@ -47,7 +47,7 @@ while IFS= read -r  file;do
   caption="${filename%.*}"
   mv "$file" "$logbookdir/handwrittennotes/$cdate.svg.gz"
   gzip -d -f -S svg "$logbookdir/handwrittennotes/$cdate.svg.gz"
-  echo -e '\n## '"$(date -j -f "%s" "$cdate" +"%A, %d %B %Y, %H:%M:%S")  [$cdate]"'\n\n'"![$caption](./handwrittennotes/$cdate.svg)" >> "$(clb-loc)"
+  echo -e '\n## '"$(date -j -f "%s" "$cdate" +"%A, %d %B %Y, %H:%M:%S")  [$cdate]"'\n\n'"$caption"'\n\n'"![$caption](./handwrittennotes/$cdate.svg)" >> "$(clb-loc)"
 done < <(find "/Users/tony/Library/Mobile Documents/com~apple~CloudDocs/Write/"* -maxdepth 1 -type f -exec ls -U {} +)
 
 pushlogbooks
