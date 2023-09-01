@@ -174,7 +174,7 @@ boot() { ssh tony@oldvenus "/home/tony/bootsystem \"$@\""; }
 #these can be on other systems if ~/.ssh/config is shared across systems
 alias venus='ssh tony@venus'
 alias oldvenus='ssh tony@oldvenus'
-alias earth='ssh tony@earth'
+alias earth='ssh -Y tony@earth'
 alias moon='ssh tony@moon'
 alias moonbaby='ssh user@moonbaby'
 alias mars='ssh tony@mars'
