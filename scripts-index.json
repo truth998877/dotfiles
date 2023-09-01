@@ -1558,6 +1558,61 @@
       ],
       "logfile": "None",
       "status": "functional"
+    },
+    {
+      "name": "tmuxin",
+      "description": "tmux using tmux-in.conf",
+      "end": "front",
+      "platform": "all",
+      "locality": "none",
+      "environment variables": [
+        {
+          "name": "TMUX",
+          "description": "TMUX"
+        }
+      ],
+      "output files": [],
+      "functions": [],
+      "associated commands": [],
+      "dependants": [
+        "tmux"
+      ],
+      "logfile": "None",
+      "status": "functional"
+    },
+    {
+      "name": "open-clb",
+      "description": "opens the currently selected logbook",
+      "end": "front",
+      "platform": "front",
+      "locality": "none",
+      "environment variables": [],
+      "output files": [],
+      "functions": [],
+      "associated commands": [
+        "clb-loc"
+      ],
+      "dependants": [
+        "vim"
+      ],
+      "logfile": "None",
+      "status": "functional"
+    },
+    {
+      "name": "im",
+      "description": "im equation in markdown",
+      "end": "front",
+      "platform": "all",
+      "locality": "none",
+      "environment variables": [],
+      "output files": [],
+      "functions": [],
+      "associated commands": [
+        "dm"
+      ],
+      "dependants": [],
+      "logfile": "None",
+      "status": "functional"
     }
   ]
 }
