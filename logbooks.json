@@ -53,6 +53,14 @@
           "complete": "no"
         }
       ]
+    },
+    {
+      "logbooknumber": "3",
+      "shorttitle": "Hutchings Physics",
+      "longtitle": "Physics (Bath Science 16-19) By Robert Hutchings",
+      "location": "Hutchings Physics",
+      "status": "open",
+      "todos": []
     }
   ]
 }
