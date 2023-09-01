@@ -1613,6 +1613,62 @@
       "dependants": [],
       "logfile": "None",
       "status": "functional"
+    },
+    {
+      "name": "todo-reopen",
+      "description": "re-opens a previously closed to-do in the currently selected logbook",
+      "end": "front",
+      "platform": "all",
+      "locality": "none",
+      "environment variables": [
+        {
+          "name": "CURRENTLOGBOOK",
+          "description": "the currently selected logbook"
+        },
+        {
+          "name": "LOGBOOKSINDEX",
+          "description": "the logbook index currently in use"
+        }
+      ],
+      "output files": [],
+      "functions": [],
+      "associated commands": [
+        "to-do",
+        "to-do"
+      ],
+      "dependants": [
+        "jq"
+      ],
+      "logfile": "None",
+      "status": "functional"
+    },
+    {
+      "name": "tmuxlastmiles",
+      "description": "Dennis's stream in tmux and mpv",
+      "end": "front",
+      "platform": "all",
+      "locality": "none",
+      "environment variables": [
+        {
+          "name": "WEECHATTMUXY",
+          "description": "the number of lines allocated to weechat on the current system"
+        },
+        {
+          "name": "WEECHATTMUXX",
+          "description": "the number of columns allocated to weechat on the current system"
+        }
+      ],
+      "output files": [],
+      "functions": [],
+      "associated commands": [
+        "tmux*"
+      ],
+      "dependants": [
+        "tmux",
+        "weechat"
+      ],
+      "logfile": "None",
+      "status": "functional"
     }
   ]
 }
