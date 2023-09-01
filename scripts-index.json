@@ -1468,6 +1468,96 @@
       ],
       "logfile": "None",
       "status": "functional"
+    },
+    {
+      "name": "dm",
+      "description": "indented equation in markdown",
+      "end": "all",
+      "platform": "all",
+      "locality": "none",
+      "environment variables": [],
+      "output files": [],
+      "functions": [],
+      "associated commands": [],
+      "dependants": [],
+      "logfile": "None",
+      "status": "functional"
+    },
+    {
+      "name": "scripts-index-update-old",
+      "description": "old code",
+      "end": "front",
+      "platform": "all",
+      "locality": "none",
+      "environment variables": [],
+      "output files": [],
+      "functions": [],
+      "associated commands": [],
+      "dependants": [],
+      "logfile": "None",
+      "status": "old code"
+    },
+    {
+      "name": "urlencode",
+      "description": "encodes a url",
+      "end": "front",
+      "platform": "all",
+      "locality": "none",
+      "environment variables": [],
+      "output files": [],
+      "functions": [
+        {
+          "name": "rawurlencod",
+          "description": "main function"
+        }
+      ],
+      "associated commands": [],
+      "dependants": [],
+      "logfile": "None",
+      "status": "functional"
+    },
+    {
+      "name": "mpvdanu",
+      "description": "danu's stream in mpv",
+      "end": "front",
+      "platform": "all",
+      "locality": "none",
+      "environment variables": [],
+      "output files": [],
+      "functions": [],
+      "associated commands": [
+        "mpv*"
+      ],
+      "dependants": [
+        "mpv"
+      ],
+      "logfile": "None",
+      "status": "functional"
+    },
+    {
+      "name": "add-todo",
+      "description": "adds a to-do to the currently selected logbook",
+      "end": "front",
+      "platform": "all",
+      "locality": "none",
+      "environment variables": [
+        {
+          "name": "CURRENTLOGBOOK",
+          "description": "currently selected logbook"
+        },
+        {
+          "name": "LOGBOOKINDEX",
+          "description": "logbook index currently in use"
+        }
+      ],
+      "output files": [],
+      "functions": [],
+      "associated commands": [],
+      "dependants": [
+        "jq"
+      ],
+      "logfile": "None",
+      "status": "functional"
     }
   ]
 }
