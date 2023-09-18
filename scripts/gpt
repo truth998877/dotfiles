@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+_have() { type "$1" &>/dev/null; }
+
+declare OPENAI_API_KEY
+OPENAI_API_KEY="$(pass OpenAI/gpt)"
+export OPENAI_API_KEY
+
+! _have mods && echo "requires charmbracelet/mods" && echo "Passing query to DuckDuckGO" && ?? "$*" && exit
+
+mods --status-text "Working..." "$*"
