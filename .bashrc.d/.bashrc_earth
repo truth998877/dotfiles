@@ -4,10 +4,9 @@
 export PATH="~/local-scripts:$PATH"
 
 #earth specific screen setting for various scripts
-export MPVX=2764 
-export MPVY=78
+export MPVX=1236 
+export MPVY=40
 export INKSCAPESHELLY=6
-export WEECHATTMUXY=31
-export WEECHATTMUXX=90
-
+export WEECHATTMUXY=27
+export WEECHATTMUXX=108
 

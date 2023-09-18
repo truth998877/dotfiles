@@ -45,7 +45,7 @@ fi
 #ln -sf "$PWD/scripts" "$HOME/Scripts"
 
 
-for i in vim tmux ssh w3m; do
+for i in vim tmux ssh w3m .bashrc.d; do
   cd $i && ./setup
   cd -
 done
