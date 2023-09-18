@@ -1,0 +1,6 @@
+#!/bin/bash
+
+cd "$NOTEBOOKS"
+git add .
+git commit -m 'notebooks updated'
+git push
