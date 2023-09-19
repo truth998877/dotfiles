@@ -191,8 +191,9 @@ alias minecraftpi='ssh tony@minecraftpi'
 alias work='ssh tonyr@work'
 
 #these need to be on every system
-alias '?'=duck
-alias '??'=google
+alias '?'=gpt
+alias '??'=duck
+alias '???'=google
 alias '???'=bing
 alias now="date +'%A, %d %B %Y, %H:%M'"
 
