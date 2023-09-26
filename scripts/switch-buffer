@@ -1,0 +1,7 @@
+#!/bin/bash
+
+read -n 1 -s -r -p "Press any key to switch buffers..."
+echo $'\n'
+
+s "/buffer #$1"
+clear
