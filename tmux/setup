@@ -20,7 +20,7 @@ if [[ -z "$(which tmux)" ]]; then
         ;;
     esac
 
-  for i in .tmux.conf .tmux-in.conf .tmux-live.conf .tmux-out.conf;do
+  for i in .tmux.conf .tmux-in.conf .tmux-live.conf .tmux-out.conf .tmux-outer.conf;do
     if [[ -f "$HOME/$i" ]]; then
       cp -p "$HOME/$i" "$HOME/$i-orig"
     fi
