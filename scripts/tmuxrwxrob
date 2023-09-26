@@ -2,4 +2,4 @@
 
 #tmux to watch rwxrob
 
-tmux -L rwxrob new-session \; \split-window -v \; \select-pane -t 1 \; \resize-pane -y $WEECHATTMUXY \; \split-window -h \; \select-pane -t 1 \; \resize-pane -x $WEECHATTMUXX \; \send "weechat -r '/bar show nicklist'" Enter \; send "/buffer #rwxrob" Enter  \; \select-pane -t 3 \; \send "mpvrwxrob" Enter "tmuxin" Enter
+tmux -L rwxrob new-session \; \split-window -v \; \select-pane -t 1 \; \resize-pane -y $WEECHATTMUXY \; \split-window -h \; \select-pane -t 1 \; \resize-pane -x $WEECHATTMUXX \; \send "weechat -r '/bar show nicklist'" Enter \; \send "/buffer #rwxrob" Enter  \; \select-pane -t 3 \; \send "mpvrwxrob" Enter "tmuxin" Enter
