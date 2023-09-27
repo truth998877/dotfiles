@@ -3,6 +3,6 @@
 #tmux for live gaming
 
 #tmux -L blastwave new-session \; \split-window -v \; \select-pane -t 1 \; \resize-pane -y 31 \; \split-window -h \; \select-pane -t 1 \; \resize-pane -x 90 \; \send "weechat -r '/bar show nicklist'" Enter \; send "/buffer #blastwave" Enter  \; \select-pane -t 3 \; \send "mpvlastmiles $1" Enter "tmuxin" Enter
-tmux -f ~/.tmux-outer.conf -L blastwave new-session \; \split-window -v \; \select-pane -t 1 \; \resize-pane -y $WEECHATTMUXY \; \split-window -h \; \select-pane -t 1 \; \resize-pane -x $WEECHATTMUXX \; \send "weechat -r /bar show nicklist" Enter  \; \select-pane -t 3 \; \send "mpvlastmiles $1" Enter "tmuxin" Enter "switch-buffer blastwave" Enter
+tmux -f ~/.tmux-outer.conf -L blastwave new-session \; \split-window -v \; \select-pane -t 1 \; \resize-pane -y $WEECHATTMUXY \; \split-window -h \; \select-pane -t 1 \; \resize-pane -x $WEECHATTMUXX \; \send "weechat -r /bar show nicklist" Enter  \; \select-pane -t 3 \; \send "mpvlastmiles $1" Enter "tmuxin" Enter "switch-buffer blastwave" Enter \; \select-pane -t 1 \;
 
 #TODO use this as a template for a replacement for all of the tmux* commands with argument 1 the person and argumentment 2 the platform hosting the stream
