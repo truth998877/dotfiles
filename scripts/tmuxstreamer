@@ -1,0 +1,24 @@
+#!/bin/bash
+
+streamer="$1"
+platform="${2:-twitch}"
+
+if [[ "$platform" == twitch ]]; then
+  mpvcommand="mpvastream twitch $streamer"
+  weechatcommand="switch-buffer $streamer join"
+fi
+
+if [[ "$streamer" == nico ]] || [[ "$streamer" == rwxrob ]]; then
+  mpvcommand="mpv$streamer $platform"
+  weechatcommand="switch-buffer $streamer"
+fi
+
+if [[ "$streamer" == lastmiles ]]; then
+  mpvcommand="mpv$streamer $platform"
+  weechatcommand="switch-buffer blastwave"
+fi
+
+
+tmux -f ~/.tmux-outer.conf -L "$streamer" new-session \; \split-window -v \; \select-pane -t 1 \; \resize-pane -y $WEECHATTMUXY \; \split-window -h \; \select-pane -t 1 \; \resize-pane -x $WEECHATTMUXX \; \send "weechat -r /bar show nicklist" Enter  \; \select-pane -t 3 \; \send "$mpvcommand" Enter "tmuxin" Enter "$weechatcommand"  Enter \; \select-pane -t 1 \;
+
+#TODO use this as a template for a replacement for all of the tmux* commands with argument 1 the person and argumentment 2 the platform hosting the stream
