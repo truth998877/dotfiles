@@ -1,7 +1,16 @@
 #!/bin/bash
 
+streamer="$1"
+switch="$2"
+
 read -n 1 -s -r -p "Press any key to switch buffers..."
 echo $'\n'
+
+if [[ "$switch" == join ]];then
+  join-twitch-channel "$streamer"
+fi
+
+sleep 1
 
 s "/buffer #$1"
 clear
