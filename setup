@@ -34,7 +34,9 @@ if [[ $END != work ]]; then
   fi
   ln -sf "$PWD/templates/" "$HOME/templates"
   
+  cd .bashrc.d && ./setup
 
+fi
 
 #ln -sf "$PWD/.bashrc" "$HOME/.bashrc"
 #ln -sf "$PWD/.dircolors" "$HOME/.dircolors"
@@ -44,12 +46,11 @@ if [[ $END != work ]]; then
 #ln -sf "$PWD/scripts" "$HOME/Scripts"
 
 
-  for i in vim tmux ssh w3m .bashrc.d; do
+  for i in vim tmux ssh w3m; do
     cd $i && ./setup
     cd -
   done
 
-fi
 
 
 if [[ $END == work ]]; then
