@@ -8,9 +8,14 @@ if [[ "$platform" == twitch ]]; then
   weechatcommand="switch-buffer $streamer join"
 fi
 
-if [[ "$streamer" == nico ]] || [[ "$streamer" == rwxrob ]]; then
+if [[ "$streamer" == rwxrob ]]; then
   mpvcommand="mpv$streamer $platform"
   weechatcommand="switch-buffer $streamer"
+fi
+
+if [[ "$streamer" == nico ]]; then
+  mpvcommand="mpv$streamer $platform"
+  weechatcommand="switch-buffer herrhotzenplotz"
 fi
 
 if [[ "$streamer" == lastmiles ]]; then
