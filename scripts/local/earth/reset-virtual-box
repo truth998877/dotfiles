@@ -9,7 +9,7 @@ delete-box ()  {
   local machine="$1 Clone"
 
 #*Code:
-  echo "Deleting \"$1 Clone\"..."
+  echo "Deleting \"$machine Clone\"..."
   VBoxManage unregistervm --delete "$machine"
   echo $'\n'
 }
