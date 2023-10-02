@@ -14,27 +14,26 @@ source set-platform-end
 
 if [[ $END != work ]]; then
 
-for i in .bashrc .dircolors .profile logbooks.json scripts-index.json scripts-index-testing.json scripts-index-schema.json; do
-  if [[ -f "$HOME/$i" ]];then
-    cp -p "$HOME/$i" "$HOME/$i-orig"
-  else
-   echo "$i not found"
+  for i in .bashrc .dircolors .profile logbooks.json scripts-index.json scripts-index-testing.json scripts-index-schema.json; do
+    if [[ -f "$HOME/$i" ]];then
+      cp -p "$HOME/$i" "$HOME/$i-orig"
+    else
+     echo "$i not found"
+    fi
+    ln -sf "$PWD/$i" "$HOME/$i"
+  done
+  
+  
+  if [[ ! -d $HOME/.bashrc.d ]]; then
+    mkdir -p "$HOME/.bashrc.d"
   fi
-  ln -sf "$PWD/$i" "$HOME/$i"
-done
-
-
-if [[ ! -d $HOME/.bashrc.d ]]; then
-  mkdir -p "$HOME/.bashrc.d"
-fi
-ln -sf "$PWD/.bashrc.d/" "$HOME/.bashrc.d"
-
-if [[ ! -d $HOME/templates ]]; then
-  mkdir -p "$HOME/templates"
-fi
-ln -sf "$PWD/templates/" "$HOME/templates"
-
-fi
+  ln -sf "$PWD/.bashrc.d/" "$HOME/.bashrc.d"
+  
+  if [[ ! -d $HOME/templates ]]; then
+    mkdir -p "$HOME/templates"
+  fi
+  ln -sf "$PWD/templates/" "$HOME/templates"
+  
 
 
 #ln -sf "$PWD/.bashrc" "$HOME/.bashrc"
@@ -45,10 +44,13 @@ fi
 #ln -sf "$PWD/scripts" "$HOME/Scripts"
 
 
-for i in vim tmux ssh w3m .bashrc.d; do
-  cd $i && ./setup
-  cd -
-done
+  for i in vim tmux ssh w3m .bashrc.d; do
+    cd $i && ./setup
+    cd -
+  done
+
+fi
+
 
 if [[ $END == work ]]; then
   ./setup-dotfiles-git-bash
