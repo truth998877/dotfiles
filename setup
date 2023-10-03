@@ -14,7 +14,7 @@ source set-platform-end
 
 if [[ $END != work ]]; then
 
-  for i in .bashrc .dircolors .profile logbooks.json scripts-index.json scripts-index-testing.json scripts-index-schema.json; do
+  for i in .bashrc .dircolors .profile logbooks.json notebooks.json scripts-index.json scripts-index-testing.json scripts-index-schema.json; do
     if [[ -f "$HOME/$i" ]];then
       cp -p "$HOME/$i" "$HOME/$i-orig"
     else
@@ -50,8 +50,6 @@ fi
     cd $i && ./setup
     cd -
   done
-
-
 
 if [[ $END == work ]]; then
   ./setup-dotfiles-git-bash
