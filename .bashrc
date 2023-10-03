@@ -60,6 +60,8 @@ set +H
 #export -f set-end-platform
 
 
+#TODO split into END specific files, front end aliases are not needed on back end systems and vice versa, also allow specific alias for work without leaking front and back end things etc. on to work.
+
 export USER="${USER:-$(whoami)}"
 export GITUSER="truth998877"
 
