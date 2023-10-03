@@ -15,22 +15,20 @@ _copy-from-repo () {
 }
 
 cd $HOME/repos/github.com/truth998877/dotfiles
-
 git pull
 
-for i in .bashrc .dircolors .profile logbooks.json scripts-index.json scripts-index-testing.json; do
+#for i in .bashrc .dircolors .profile logbooks.json scripts-index.json scripts-index-testing.json; do
+for i in .bashrc .dircolors .profile scripts-index.json scripts-index-testing.json logbooks-schema.json notebooks-schema.json; do
   _backup "$i"
   _copy-from-repo "$i"
 done
 
 cd vim
-
 _backup .vimrc
 _copy-from-repo .vimrc
-
 cd -
-cd tmux
 
+cd tmux
 for i in .tmux.conf .tmux-in.conf .tmux-live.conf .tmux-out.conf .tmux-outer.conf; do
   _backup "$i"
   _copy-from-repo "$i"
@@ -39,12 +37,15 @@ done
 cd -
 
 cd w3m
-
 for i in config keymap; do
   _backup "$i"
   _copy-from-repo "$i"
 done
+cd -
 
-
+cd .bashrc.d
+  _backup .bashrc_work
+  _copy-from-repo .bashrc_work
+cd -
 
 echo 'now run "exec bash -l"'
