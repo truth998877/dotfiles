@@ -142,6 +142,7 @@ fi
 #alias la='ls -A'
 #alias l='ls -CF'
 
+alias now="date +'%A, %d %B %Y, %H:%M'"
 
 case "$END" in
   front|back)
@@ -149,7 +150,6 @@ case "$END" in
     alias '??'=duck
     alias '???'=google
     alias '????'=bing
-    alias now="date +'%A, %d %B %Y, %H:%M'"
     alias venus='ssh tony@venus'
     alias oldvenus='ssh tony@oldvenus'
     alias earth='ssh -Y tony@earth'
