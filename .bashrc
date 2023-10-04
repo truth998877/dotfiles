@@ -142,14 +142,14 @@ fi
 #alias la='ls -A'
 #alias l='ls -CF'
 
-alias '?'=gpt
-alias '??'=duck
-alias '???'=google
-alias '???'=bing
-alias now="date +'%A, %d %B %Y, %H:%M'"
 
 case "$END" in
   front|back)
+    alias '?'=gpt
+    alias '??'=duck
+    alias '???'=google
+    alias '????'=bing
+    alias now="date +'%A, %d %B %Y, %H:%M'"
     alias venus='ssh tony@venus'
     alias oldvenus='ssh tony@oldvenus'
     alias earth='ssh -Y tony@earth'
@@ -166,7 +166,7 @@ case "$END" in
     alias gamma='ssh -Y tony@gamma'
     alias macbook='ssh tony@macbook'
     alias minecraftpi='ssh tony@minecraftpi'
-    alias work='ssh tonyr@work'
+    alias work='ssh -Y tonyr@work'
   ;;
 esac
 
