@@ -14,7 +14,7 @@ source set-platform-end
 
 if [[ $END != work ]]; then
 
-  for i in .bashrc .dircolors .profile logbooks.json notebooks.json scripts-index.json scripts-index-testing.json scripts-index-schema.json; do
+  for i in .bashrc .dircolors .profile; do
     if [[ -f "$HOME/$i" ]];then
       cp -p "$HOME/$i" "$HOME/$i-orig"
     else
@@ -35,7 +35,16 @@ if [[ $END != work ]]; then
   ln -sf "$PWD/templates/" "$HOME/templates"
   
   cd .bashrc.d && ./setup
-
+  cd -
+ 
+  if [[ "$END" == front ]];then
+    cd logbooks-setup && ./setup
+    cd -
+    cd notebooks-setup && ./setup
+    cd -
+   # for i in logbooks.json notebooks.json scripts-index.json scripts-index-testing.json scripts-index-schema.json;do
+    
+  fi
 fi
 
 #ln -sf "$PWD/.bashrc" "$HOME/.bashrc"
