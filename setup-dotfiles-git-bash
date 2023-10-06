@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [[ $END != work ]];
+if [[ $END != work ]]; then
   echo "Wrong system"
   exit 0
 fi
