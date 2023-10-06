@@ -2,15 +2,25 @@
 
 _backup () {
 
-  if [[ -f $HOME/$1 ]]; then
-    mv "$HOME/$1" "$HOME/$1-orig"
+  if [[ ! -z "$2" ]]; then
+    if [[ -f "$HOME/$1" ]]; then
+      mv "$HOME/$1" "$HOME/$1-orig"
+    fi
+  else
+    if [[ -f "$HOME/$2/$1" ]]; then
+      mv "$HOME/$2/$1" "$HOME/$2/$1-orig"
+    fi
   fi
-
+     
 }
 
 _copy-from-repo () {
 
+if [[ ! -z $2 ]];then
   cp "$PWD/$1" "$HOME/$1"
+else
+  cp "$PWD/$1" "$HOME/$2/$1"
+fi
 
 }
 
@@ -23,6 +33,7 @@ for i in .bashrc .dircolors .profile scripts-index.json scripts-index-testing.js
   _copy-from-repo "$i"
 done
 
+#-----Vim
 cd vim
 _backup .vimrc
 _copy-from-repo .vimrc
@@ -36,16 +47,28 @@ done
 
 cd -
 
+
+#-----w3m
 cd w3m
+if [[ ! -d "$HOME/.w3m" ]]; then
+  mkdir -p "$HOME/.w3m"
+fi
 for i in config keymap; do
-  _backup "$i"
-  _copy-from-repo "$i"
+  _backup "$i" .w3m
+  _copy-from-repo "$i" .w3m
 done
 cd -
 
+
+#-----.bashrc.d
 cd .bashrc.d
-  _backup .bashrc_work
-  _copy-from-repo .bashrc_work
+if [[ ! -d "$HOME/.bashrc.d" ]]; then
+  mkdir -p "$HOME/.bashrc.d"
+fi
+  _backup .bashrc_work .bashrc.d
+  _copy-from-repo .bashrc_work .bashrc.d
 cd -
 
+
+#----done
 echo 'now run "exec bash -l"'
