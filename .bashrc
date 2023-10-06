@@ -4,17 +4,6 @@ set +H
 
 #TODO split into END specific files, front end aliases are not needed on back end systems and vice versa, also allow specific alias for work without leaking front and back end things etc. on to work.
 
-
-#------FUNCTIONS-------
-_source_if() { [[ -r "$1" ]] && source "$1"; }
-boot() { ssh tony@oldvenus "/home/tony/bootsystem \"$@\""; }
-
-#set the current logbook
-#TODO if no argument use bash select to select a logbook based on it's title
-set-clb () { . set-clb-1 "$1" ; clb ; }
-#----------
-
-
 #-----PREAMBLE-----
 # ~/.bashrc: executed by bash(1) for non-login shells.
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
@@ -47,11 +36,23 @@ if [ -z "$debian_chroot" ] && [ -r /etc/debian_chroot ]; then
 fi
 #----------
 
+#------SOURCE IF-------
+_source_if() { [[ -r "$1" ]] && source "$1"; }
+#-----
 
 #----SET-PLATFORM-END----
 _source_if "$DOTFILES/set-platform-end"
 #----------
 
+
+#-----END SPECIFIC FUNCTIONS----
+if [[ "$END" == front ]];then
+  boot() { ssh tony@oldvenus "/home/tony/bootsystem \"$@\""; }
+
+  #set the current logbook
+  #TODO if no argument use bash select to select a logbook based on it's title
+  set-clb () { . set-clb-1 "$1" ; clb ; }
+#-----
 
 #------ENV VARS-----
 export EDITOR=vi
