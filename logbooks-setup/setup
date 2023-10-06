@@ -1,0 +1,14 @@
+#!/bin/bash
+
+cd "$HOME/repos/github.com/truth998877"
+git clone git@github.com:truth998877/logbooks.git
+
+cd "$HOME/repos/github.com/truth998877/logbooks"
+
+for i in logbooks.json;do
+  if [[ -f "$HOME/$i" ]];then
+    cp -p "$HOME/$i" "$HOME/$i-orig"
+  fi
+  ln -sf "$PWD/$i" "$HOME/$i"
+done
+   
