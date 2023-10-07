@@ -36,26 +36,11 @@ if [ -z "$debian_chroot" ] && [ -r /etc/debian_chroot ]; then
 fi
 #----------
 
-#------SOURCE IF-------
+#-----SOURCE IF-----
 _source_if() { [[ -r "$1" ]] && source "$1"; }
 #-----
 
-#----SET-PLATFORM-END----
-_source_if "$DOTFILES/set-platform-end"
-#----------
-
-
-#-----END SPECIFIC FUNCTIONS----
-if [[ "$END" == front ]];then
-  boot() { ssh tony@oldvenus "/home/tony/bootsystem \"$@\""; }
-
-  #set the current logbook
-  #TODO if no argument use bash select to select a logbook based on it's title
-  set-clb () { . set-clb-1 "$1" ; clb ; }
-fi
-#-----
-
-#------ENV VARS-----
+#------GENERIC ENV VARS-----
 export EDITOR=vi
 export VISUAL=vi
 export USER="${USER:-$(whoami)}"
@@ -68,19 +53,6 @@ export SCRIPTS="$DOTFILES/scripts"
 export SNIPPETS="$DOTFILES/snippets"
 export LOCALSCRIPTS="$DOTFILES/scripts/local/$HOSTNAME"
 export CDPATH=".:$GHREPOS:$GLREPOS:$DOTFILES:$REPOS:$SCRIPTS:$SNIPPETS:$LOCALSCRIPTS"
-
-case "$END" in
-  front|back)
-    export PGM="$GHREPOS/pgm"
-    export LOGBOOKS="$GHREPOS/logbooks"
-    export LOGBOOKSINDEX="$HOME/logbooks.json"
-    export SCRIPTSINDEX="$HOME/scripts-index.json"
-    export NOTEBOOKS="$GHREPOS/notebooks"
-    export CDPATH=".:$LOGBOOKS:$NOTEBOOKS:$GHREPOS:$GLREPOS:$DOTFILES:$REPOS:$SCRIPTS:$SNIPPETS:$LOCALSCRIPTS:$PGM"
-    ;;
-esac
-#----------
-
 
 #----PROMPT----
 # set a fancy prompt (non-color, unless we know we "want" color)
@@ -120,10 +92,9 @@ xterm*|rxvt*)
 *)
     ;;
 esac
-#----------
+#-----
 
-
-#----DIR COLOURS----
+#-----DIR COLOURS-----
 # enable color support of ls and also add handy aliases
 if [ -x /usr/bin/dircolors ]; then
     test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
@@ -135,10 +106,9 @@ if [ -x /usr/bin/dircolors ]; then
     #alias fgrep='fgrep --color=auto'
     #alias egrep='egrep --color=auto'
 fi
-#----------
+#-----
 
-
-#------ALIASES---------
+#-----GENERIC ALIASES-----
 # some more ls aliases
 #alias ll='ls -l'
 #alias la='ls -A'
@@ -146,6 +116,39 @@ fi
 
 alias now="date +'%A, %d %B %Y, %H:%M'"
 
+if [ -f ~/.bash_aliases ]; then
+    . ~/.bash_aliases
+fi
+#-----
+
+#----SET-PLATFORM-END----
+_source_if "$DOTFILES/set-platform-end"
+#-----
+
+#----END SPECIFIC ENV VARS-----
+case "$END" in
+  front|back)
+    export PGM="$GHREPOS/pgm"
+    export LOGBOOKS="$GHREPOS/logbooks"
+    export LOGBOOKSINDEX="$HOME/logbooks.json"
+    export SCRIPTSINDEX="$HOME/scripts-index.json"
+    export NOTEBOOKS="$GHREPOS/notebooks"
+    export CDPATH=".:$LOGBOOKS:$NOTEBOOKS:$GHREPOS:$GLREPOS:$DOTFILES:$REPOS:$SCRIPTS:$SNIPPETS:$LOCALSCRIPTS:$PGM"
+    ;;
+esac
+#-----
+
+#-----END SPECIFIC FUNCTIONS-----
+if [[ "$END" == front ]];then
+  boot() { ssh tony@oldvenus "/home/tony/bootsystem \"$@\""; }
+
+  #set the current logbook
+  #TODO if no argument use bash select to select a logbook based on it's title
+  set-clb () { . set-clb-1 "$1" ; clb ; }
+fi
+#-----
+
+#-----END SPECIFIC ALIASES-----
 case "$END" in
   front|back)
     alias '?'=gpt
@@ -171,15 +174,14 @@ case "$END" in
     alias work='ssh -Y tonyr@work'
   ;;
 esac
+#-----
 
+
+#-----PLATFORM SPECIFIC ALIASES
 if [[ $PLATFORM == darwin ]];then
   alias ls='ls -G'
 fi
-
-if [ -f ~/.bash_aliases ]; then
-    . ~/.bash_aliases
-fi
-#----------
+#-----
 
 
 #-----COMPLETION-----
@@ -213,10 +215,10 @@ fi
 if [[ $HOSTNAME == earth ]]; then
   complete -C gamecaptures gamecaptures #earth
 fi
-#----------
+#-----
 
 
-#-----PATH----
+#-----PATH-----
 #TODO finer control of the path for specific machines is needed
 export PATH=/opt/flex/bin:/home/tony/.local/bin:$PATH
 
@@ -236,16 +238,16 @@ case "$END" in
     export PATH="$HOME/.secrets/facebook:$PATH"
   ;;
 esac
-#----------
+#-----
 
 
-#-----MACHINE SPECIFIC
+#-----MACHINE SPECIFIC BASHRC-----
 _source_if "$HOME/.bashrc.d/.bashrc_$HOSTNAME"
-#----------
+#-----
 
 
-#----WORK SPECIFIC
+#-----WORK SPECIFIC BASHRC-----
 if [[ $END == work ]]; then 
   _source_if "$HOME/.bashrc.d/.bashrc_work"
 fi
-#----------
+#-----
