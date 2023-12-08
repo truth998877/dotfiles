@@ -1,0 +1,117 @@
+#!/bin/bash
+
+_send () {
+
+  local device="$1"
+  local payload="$3"
+  #local value="$3"
+  local endpoint="$2"
+
+  curl -X GET http://192.168.0."$device"/"$endpoint"/?"$payload" 2>%1 > /dev/null
+  #curl -X GET http://192.168.0.53/light/0/?turn=toggle 2>%1 > /dev/null
+  #curl -X GET http://192.168.0.53/light/0/?'red=255&green=0&blue=0&gain=15' 2>%1 > /dev/null
+  #curl -X GET http://192.168.0.53/light/0/?effect=off 2>%1 > /dev/null
+  #curl -v -X GET http://192.168.0.53/settings/?mode=color 2>%1 > /dev/null
+}
+
+_device_num () {
+
+ local location="$1"
+
+ case "$location" in
+
+   office)
+     echo 53
+   ;;
+
+   *)
+    echo unknown
+   ;;
+
+ esac   
+
+}
+
+_payload () {
+
+  local action="$1"
+  local gainlevel="${2:-15}"
+  local effect_type="$2"
+
+  case "$action" in
+    toggle)
+      echo turn=toggle
+    ;;
+
+    red)
+      echo "red=255&green=0&blue=0&gain=$gainlevel"
+      #ifoffswitchon
+    ;;
+    
+    blue)
+      echo "red=0&green=0&blue=255&gain=$gainlevel"
+      #ifoffswitchon
+    ;;
+
+    green)
+      echo "red=0&green=255&blue=0&gain=$gainlevel"
+      #ifoffswitchon
+    ;;
+
+    gain)
+      echo "gain=$gainlevel"
+      #ifoffswitchon
+    ;;
+
+    brightness)
+      echo "brightness=$gainlevel"
+    ;;
+
+    white)
+      echo "mode=white"
+    ;;
+   
+    color|colour)
+      echo "mode=color"
+    ;;
+
+    effect)
+      case $effect_type in
+        flash)
+          echo "effect=3"
+        ;;
+
+        off)
+          echo "effect=off"
+        ;;
+
+      esac
+      #ifoffswitchon
+    ;; 
+    
+  esac
+
+}
+
+_endpoint () {
+  
+  local input="$1"
+  local output="light/0"
+  
+  if [[ $input == white ]] || [[ $input == color ]] || [[ $input == colour ]]; then
+    output="settings"
+  fi
+
+  echo "$output"
+
+}
+
+_ifoffswitchon () {
+
+}
+
+devicenum=$(_device_num "$1")
+payload=$(_payload "$2" "$3")
+endpoint=$(_endpoint "$2")
+
+_send "$devicenum" "$endpoint" "$payload"
