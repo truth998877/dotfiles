@@ -1,17 +1,38 @@
 #!/bin/bash
 
-_send () {
+_sendpayload () {
 
   local device="$1"
-  local payload="$3"
-  #local value="$3"
   local endpoint="$2"
+  local payload="$3"
 
-  curl -X GET http://192.168.0."$device"/"$endpoint"/?"$payload" 2>%1 > /dev/null
-  #curl -X GET http://192.168.0.53/light/0/?turn=toggle 2>%1 > /dev/null
-  #curl -X GET http://192.168.0.53/light/0/?'red=255&green=0&blue=0&gain=15' 2>%1 > /dev/null
-  #curl -X GET http://192.168.0.53/light/0/?effect=off 2>%1 > /dev/null
-  #curl -v -X GET http://192.168.0.53/settings/?mode=color 2>%1 > /dev/null
+  local ison="$(curl -s -X GET http://192.168.0."$device"/status|jq .lights.[].ison)"
+  case "$ison" in
+    
+    false)
+      if [[ $payload != *toggle* ]]; then
+        curl -s -X GET http://192.168.0."$device"\/light\/0\/?turn=on 2>&1 > /dev/null
+      fi
+    ;;
+
+    "")
+      echo "Device not connected"
+      exit 1
+    ;;
+
+    *)
+    ;;
+
+  esac
+
+  curl -s -X GET http://192.168.0."$device"/"$endpoint"/?"$payload" 2>&1 > /dev/null
+  
+  #examples
+  #curl -s -X GET http://192.168.0.53/light/0/?turn=toggle
+  #curl -s -X GET http://192.168.0.53/light/0/?'red=255&green=0&blue=0&gain=15'
+  #curl -s -X GET http://192.168.0.53/light/0/?effect=off
+  #curl -s -X GET http://192.168.0.53/settings/?mode=color
+
 }
 
 _device_num () {
@@ -39,28 +60,33 @@ _payload () {
   local effect_type="$2"
 
   case "$action" in
+
+    off)
+      echo turn=off
+    ;;
+
+    on)
+      echo turn=on
+    ;;
+
     toggle)
       echo turn=toggle
     ;;
 
     red)
       echo "red=255&green=0&blue=0&gain=$gainlevel"
-      #ifoffswitchon
     ;;
     
     blue)
       echo "red=0&green=0&blue=255&gain=$gainlevel"
-      #ifoffswitchon
     ;;
 
     green)
       echo "red=0&green=255&blue=0&gain=$gainlevel"
-      #ifoffswitchon
     ;;
 
     gain)
       echo "gain=$gainlevel"
-      #ifoffswitchon
     ;;
 
     brightness)
@@ -86,7 +112,6 @@ _payload () {
         ;;
 
       esac
-      #ifoffswitchon
     ;; 
     
   esac
@@ -106,12 +131,8 @@ _endpoint () {
 
 }
 
-_ifoffswitchon () {
-
-}
-
 devicenum=$(_device_num "$1")
 payload=$(_payload "$2" "$3")
 endpoint=$(_endpoint "$2")
 
-_send "$devicenum" "$endpoint" "$payload"
+_sendpayload "$devicenum" "$endpoint" "$payload"
