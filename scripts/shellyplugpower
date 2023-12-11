@@ -1,0 +1,40 @@
+#!/bin/bash
+
+
+
+_get_power () {
+
+  local dev_number="$1"
+
+  local power=$(curl -s -X POST -d '{"id":1,"method":"Switch.GetStatus","params":{"id":0}}' http://192.168.0."$dev_number"/rpc|jq .result.apower)
+
+  echo "$power"
+
+}
+
+
+_device_num () {
+
+  local location="$1"
+
+  case "$location" in
+
+    office)
+      #echo 54
+      echo 238
+    ;;
+
+  esac
+
+}
+
+   
+location="$1"
+
+device_num="$(_device_num "$location")"
+_get_power "$device_num"
+
+
+
+
+
