@@ -6,7 +6,7 @@ _sendpayload () {
   local endpoint="$2"
   local payload="$3"
 
-  local ison="$(curl -s -X GET http://192.168.0."$device"/status|jq .lights.[].ison)"
+  local ison="$(curl -s -X GET http://192.168.0."$device"/status|jq .lights[].ison)"
   case "$ison" in
     
     false)
