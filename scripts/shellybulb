@@ -6,7 +6,8 @@ _sendpayload () {
   local endpoint="$2"
   local payload="$3"
 
-  local ison="$(curl -s -X GET http://192.168.0."$device"/status|jq .lights.[].ison)"
+  local ison="$(curl -s -X GET http://192.168.0."$device"/status|jq .lights[].ison)"
+
   case "$ison" in
     
     false)
@@ -14,7 +15,7 @@ _sendpayload () {
         curl -s -X GET http://192.168.0."$device"\/light\/0\/?turn=on 2>&1 > /dev/null
       fi
     ;;
-
+  
     "")
       echo "Device not connected"
       exit 1
@@ -23,6 +24,16 @@ _sendpayload () {
     *)
     ;;
 
+  esac
+
+  case $payload in
+
+    *red*|*blue*|*green*)
+      local mode=$(curl -s -X GET http://192.168.0."$device"/status|jq .lights[].mode)
+      if [[ $mode != color ]]; then
+        curl -s -X GET http://192.168.0."$device"/settings/?mode=color 2>&1 > /dev/null
+      fi
+    ;;
   esac
 
   curl -s -X GET http://192.168.0."$device"/"$endpoint"/?"$payload" 2>&1 > /dev/null
