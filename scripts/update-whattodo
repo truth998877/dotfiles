@@ -1,0 +1,6 @@
+#!/bin/bash
+
+cd $DOTFILES
+git add things-i-am-doing.md
+git commit -m 'update to things I am doing'
+git push
