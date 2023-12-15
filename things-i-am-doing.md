@@ -2,7 +2,6 @@ tidy office
 move printer to office
 add second gpu to earth
 mycroft
-wifi extender
 obs scripts
 twitch scripts
 game video scripts
