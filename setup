@@ -14,7 +14,7 @@ source set-platform-end
 
 if [[ $END != work ]]; then
 
-  for i in .bashrc .dircolors .profile; do
+  for i in .bashrc .dircolors .profile things-i-am-doing.md; do
     if [[ -f "$HOME/$i" ]];then
       cp -p "$HOME/$i" "$HOME/$i-orig"
     else
