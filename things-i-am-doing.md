@@ -1,6 +1,5 @@
 tidy office
 move printer to office
-add second gpu to earth
 mycroft
 obs scripts
 twitch scripts
@@ -10,5 +9,5 @@ skippy's blog
 mars
 sun blade 1000
 sun's
-
+moonbaby
 
