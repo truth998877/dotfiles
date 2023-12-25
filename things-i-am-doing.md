@@ -10,4 +10,4 @@ mars
 sun blade 1000
 sun's
 moonbaby
-
+update minecraft server
