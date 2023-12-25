@@ -47,12 +47,14 @@ export USER="${USER:-$(whoami)}"
 export GITUSER="truth998877"
 export REPOS="$HOME/repos"
 export GHREPOS="$REPOS/github.com/$GITUSER"
+export FORTIESGAMER="$GHREPOS/fortiesgamer-site"
+export STUDYWITHTONY="$GHREPOS/studywithtony-site"
 export GLREPOS="$REPOS/gitlab.com/$GITUSER"
 export DOTFILES="$GHREPOS/dotfiles"
 export SCRIPTS="$DOTFILES/scripts"
 export SNIPPETS="$DOTFILES/snippets"
 export LOCALSCRIPTS="$DOTFILES/scripts/local/$HOSTNAME"
-export CDPATH=".:$GHREPOS:$GLREPOS:$DOTFILES:$REPOS:$SCRIPTS:$SNIPPETS:$LOCALSCRIPTS"
+export CDPATH=".:$FORTIESGAMER:$STUDYWITHTONY:$GHREPOS:$GLREPOS:$DOTFILES:$REPOS:$SCRIPTS:$SNIPPETS:$LOCALSCRIPTS"
 
 #----PROMPT----
 # set a fancy prompt (non-color, unless we know we "want" color)
