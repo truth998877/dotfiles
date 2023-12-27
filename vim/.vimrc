@@ -1,4 +1,5 @@
-set spell spelllang=en_gb
+set nospell
+set spelllang=en_gb
 set number
 set linebreak
 syntax on
@@ -40,5 +41,6 @@ filetype plugin on
 au bufnewfile,bufRead *.txt set spell
 au FileType markdown,pandoc noremap j gj
 au FileType markdown,pandoc noremap k gk
+au FileType markdown,text set spell
 
 autocmd BufNewFile,BufRead * let $SNIPSUBDIR = &filetype
