@@ -39,8 +39,17 @@ set ttyfast
 filetype plugin on
 
 au bufnewfile,bufRead *.txt set spell
+au FileType markdown,pandoc,text set wrap
 au FileType markdown,pandoc noremap j gj
 au FileType markdown,pandoc noremap k gk
 au FileType markdown,text set spell
+
+" start at last place you were editing
+au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
+
+noremap <up> :echoerr "Umm, use k instead"<CR>
+noremap <down> :echoerr "Umm, use j instead"<CR>
+noremap <left> :echoerr "Umm, use h instead"<CR>
+noremap <right> :echoerr "Umm, use l instead"<CR>
 
 autocmd BufNewFile,BufRead * let $SNIPSUBDIR = &filetype
