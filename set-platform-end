@@ -20,6 +20,10 @@ case $HOSTNAME in
    PLATFORM=freebsd
    ;;
 
+	 work)
+	 PLATFORM=work
+	 ;;
+
    *)
    echo 'Hostname not recognised, assuming debian based'
    PLATFORM=debian
