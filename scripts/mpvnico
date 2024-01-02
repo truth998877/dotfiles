@@ -6,7 +6,7 @@
 
 case "$1" in
   genunix)
-    mpvastream play rtmp://live.genunix.com/herrhotzenplotz/
+    mpvastream play rtmp://live.genunix.com/nico
   ;;
   twitch)
     mpvastream play https://www.twitch.tv/herrhotzenplotz/
