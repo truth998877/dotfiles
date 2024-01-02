@@ -1,0 +1,14 @@
+#!/bin/bash
+
+machines="$(virsh list --all|grep "shut off"|tr -s " "|cut -d " " -f 3)"
+OLD_IFS=${IFS};IFS=$'\n'
+
+machines=($machines)
+
+#machines=("${machines[@]% \{*}")
+#machines=("${machines[@]//\"/}")
+select machine in ${machines[@]};do
+  virsh start "$machine"  
+  IFS="${OLD_IFS}"
+  break
+done
