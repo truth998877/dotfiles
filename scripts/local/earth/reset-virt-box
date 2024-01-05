@@ -10,7 +10,7 @@ delete-box ()  {
 
 #*Code:
   echo "Deleting \"$machine\"..."
-  virsh undefine --domain "$machine" --remove-all-storage --delete-snapshots
+  sudo virsh undefine --domain "$machine" --remove-all-storage --delete-snapshots
   echo $'\n'
 }
 
