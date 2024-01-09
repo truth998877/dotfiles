@@ -1,0 +1,16 @@
+#!/bin/bash
+if [[ $END != work ]]; then
+  echo "Not 'work'"
+  exit 0
+fi
+
+read -p "Enter new logbook location: " location
+
+if [[ ! -d $location ]]; then
+  mkdir -p "$location"
+fi
+
+cp $HOME/logbooks-schema.json "$location"
+
+echo export LOGBOOKSINDEX="$location/logbooks.json" >> "$HOME/.bashrc.d/.bashrc_work"
+echo "Now run \"exec bash -l\""
