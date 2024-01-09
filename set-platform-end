@@ -20,10 +20,6 @@ case $HOSTNAME in
    PLATFORM=freebsd
    ;;
 
-	 work)
-	 PLATFORM=work
-	 ;;
-
    *)
    echo 'Hostname not recognised, assuming debian based'
    PLATFORM=debian
@@ -46,6 +42,7 @@ case $HOSTNAME in
   unamestr="$(uname -sr)"
   if [[ $unamestr == CYGWIN* || $unamestr == MINGW* || $unamestr == MINGW32* || $unamestr == MSYS* || $HOSTNAME == work ]]; then
     END=work
+		PLATFORM=work
   fi
   ;;
 
