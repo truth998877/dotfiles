@@ -10,7 +10,7 @@ delete-box ()  {
 
 #*Code:
   echo "Deleting \"$machine\"..."
-  sudo virsh undefine --domain "$machine" --remove-all-storage --delete-snapshots
+  virsh undefine --domain "$machine" --remove-all-storage
   echo $'\n'
 }
 
@@ -26,7 +26,8 @@ clone-box ()  {
 
   echo "Cloning \"${machine:0:-6}\" into \"$machine\"..."
   echo "This may take some time..."
-  virt-clone --original ${machine:0:-6} --auto-clone
+	mac="$(virsh domiflist "${machine:0:-6}"|tail +3|tr -s " "|cut -d " " -f 6)"
+   virt-clone --original ${machine:0:-6} --auto-clone --mac "$mac" --check mac_in_use=off 
 }
 
 machines=$(virsh list --all|tail +3|tr -s " "|cut -d " " -f 3|grep clone)
@@ -40,4 +41,3 @@ select machine in "${machines[@]}";do
 	break
 
 done
-
