@@ -12,5 +12,5 @@ fi
 
 cp $HOME/logbooks-schema.json "$location/logbooks.json"
 
-echo export LOGBOOKSINDEX="$location/logbooks.json" >> "$HOME/.bashrc.d/.bashrc_work"
+echo export LOGBOOKS="$location"\nexport LOGBOOKSINDEX="$location/logbooks.json" >> "$HOME/.bashrc.d/.bashrc_work"
 echo "Now run \"exec bash -l\""
