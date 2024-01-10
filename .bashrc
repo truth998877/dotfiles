@@ -145,7 +145,9 @@ esac
 #-----END SPECIFIC FUNCTIONS-----
 if [[ "$END" == front ]];then
   boot() { ssh tony@oldvenus "/home/tony/bootsystem \"$@\""; }
+fi
 
+if [[ "$END" == front ]] || [[ "$END" == work ]];then
   #set the current logbook
   #TODO if no argument use bash select to select a logbook based on it's title
   set-clb () { . set-clb-1 "$1" ; clb ; }
