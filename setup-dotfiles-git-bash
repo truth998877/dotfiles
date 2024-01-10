@@ -66,13 +66,13 @@ cd -
 
 
 #-----.bashrc.d
-cd .bashrc.d
-if [[ ! -d "$HOME/.bashrc.d" ]]; then
-  mkdir -p "$HOME/.bashrc.d"
-fi
-  _backup .bashrc_work .bashrc.d
-  _copy-from-repo .bashrc_work .bashrc.d
-cd -
+#cd .bashrc.d
+#if [[ ! -d "$HOME/.bashrc.d" ]]; then
+#  mkdir -p "$HOME/.bashrc.d"
+#fi
+#  _backup .bashrc_work .bashrc.d
+#  _copy-from-repo .bashrc_work .bashrc.d
+#cd -
 
 
 #----done
