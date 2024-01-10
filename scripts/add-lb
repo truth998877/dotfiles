@@ -8,10 +8,12 @@
 echo "Default values in []"
 
 read -p "Enter Short Title :> " shorttitle
+shorttitlearray=($shorttitle)
+cap="${shorttitlearray[@]^}"
 
 read -p "Enter Long Title :> " longtitle
-default_location="$shorttitle"
 
+default_location="$LOGBOOKS"/"${cap//\ /}"
 read -p "Enter Location [$default_location] :> " location
 location="${location:-$default_location}"
 
