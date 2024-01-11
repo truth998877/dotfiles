@@ -1,6 +1,9 @@
 #!/bin/bash
 
 if [[ $END != work ]]; then
+  if [[ ! -d "$HOME/.ssh" ]] then
+    mkdir -p "$HOME/.ssh"
+  fi
   if [[ -f "$HOME/.ssh/config" ]]; then
     cp -p "$HOME/.ssh/config" "$HOME/.ssh/config-orig"
   fi
