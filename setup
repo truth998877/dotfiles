@@ -45,6 +45,7 @@ if [[ $END != work ]]; then
    # for i in logbooks.json notebooks.json scripts-index.json scripts-index-testing.json scripts-index-schema.json;do
     
   fi
+fi
 
 #ln -sf "$PWD/.bashrc" "$HOME/.bashrc"
 #ln -sf "$PWD/.dircolors" "$HOME/.dircolors"
@@ -53,13 +54,12 @@ if [[ $END != work ]]; then
 #ln -sf "$PWD/.profile" "$HOME/.bash_profile"
 #ln -sf "$PWD/scripts" "$HOME/Scripts"
 
+#this is needed for all systems
+for i in vim tmux ssh w3m; do
+  cd $i && ./setup
+  cd -
+done
 
-  for i in vim tmux ssh w3m; do
-    cd $i && ./setup
-    cd -
-  done
-
-fi
 
 if [[ $END == work ]]; then
   
