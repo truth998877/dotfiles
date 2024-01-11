@@ -62,6 +62,8 @@ if [[ $END != work ]]; then
 fi
 
 if [[ $END == work ]]; then
+  
+	echo "End=work. Setting up dotfiles for git bash...\n"
   ./setup-dotfiles-git-bash
   ./add-jq-to-git-bash
 fi
