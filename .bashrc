@@ -161,6 +161,7 @@ case "$END" in
     alias '??'=duck
     alias '???'=google
     alias '????'=bing
+		alias mercury='ssh tony@mercury'
     alias venus='ssh tony@venus'
     alias oldvenus='ssh tony@oldvenus'
     alias earth='ssh -Y tony@earth'

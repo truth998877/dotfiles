@@ -1,12 +1,19 @@
 Host oldvenus
      Hostname 192.168.0.16
     Protocol 2
+
+Host mercury 
+     Hostname 192.168.0.1
+    Protocol 2
+
 Host venus
      Hostname 192.168.0.2
     Protocol 2
+
 Host earth
      Hostname 192.168.0.3
     Protocol 2
+
 Host mars
      Hostname 192.168.0.4
     Protocol 2
