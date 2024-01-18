@@ -69,3 +69,7 @@ Host minecraftpi
 Host work
      Hostname 192.168.0.32
     Protocol 2
+
+Host debiantesting
+     Hostname 192.168.0.33
+    Protocol 2
