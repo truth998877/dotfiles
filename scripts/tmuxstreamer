@@ -20,9 +20,11 @@ fi
 
 if [[ "$streamer" == lastmiles ]]; then
   mpvcommand="mpv$streamer $platform"
-  weechatcommand="switch-buffer blastwave"
+	weechatcommand="switch-buffer blastwave"
+  if [[ $platform == twitch ]]; then
+	  weechatcommand="switch-buffer lastmiles"
+  fi
 fi
-
 
 tmux -f ~/.tmux-outer.conf -L "$streamer" new-session \; \split-window -v \; \select-pane -t 1 \; \resize-pane -y $WEECHATTMUXY \; \split-window -h \; \select-pane -t 1 \; \resize-pane -x $WEECHATTMUXX \; \send "weechat -r /bar show nicklist" Enter  \; \select-pane -t 3 \; \send "$mpvcommand" Enter "tmuxin" Enter "$weechatcommand"  Enter \; \select-pane -t 1 \;
 
