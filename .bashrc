@@ -180,6 +180,7 @@ case "$END" in
     alias minecraftpi='ssh tony@minecraftpi'
     alias work='ssh -Y tonyr@work'
 		alias debiantesting='ssh tony@debiantesting'
+		alias openmc-testing='ssh tony@openmc-testing'
   ;;
 esac
 #-----
