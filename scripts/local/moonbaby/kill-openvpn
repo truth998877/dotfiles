@@ -1,0 +1,4 @@
+#!/bin/bash
+
+sudo kill "$(pidof openvpn)"
+
