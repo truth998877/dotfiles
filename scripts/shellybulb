@@ -67,7 +67,7 @@ _device_num () {
 _payload () {
 
   local action="$1"
-  local gainlevel="${2:-15}"
+  local gainlevel="${2:-40}"
   local effect_type="$2"
 
   case "$action" in
