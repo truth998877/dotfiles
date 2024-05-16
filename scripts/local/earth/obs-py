@@ -1,5 +1,8 @@
+#!/usr/bin/python3
+
 import logging
-logging.basicConfig(level=logging.DEBUG)
+import argparse
+#logging.basicConfig(level=logging.DEBUG)
 import asyncio
 import simpleobsws
 
