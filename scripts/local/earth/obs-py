@@ -10,7 +10,7 @@ parameters = simpleobsws.IdentificationParameters(ignoreNonFatalRequestChecks = 
 
 ws = simpleobsws.WebSocketClient(url = 'ws://localhost:4455', password = 'Oidwk1oznW3fKQqz', identification_parameters = parameters) # Every possible argument has been passed, but none are required. See lib code for defaults.
 
-async def make_request(request):
+async def make_single_request(request):
 #    print(Request)
     await ws.connect() # Make the connection to obs-websocket
     await ws.wait_until_identified() # Wait for the identification handshake to complete
@@ -26,35 +26,66 @@ async def make_request(request):
 
     await ws.disconnect() # Disconnect from the websocket server cleanly
 
+async def make_batch_request(Requests):
+    await ws.connect() # Make the connection to obs-websocket
+    await ws.wait_until_identified() # Wait for the identification handshake to complete
+
+    ret = await ws.call_batch(requests, halt_on_failure = False) # Perform the request batch
+
+    for result in ret:
+        if ret.ok(): # Check if the request succeeded
+            print("Request succeeded! Response data: {}".format(ret.responseData))
+
+    await ws.disconnect() # Disconnect from the websocket server cleanly
+
+
+
 parser = argparse.ArgumentParser(
                     prog='ProgramName',
                     description='What the program does',
                     epilog='Text at the bottom of help')
 
-parser.add_argument('-s', '--scenechange' )
+parser.add_argument('-s', '--scenechange')
+parser.add_argument('-b', '--batch')
 parser.add_argument('--stream-on')
 parser.add_argument('--stream-off')
 parser.add_argument('--record-on')
 parser.add_argument('--record-off')
 parser.add_argument('--stream-off')
+parser.add.argument('-a','--animate')
 args = parser.parse_args()
 
 if args.scenechange:
     requestIn=simpleobsws.Request('SetCurrentProgramScene',{'sceneName':args.scenechange})
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(make_request(requestIn))
 
 if arg.stream-on 
     requestIn=simpleobsws.Request('StartStream')
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(make_single_request(requestIn))
 
 if arg.stream-off
     requestIn=simpleobsws.Request('StopStream')
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(make_single_request(requestIn))
 
 if arg.record-on
     requestIn=simpleobsws.Request('StartRecord')
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(make_single_request(requestIn))
 
 if arg.record-off
     requestIn=simpleobsws.Request('StopRecord')
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(make_single_request(requestIn))
 
+if arg.batch
+    requests = []
+    for request in arg.batch
+        requests.append(simpleobsws.Request(request)) # Build a Request object, then append it to the batch
+        asyncio.run(make_batch_request(requests))
 
-
-loop = asyncio.get_event_loop()
-loop.run_until_complete(make_request(requestIn))
+if arg.animate
+    import * from obs-py-animate
+    asyncio.run(run_animation(ags.animate))
