@@ -8,17 +8,21 @@ import simpleobsws
 
 parameters = simpleobsws.IdentificationParameters(ignoreNonFatalRequestChecks = False) # Create an IdentificationParameters object (optional for connecting)
 
-ws = simpleobsws.WebSocketClient(url = 'ws://localhost:4444', password = 'test', identification_parameters = parameters) # Every possible argument has been passed, but none are required. See lib code for defaults.
+ws = simpleobsws.WebSocketClient(url = 'ws://localhost:4455', password = 'Oidwk1oznW3fKQqz', identification_parameters = parameters) # Every possible argument has been passed, but none are required. See lib code for defaults.
 
-async def make_request(Request):
+async def make_request(request):
+#    print(Request)
     await ws.connect() # Make the connection to obs-websocket
     await ws.wait_until_identified() # Wait for the identification handshake to complete
 
-    request = simpleobsws.Request(Request) # Build a Request object
+    #request = simpleobsws.Request(Request) # Build a Request object
+    #request=simpleobsws.Request('SetCurrentProgramScene',{'sceneName':'Talk'})
 
     ret = await ws.call(request) # Perform the request
     if ret.ok(): # Check if the request succeeded
         print("Request succeeded! Response data: {}".format(ret.responseData))
+    else:
+        print("Response data: {}".format(ret.responseData))
 
     await ws.disconnect() # Disconnect from the websocket server cleanly
 
@@ -27,9 +31,30 @@ parser = argparse.ArgumentParser(
                     description='What the program does',
                     epilog='Text at the bottom of help')
 
-parser.add_argument('request')
-
+parser.add_argument('-s', '--scenechange' )
+parser.add_argument('--stream-on')
+parser.add_argument('--stream-off')
+parser.add_argument('--record-on')
+parser.add_argument('--record-off')
+parser.add_argument('--stream-off')
 args = parser.parse_args()
 
+if args.scenechange:
+    requestIn=simpleobsws.Request('SetCurrentProgramScene',{'sceneName':args.scenechange})
+
+if arg.stream-on 
+    requestIn=simpleobsws.Request('StartStream')
+
+if arg.stream-off
+    requestIn=simpleobsws.Request('StopStream')
+
+if arg.record-on
+    requestIn=simpleobsws.Request('StartRecord')
+
+if arg.record-off
+    requestIn=simpleobsws.Request('StopRecord')
+
+
+
 loop = asyncio.get_event_loop()
-loop.run_until_complete(make_request(args.request))
+loop.run_until_complete(make_request(requestIn))
