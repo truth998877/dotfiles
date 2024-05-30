@@ -2,36 +2,48 @@
 
 obsrecord_ () {
 
-local collection="$1"
-local profile="$2"
-local capturedir="$3"
+  local collection="$1"
+  local profile="$2"
+  local capturedir="$3"
 
-#TODO move to separate obs start command
-obs \
+  #echo "$capturedir"
+	#
+	status="$(obs-py --version)" > /dev/null 2>&1	
+	if [[ $status != ok ]];then
+
+  #TODO move to separate obs start command
+    obs \
     --minimize-to-tray \
     --collection "$collection" \
     --profile "$profile" \
     &>/dev/null &
  
-      sleep 15
+    sleep 15
 
-      local scenestatus=$(obs-cli SetCurrentScene='{"scene-name" : "Starting Soon"}'|jq -r '.[].status')
-      echo "Scene Status - $scenestatus" 
-      sleep 2
+	fi
+
+    #local scenestatus=$(obs-cli SetCurrentScene='{"scene-name" : "Starting Soon"}'|jq -r '.[].status')
+  local scenestatus=$(obs-py --scenechange "Starting Soon")
+	echo "Scene Status - $scenestatus" 
+  sleep 2
     
-      # example   local recordingfolderstring = "'{ "rec-folder":"/home/tony/GameCaptures/$capturedir"}'"
-      local recdir="SetRecordingFolder="\'"{\"rec-folder\": \"/"home/tony/GameCaptures/$capturedir"/\" }"\'
-      local recdirstatus=$(echo "$recdir" |xargs obs-cli | jq -r '.[].status')
+  # example   local recordingfolderstring = "'{ "rec-folder":"/home/tony/GameCaptures/$capturedir"}'"
+  #local recdir="SetRecordingFolder="\'"{\"rec-folder\": \"/"home/tony/GameCaptures/$capturedir"/\" }"\'
+  #local recdirstatus=$(echo "$recdir" |xargs obs-cli | jq -r '.[].status')
+			
 
-      echo "Recording Directory Status - $recdirstatus"
+  #echo "Recording Directory Status - $recdirstatus"
       
-      local recordingstatus="$(obs-cli StartRecording | jq -r '.[].status')"
-      echo "Recording Status - $recordingstatus"
+  #local recordingstatus="$(obs-cli StartRecording | jq -r '.[].status')"
+	local recordingstatus="$(obs-py --record-on "$capturedir")"
+
+  echo "Recording Directory Status - $recordingstatus"
+  echo "Recording Status - $recordingstatus"
       
       #set recording status manually
-      if [[ $recordingstatus == ok ]]; then
-            echo "true" > ~/obsrecordingstatus
-      fi       
+  if [[ $recordingstatus == ok ]]; then
+    echo "true" > ~/obsrecordingstatus
+  fi       
 
 }
 

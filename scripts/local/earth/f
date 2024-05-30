@@ -9,7 +9,7 @@ echo "${clear}"
 while true; do
   echo "${top}"
   setterm --cursor off
-  echo -e "$@" | figlet -c -t -f term|lolcat
+  echo -e "$@" | figlet -c -t -f big|lolcat
   setterm --cursor off
   sleep 2
 done

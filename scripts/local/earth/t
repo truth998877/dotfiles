@@ -12,31 +12,67 @@ fatal() {
 
 }
 
-buff="${buff%%#*}"
-if [[ ${#sbuff} > 50 ]]; then
-   fatal "Topic must be less than 50 characters"
+
+istmuxsocket() {
+  
+	local socket="$1"
+
+  local issocket="$(lsof -U | grep '^tmux'|grep $socket|wc -l)"
+	
+  local out=0
+	if [[ $issocket == 1 ]] ;then
+    out=1
+  fi
+
+  echo "$out"
+
+}
+if [[ $(istmuxsocket livestudy) == 1 ]]; then
+  
+	buff="${buff%%#*}"
+  
+	if (( ${#sbuff} > 50 )); then
+    fatal "Topic must be less than 50 characters"
+  fi
+
+  echo "$buff" >> "$HOME/GameCaptures/livestudy/topics"
+
+  hour=$(date "+%k")
+
+  txt1="Evening Stream - "
+  if ((hour < 12 )); then
+    txt1="Morning Stream - "
+  elif ((hour < 18 )); then
+    txt1="Afternoon Stream - "
+  fi
+
+  txt="$txt1""$(date "+%A %d/%m/%Y")"
+
+  #Update Stream title box
+  tmux -L livestudy send-keys -t 2 C-c
+  tmux -L livestudy send-keys -t 2 "f 'Welcome To My Channel!\\n$txt\\n ----Current Topic---- \\n$buff'" Enter
+
+  promotestream topicchange studywithtony "$buff"
+
+  #twitch updatetitle "$buff"
+  marker "$buff"
+
+  #TODO update twitter
 fi
 
-echo "$buff" >> "$HOME/GameCaptures/livestudy/topics"
+if [[ $(istmuxsocket recordstudy) == 1 ]]; then
+	buff="${buff%%#*}"
+  echo "${#buff}"
+	if (( "${#buff}" > 32 )); then
+	  fatal "Topic must be less than 32 characters"
+  fi
 
-hour=$(date "+%k")
+	echo "$buff" >> "$HOME/GameCaptures/livestudy/topics"
+ 
+  tmux -L recordstudy send-keys -t 1 C-c
+	tmux -L recordstudy send-keys -t 1 "f 'Topic: $buff'" Enter
 
-txt1="Evening Stream - "
-if ((hour < 12 )); then
-  txt1="Morning Stream - "
-elif ((hour < 18 )); then
-  txt1="Afternoon Stream - "
+#	marker "$buff"
+
 fi
 
-txt="$txt1""$(date "+%A %d/%m/%Y")"
-
-#Update Stream title box
-tmux -L livestudy send-keys -t 2 C-c
-tmux -L livestudy send-keys -t 2 "f 'Welcome To My Channel!\\n$txt\\n ----Current Topic---- \\n$buff'" Enter
-
-promotestream topicchange studywithtony "$buff"
-
-#twitch updatetitle "$buff"
-marker "$buff"
-
-#TODO update twitter

@@ -20,9 +20,11 @@ async def make_single_request(request):
 
     ret = await ws.call(request) # Perform the request
     if ret.ok(): # Check if the request succeeded
-        print("Request succeeded! Response data: {}".format(ret.responseData))
+        return 1
+#        print("Request succeeded! Response data: {}".format(ret.responseData))
     else:
-        print("Response data: {}".format(ret.responseData))
+        return 0
+#        print("Response data: {}".format(ret.responseData))
 
     await ws.disconnect() # Disconnect from the websocket server cleanly
 
@@ -34,7 +36,7 @@ async def make_batch_request(Requests):
 
     for result in ret:
         if ret.ok(): # Check if the request succeeded
-            print("Request succeeded! Response data: {}".format(ret.responseData))
+           print("Request succeeded! Response data: {}".format(ret.responseData))
 
     await ws.disconnect() # Disconnect from the websocket server cleanly
 
@@ -47,45 +49,71 @@ parser = argparse.ArgumentParser(
 
 parser.add_argument('-s', '--scenechange')
 parser.add_argument('-b', '--batch')
-parser.add_argument('--stream-on')
-parser.add_argument('--stream-off')
-parser.add_argument('--record-on')
-parser.add_argument('--record-off')
-parser.add_argument('--stream-off')
-parser.add.argument('-a','--animate')
+parser.add_argument('--stream-on', action='store_true')
+parser.add_argument('--stream-off', action='store_true')
+parser.add_argument('--record-on', nargs='?', const='/home/tony/GameCaptures/livestudy')
+parser.add_argument('--record-dir', nargs='?', const='/home/tony/GameCaptures/livestudy')
+parser.add_argument('--record-off', action='store_true')
+parser.add_argument('-a','--animate')
+parser.add_argument('-v','--version', action='store_true')
+parser.add_argument('--is-running')
 args = parser.parse_args()
 
 if args.scenechange:
     requestIn=simpleobsws.Request('SetCurrentProgramScene',{'sceneName':args.scenechange})
     loop = asyncio.get_event_loop()
-    loop.run_until_complete(make_request(requestIn))
+    status=loop.run_until_complete(make_single_request(requestIn))
+    if status == 1:
+        print('ok')
 
-if arg.stream-on 
+if args.stream_on: 
     requestIn=simpleobsws.Request('StartStream')
     loop = asyncio.get_event_loop()
-    loop.run_until_complete(make_single_request(requestIn))
+    status=loop.run_until_complete(make_single_request(requestIn))
+    if status == 1:
+        print('ok')
 
-if arg.stream-off
+if args.version: 
+    requestIn=simpleobsws.Request('GetVersion')
+    loop = asyncio.get_event_loop()
+    status=loop.run_until_complete(make_single_request(requestIn))
+    if status==1:
+       print('ok')
+
+if args.stream_off:
     requestIn=simpleobsws.Request('StopStream')
     loop = asyncio.get_event_loop()
     loop.run_until_complete(make_single_request(requestIn))
 
-if arg.record-on
+if args.record_on:
+    #print('here')
+    requestIn=simpleobsws.Request('SetProfileParameter', { 'parameterCategory': 'SimpleOutput', 'parameterName': 'FilePath', 'parameterValue': args.record_on })
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(make_single_request(requestIn))
     requestIn=simpleobsws.Request('StartRecord')
     loop = asyncio.get_event_loop()
-    loop.run_until_complete(make_single_request(requestIn))
+    status=loop.run_until_complete(make_single_request(requestIn))
+    if status == 1:
+        print('ok')
 
-if arg.record-off
-    requestIn=simpleobsws.Request('StopRecord')
+if args.record_dir:
+    requestIn=simpleobsws.Request('SetProfileParameter', { 'parameterCategory': 'SimpleOutput', 'parameterName': 'FilePath', 'parameterValue': args.record_dir })
     loop = asyncio.get_event_loop()
     loop.run_until_complete(make_single_request(requestIn))
 
-if arg.batch
+if args.record_off:
+    requestIn=simpleobsws.Request('StopRecord')
+    loop = asyncio.get_event_loop()
+    status=loop.run_until_complete(make_single_request(requestIn))
+    if status == 1:
+        print('ok')
+
+if args.batch:
     requests = []
-    for request in arg.batch
+    for request in arg.batch:
         requests.append(simpleobsws.Request(request)) # Build a Request object, then append it to the batch
         asyncio.run(make_batch_request(requests))
 
-if arg.animate
-    import * from obs-py-animate
-    asyncio.run(run_animation(ags.animate))
+#if arg.animate:
+#    import * from obs-py-animate
+#    asyncio.run(run_animation(ags.animate))

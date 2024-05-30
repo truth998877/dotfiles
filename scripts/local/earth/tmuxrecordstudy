@@ -10,4 +10,4 @@
 
 #s /buffer \# studywithtony
 
-tmux -L recordstudy new-session \; \send -t 1 "f 'Welcome to my Channel!'" Enter \; split-window -v \; \select-pane -t 1 \;  \split-window -h \; \resize-pane -x 53 \; \resize-pane -y 14 \; \send -t 2 "blankpane" Enter \; \select-pane -t 3 \; \send -t 3 "tmuxin" Enter \;
+tmux -L recordstudy new-session -s recordstudy \; \send -t 1 "f 'Welcome to my Channel!'" Enter \; split-window -v \; \select-pane -t 1 \;  \split-window -h \; \resize-pane -x 53 \; \resize-pane -y 12 \; \send -t 2 "blankpane" Enter \; \select-pane -t 3 \; \send -t 3 "tmuxin" Enter \;

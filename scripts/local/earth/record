@@ -47,13 +47,13 @@ start () {
       local profile="studywithtony"
       local collection="studywithtony"
       local capturedir="livestudy/$(datepath)"
-      echo $capturedir
+      #echo $capturedir
 
       if [[ ! -d "/home/tony/GameCaptures/$capturedir" ]]; then
         mkdir -p "/home/tony/GameCaptures/$capturedir"
       fi
 
-      obsrecord "$collection" "$profile" "$capturedir"
+      obsrecord "$collection" "$profile" /home/tony/GameCaptures/"$capturedir"
       sleep 5
 
       markerscreatefile create
@@ -77,7 +77,8 @@ stop () {
 
   #echo "To stop recording"
   #TODO current stream
-  echo "Stopped recording - $(obs-cli StopRecording|jq -r '.[].status')"
+  #echo "Stopped recording - $(obs-cli StopRecording|jq -r '.[].status')"
+  echo "Stopped recording - $(obs-py --record-off)"
   killoverlay
   #markerfinish
 }
