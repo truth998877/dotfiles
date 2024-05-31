@@ -7,7 +7,8 @@ foo () {
 
 stream_ () {
 
-   local streamingstatus=$(obs-cli StartStreaming | jq -r '.[].status')
+   #local streamingstatus=$(obs-cli StartStreaming | jq -r '.[].status')
+   local streamingstatus=$(obs-py --stream-on)
    echo "Streaming Status - $streamingstatus"
 
 }
@@ -77,7 +78,7 @@ start () {
         mkdir -p "/home/tony/GameCaptures/$capturedir"
       fi 
 
-      obsrecord "$collection" "$profile" "$capturedir"
+      obsrecord "$collection" "$profile" /home/tony/GameCaptures/"$capturedir"
       sleep 5   
 
       stream_    
