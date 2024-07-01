@@ -82,7 +82,7 @@ start () {
       sleep 5   
 
       stream_    
-      sleep 3
+      sleep 5 
 
       markerscreatefile create
       sleep 5
