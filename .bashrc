@@ -46,17 +46,8 @@ _source_if() { [[ -r "$1" ]] && source "$1"; }
 export EDITOR=vi
 export VISUAL=vi
 export USER="${USER:-$(whoami)}"
-export GITUSER="truth998877"
-export REPOS="$HOME/repos"
-export GHREPOS="$REPOS/github.com/$GITUSER"
-export FORTIESGAMER="$GHREPOS/fortiesgamer-site"
-export STUDYWITHTONY="$GHREPOS/studywithtony-site"
-export GLREPOS="$REPOS/gitlab.com/$GITUSER"
-export DOTFILES="$GHREPOS/dotfiles"
-export SCRIPTS="$DOTFILES/scripts"
-export SNIPPETS="$DOTFILES/snippets"
-export LOCALSCRIPTS="$DOTFILES/scripts/local/$HOSTNAME"
-export CDPATH=".:$FORTIESGAMER:$STUDYWITHTONY:$GHREPOS:$GLREPOS:$DOTFILES:$REPOS:$SCRIPTS:$SNIPPETS:$LOCALSCRIPTS"
+
+
 
 #----PROMPT----
 # set a fancy prompt (non-color, unless we know we "want" color)
@@ -132,12 +123,25 @@ _source_if "$DOTFILES/set-platform-end"
 #----END SPECIFIC ENV VARS-----
 case "$END" in
   front|back)
+    export GITUSER="truth998877"   #not work
+    export REPOS="$HOME/repos"     #not work
+    export GHREPOS="$REPOS/github.com/$GITUSER"  #not work
+    export FORTIESGAMER="$GHREPOS/fortiesgamer-site"  #not work
+    export STUDYWITHTONY="$GHREPOS/studywithtony-site"  #not work
+    export GLREPOS="$REPOS/gitlab.com/$GITUSER"   #not work
+    export DOTFILES="$GHREPOS/dotfiles"  
+    export SCRIPTS="$DOTFILES/scripts"  
+    export SNIPPETS="$DOTFILES/snippets"
+    export LOCALSCRIPTS="$DOTFILES/scripts/local/$HOSTNAME"
     export PGM="$GHREPOS/pgm"
+    export CDPATH=".:$FORTIESGAMER:$STUDYWITHTONY:$GHREPOS:$GLREPOS:$DOTFILES:$REPOS:$SCRIPTS:$SNIPPETS:$LOCALSCRIPTS:$PGM"
     export LOGBOOKS="$GHREPOS/logbooks"
     export LOGBOOKSINDEX="$HOME/logbooks.json"
     export SCRIPTSINDEX="$HOME/scripts-index.json"
     export NOTEBOOKS="$GHREPOS/notebooks"
-    export CDPATH=".:$LOGBOOKS:$NOTEBOOKS:$GHREPOS:$GLREPOS:$DOTFILES:$REPOS:$SCRIPTS:$SNIPPETS:$LOCALSCRIPTS:$PGM"
+		export NOTEBOOKSINDEX="$HOME/notebooks.json"
+    #export CDPATH=".:$LOGBOOKS:$NOTEBOOKS:$GHREPOS:$GLREPOS:$DOTFILES:$REPOS:$SCRIPTS:$SNIPPETS:$LOCALSCRIPTS:$PGM"
+    export CDPATH="$CDPATH:$LOGBOOKS:$NOTEBOOKS"
     ;;
 esac
 #-----
