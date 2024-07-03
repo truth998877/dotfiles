@@ -406,13 +406,14 @@ event () {
 #TODO output this to a new window in in the twitch tmux
 #TODO work out how to get this to work with aosd_cat to overlay events when gaming full screen
 
-
+  echo here1
   local eventtype="$1"
   local username="$2"
   local usernamelen=${#username}
 
   case "$eventtype" in 
     follower)
+		  echo here2
       local eventstr="New Follower"
       ;;
     subscription)
@@ -591,12 +592,18 @@ eventosd () {
 
 
 getfollowers () {
+
+  if [[ ! -d /home/tony/"$currentstreamer" ]]; then
+    mkdir -p /home/tony/"$currentstreamer" 
+    touch /home/tony/"$currentstreamer"/followers.json
+  fi
+
   
   curl -s \
-       -X GET "https://api.twitch.tv/helix/users/follows?to_id=$twitchid" \
+       -X GET "https://api.twitch.tv/helix/channels/followers?broadcaster_id=$twitchid" \
        -H "Authorization: Bearer $useraccesstoken" \
        -H "Client-Id: $clientid" | \
-       jq -r '{followers: [.data[]|{from_login: .from_login , followed_at: .followed_at}]}' > /home/tony/"$currentstreamer"/followers.json
+       jq -r '{followers: [.data[]|{user_name: .user_name , followed_at: .followed_at}]}' > /home/tony/"$currentstreamer"/followers.json
  
        #TODO add followers rolls of honour here
        #TODO decide where followers.json will be stored and make "$currentstreamer-followers.json"
@@ -626,7 +633,8 @@ local period=20
 
     #obtain list of new followers after $now
     #TODO update for new location of followers.json
-    local newfollowers=$(jq -r --arg now $now  '.followers[]|select(((.followed_at)|strptime("%Y-%m-%dT%H:%M:%SZ") | mktime)|. > ($now|strptime("%Y-%m-%dT%H:%M:%SZ") | mktime)).from_login' /home/tony/"$currentstreamer"/followers.json) #in followers select records where .followed_at is after $now and return .from_login values
+    #local newfollowers=$(jq -r --arg now $now  '.followers[]|select(((.followed_at)|strptime("%Y-%m-%dT%H:%M:%SZ") | mktime)|. > ($now|strptime("%Y-%m-%dT%H:%M:%SZ") | mktime)).from_login' /home/tony/"$currentstreamer"/followers.json) #in followers select records where .followed_at is after $now and return .from_login values
+    local newfollowers=$(jq -r --arg now $now  '.followers[]|select(((.followed_at)|strptime("%Y-%m-%dT%H:%M:%SZ") | mktime)|. > ($now|strptime("%Y-%m-%dT%H:%M:%SZ") | mktime)).user_name' /home/tony/"$currentstreamer"/followers.json) #in followers select records where .followed_at is after $now and return .from_login values
     #TODO will need to be updated when new location for followers.json is decided
     
     #TODO
