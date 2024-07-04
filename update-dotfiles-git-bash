@@ -24,7 +24,7 @@ if [[ $END == work ]]; then
   cd -
   cd tmux
 
-  for i in .tmux.conf .tmux-in.conf .tmux.live.conf .tmux-out.conf; do
+  for i in .tmux.conf .tmux-in.conf .tmux-live.conf .tmux-out.conf; do
     _copy-from-repo "$i"
   done
 
