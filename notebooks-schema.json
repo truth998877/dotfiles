@@ -8,14 +8,14 @@
       "location": "test",
       "status": "open"
 			},
-      "logbooknumber": "2",
+      "notebooknumber": "2",
       "shorttitle": "short title 2",
       "longtitle": "long title 2",
       "location": "test2",
       "status": "open"
     },
     {
-      "logbooknumber": "3",
+      "notebooknumber": "3",
       "shorttitle": "Hutchings Physics",
       "longtitle": "Physics (Bath Science 16-19) By Robert Hutchings",
       "location": "Hutchings Physics",

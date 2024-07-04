@@ -1,0 +1,40 @@
+#!/bin/bash
+
+#TODO index should differentiate from local only (work) and those on github
+#TODO work notebooks should be located in a  onedrive directory
+
+#TODO notebooks.json will contain a list of todod for each notebook, thus a number of standard todo's should be added to this section when each notebook is created
+
+echo "Default values in []"
+
+read -p "Enter Short Title :> " shorttitle
+shorttitlearray=($shorttitle)
+cap="${shorttitlearray[@]^}"
+
+read -p "Enter Long Title :> " longtitle
+
+default_location="$NOTEBOOKS"/"${cap//\ /}"
+read -p "Enter Location [$default_location] :> " location
+location="${location:-$default_location}"
+
+read -p "Enter Status [open] :> " status
+status="${status:-open}"
+
+nextlbnumber="$(jq -r '[.notebooks[].notebooknumber|tonumber]|max+1' "$NOTEBOOKSINDEX")"
+
+#read -p "Enter Notebook Number ["$(echo "$nextlbnumber")"] :> " number
+read -p "Enter Notebook Number ["$nextlbnumber"] :> " number
+number="${number:-$nextlbnumber}"
+
+cp "$NOTEBOOKSINDEX" "$NOTEBOOKSINDEX.tmp"
+
+jq -r --arg jq_shorttitle "$shorttitle" --arg jq_longtitle "$longtitle" --arg jq_location "$location" --arg jq_status "$status" --arg jq_number "$number" '.notebooks += [{"notebooknumber":$jq_number, "shorttitle":$jq_shorttitle, "longtitle":$jq_longtitle, "location":$jq_location, "status":$jq_status, "todos":[]}]' "$NOTEBOOKSINDEX.tmp" > "$NOTEBOOKSINDEX"
+
+rm "$NOTEBOOKSINDEX.tmp"
+
+mkdir -p "$NOTEBOOKS/$location"
+touch "$NOTEBOOKS/$location/README.md"
+
+echo "To set the current notebook to this notebook issue \"set-cnb "$number"\""
+add-ql "$longtitle"
+

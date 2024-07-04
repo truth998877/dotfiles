@@ -1,0 +1,11 @@
+#!/bin/bash
+
+#TODO functionize rwxrob style, if no argument list number and short title of all note books, if the argument is title, just list the titles of each notebook
+
+_list-nb-num-title () {
+
+jq  -r --arg  jq_notebooks "$NOTEBOOKS"  '.notebooks[] | "\(.shorttitle)"' "$NOTEBOOKSINDEX"
+
+}
+
+_list-nb-num-title

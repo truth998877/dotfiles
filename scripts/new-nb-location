@@ -1,0 +1,16 @@
+#!/bin/bash
+if [[ $END != work ]]; then
+  echo "Not 'work'"
+  exit 0
+fi
+
+read -p "Enter new notebook location: " location
+
+if [[ ! -d $location ]]; then
+  mkdir -p "$location"
+fi
+
+cp $HOME/notebooks-schema.json "$location/notebooks.json"
+
+echo -e "export NOTEBOOKS=$location\nexport NOTEBOOKSINDEX=$location/notebooks.json" >> "$HOME/.bashrc.d/.bashrc_work"
+echo "Now run \"exec bash -l\""

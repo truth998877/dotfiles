@@ -1,0 +1,5 @@
+#!/bin/bash
+
+dir="$(jq -r --arg jq_currentnotebook "$CURRENTNOTEBOOK" '.notebooks[$jq_currentnotebook|tonumber-1]|.location' "$NOTEBOOKSINDEX")"
+
+echo "$NOTEBOOKS/$dir/README.md"

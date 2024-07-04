@@ -1,0 +1,7 @@
+#!/bin/bash
+
+if [[ -z $CURRENTNOTEBOOK ]]; then
+  echo No notebook set
+else
+  jq -r --arg jq_currentnotebook "$CURRENTNOTEBOOK" --arg jq_notebooks "$NOTEBOOKS" '.notebooks[$jq_currentnotebook|tonumber-1] | "Current notebook:\n Short Title: \(.shorttitle)\n Notebook number: #\(.notebooknumber)\n File Path on this system: \($jq_notebooks)/\(.location)/README.md"' "$NOTEBOOKSINDEX"
+fi
