@@ -37,6 +37,10 @@ for i in .bashrc .dircolors .profile scripts-index.json scripts-index-testing.js
   _copy-from-repo "$i"
 done
 
+cd $HOME
+cp logbooks-schema.json logbooks.json
+cp notebooks-schema.json notebooks.json
+
 #-----Vim
 cd vim
 _backup .vimrc
