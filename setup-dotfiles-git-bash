@@ -41,6 +41,8 @@ cd $HOME
 cp logbooks-schema.json logbooks.json
 cp notebooks-schema.json notebooks.json
 
+cd -
+
 #-----Vim
 cd vim
 _backup .vimrc
