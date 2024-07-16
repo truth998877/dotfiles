@@ -20,8 +20,8 @@ _device_num () {
   case "$location" in
 
     office)
-      #echo 54
-      echo 238
+      echo 54
+      #echo 238
     ;;
 
   esac
