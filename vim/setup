@@ -1,5 +1,7 @@
 #!/bin/bash
 
+echo "Setting up Vim..."
+
 if [ -z "$(which vim)" -o -z "$(which vimtutor)" ]; then
   echo "Warning, doesn't look like you have full Vim version, installing..."
   case $PLATFORM in
