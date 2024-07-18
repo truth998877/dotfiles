@@ -1,6 +1,7 @@
 #!/bin/bash
 
 
-tmux -f ~/.tmux-outer.conf -L minicom new-session \; \split-window -h \; \split-window -h \; \select-layout even-horizontal \;
+tmux -f ~/.tmux-outer.conf -L minicom new-session -s minicom \; \send "minicom usb0" Enter \; \split-window -h \; \send "minicom usb1" Enter\; \split-window -h \; \send "minicom usb2" Enter \; \select-layout even-horizontal \;
+
 
 #TODO use this as a template for a replacement for all of the tmux* commands with argument 1 the person and argumentment 2 the platform hosting the stream
