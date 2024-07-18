@@ -1,0 +1,18 @@
+#!/bin/bash
+
+tmux send-keys "1 0 mkp" Enter \
+"80 1 mkp" Enter \
+"8 2 mkp" Enter \
+"0 3 mkp" Enter \
+"20 4 mkp" Enter \
+"c0 5 mkp" Enter \
+"ff 6 mkp" Enter \
+"ee 7 mkp" Enter \
+"0 8 mkp" Enter \
+"0 9 mkp" Enter \
+"0 a mkp" Enter \
+"0 b mkp" Enter \
+"c0 c mkp" Enter \
+"ff d mkp" Enter \
+"ee e mkp" Enter \
+"0 f 0 do i idprom@ xor loop f mkp" Enter \
