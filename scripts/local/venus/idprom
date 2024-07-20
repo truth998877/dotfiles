@@ -2,28 +2,58 @@
 
 _sendcmd () {
 
- local pane="$1"
- local num=$(( $pane - 1 ))
+  local pane="$1"
+  local machine="$2"
 
-  tmux -L minicom send-keys -t minicom."$pane" "set-defaults" Enter \
-"1 0 mkp" Enter \
-"80 1 mkp" Enter \
-"8 2 mkp" Enter \
-"0 3 mkp" Enter \
-"20 4 mkp" Enter \
-"c$num 5 mkp" Enter \
-"ff 6 mkp" Enter \
-"ee 7 mkp" Enter \
-"0 8 mkp" Enter \
-"0 9 mkp" Enter \
-"0 a mkp" Enter \
-"0 b mkp" Enter \
-"c$num c mkp" Enter \
-"ff d mkp" Enter \
-"ee e mkp" Enter \
-"0 f 0 do i idprom@ xor loop f mkp" Enter \
-"reset" Enter
+  case $machine in
+    eris)
+		  local num=0
+    ;;
+    ceres)
+		  local num=1
+    ;;
+		*)
+		  echo "Unkown Sun machine, exiting..."
+			exit 0
+    ;;
+  esac
 
+  tmux -L minicom send-keys -t minicom."$pane" "set-defaults" Enter 
+  sleep 1
+  tmux -L minicom send-keys -t minicom."$pane" "1 0 mkp" Enter 
+  sleep 1
+  tmux -L minicom send-keys -t minicom."$pane" "80 1 mkp" Enter 
+  sleep 1
+  tmux -L minicom send-keys -t minicom."$pane" "8 2 mkp" Enter 
+  sleep 1
+  tmux -L minicom send-keys -t minicom."$pane" "0 3 mkp" Enter 
+  sleep 1
+  tmux -L minicom send-keys -t minicom."$pane" "20 4 mkp" Enter 
+  sleep 1
+  tmux -L minicom send-keys -t minicom."$pane" "c$num 5 mkp" Enter 
+  sleep 1
+  tmux -L minicom send-keys -t minicom."$pane" "ff 6 mkp" Enter 
+  sleep 1
+  tmux -L minicom send-keys -t minicom."$pane" "ee 7 mkp" Enter 
+  sleep 1
+  tmux -L minicom send-keys -t minicom."$pane" "0 8 mkp" Enter 
+  sleep 1
+  tmux -L minicom send-keys -t minicom."$pane" "0 9 mkp" Enter 
+  sleep 1
+  tmux -L minicom send-keys -t minicom."$pane" "0 a mkp" Enter 
+  sleep 1
+  tmux -L minicom send-keys -t minicom."$pane" "0 b mkp" Enter 
+  sleep 1
+  tmux -L minicom send-keys -t minicom."$pane" "c$num c mkp" Enter 
+  sleep 1
+  tmux -L minicom send-keys -t minicom."$pane" "ff d mkp" Enter 
+  sleep 1
+  tmux -L minicom send-keys -t minicom."$pane" "ee e mkp" Enter 
+  sleep 1
+  tmux -L minicom send-keys -t minicom."$pane" "0 f 0 do i idprom@ xor loop f mkp" Enter 
+  sleep 1
+  tmux -L minicom send-keys -t minicom."$pane" "reset" Enter
+  
 }
-
-_sendcmd "$1"
+  
+_sendcmd "$1" "$2"
