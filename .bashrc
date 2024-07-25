@@ -180,6 +180,7 @@ case "$END" in
     alias alpha='ssh -Y tony@alpha'
     alias beta='ssh -Y tony@beta'
     alias gamma='ssh -Y tony@gamma'
+		alias eris='ssh -Y tony@eris'
     alias macbook='ssh tony@macbook'
     alias minecraftpi='ssh tony@minecraftpi'
     alias work='ssh -Y tonyr@work'

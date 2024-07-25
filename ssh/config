@@ -50,6 +50,10 @@ Host gamma
      Hostname 192.168.0.12
     Protocol 2
 
+Host eris
+     Hostname 192.168.0.40
+    Protocol 2
+
 Host moon
      Hostname 192.168.0.13
     Protocol 2
