@@ -15,9 +15,17 @@ converttowav () {
   ffmpeg -i "$fullfilename" "$filename".wav
 }
 
-burncd () {
+_burn_audio_cd () {
 
  wodim -v -nofix -eject dev='/dev/sr0' -audio-pad *.wav
+
+}
+
+_burn_iso () {
+
+  local isofile="$1"
+
+  wodim -v -eject -tao speed=2 dev='/dev/sr0' -d "$isofile"
 
 }
 
@@ -51,8 +59,15 @@ rm "$(ls -I "*.wav")"
 
 #TODO order the wavs into track order on cd
 
-normaliseaudio
-burncd
-fixcd
+burn_audio_cd () {
 
+  normaliseaudio
+  burncd
+  fixcd
+
+}
+
+burn_iso () {
+
+  local isofile="$1"
 
