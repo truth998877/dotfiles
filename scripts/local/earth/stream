@@ -110,8 +110,11 @@ stop () {
   
   markerfinish 
 
-  obs-cli StopStreaming
-  obs-cli StopRecording
+  #obs-cli StopStreaming
+  #obs-cli StopRecording
+	
+	obs-py --stream-off
+	obs-py --record-off
   echo "false" > ~/obsrecordingstatus
 
   killoverlay
