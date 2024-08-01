@@ -13,13 +13,13 @@ create () {
   #echo "$recdir"
   
   now=$(date "+%s")
-#  echo "$now"
+  echo "$now"
   latestvid=$(newestvid "$recdir")
-#  echo "$latestvid"
+  #echo "$latestvid"
 
   #json filename of marks for latest video
   markersjson="${latestvid%.*}-markers.json"
-# echo "$markersjson"
+  #echo "$markersjson"
 
   #if json filename for the latest video does not exist, create it
   if [ ! -f "$markersjson" ];then

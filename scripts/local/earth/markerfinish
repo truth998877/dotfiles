@@ -4,8 +4,16 @@ now=$(date "+%s")
 
 recdir="/home/tony/GameCaptures/livestudy/$(datepath)"
 
+#echo recdir
+#echo $recdir
+
 latestvid=$(newestvid "$recdir")
+#echo latestvid
+#echo $latestvid
 markersjson="${latestvid%.*}-markers.json"
+#echo markersjson
+#echo $markersjson
+
 
 mv "$markersjson" "$markersjson.tmp"
 jq --arg now "$now" '.finish=$now' "$markersjson.tmp" > "$markersjson"
