@@ -53,7 +53,9 @@ start () {
       twitch overlay
       
       obsrecord "$collection" "$profile" "$capturedir"
-      sleep 5   
+      sleep 5
+			#twitch read-websocket
+			#sleep 1  
      
       stream_
  

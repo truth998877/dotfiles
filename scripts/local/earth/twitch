@@ -52,33 +52,69 @@ slash () {
     wee "/msg $currentstreamer /$cmd $*"
 }
 
+_send_to_twitch () {
+
+  local type="$1"
+  local endpoint="$2"
+	local json="$3"
+
+
+  curl -s -X "$type" "https://api.twitch.tv/helix/$endpoint?broadcaster_id=$twitchid" \
+    -H "Authorization: Bearer $useraccesstoken" \
+    -H "Client-Id: $clientid" \
+    -H 'Content-Type: application/json' \
+    --data-raw "$json"
+
+}
+
 #######################################################
 
 ###########twitch commands#############################
 
 mod () {
+
+    #sets a user, $1, as a moderator
     if [ -z "$1" ]; then
         echo 'usage: mod <twitchid>'
         return 1
     fi
-    slash mod $1
+ 
+    local user_id="$1"
+    local json='{"user_id":"'$user_id'"}'
+
+    _send_to_twitch "POST" "moderation/moderators" "$json"
+
+ #   slash mod $1
 }
 
 unmod () {
+    #unsets a user, $1, as a moderator
     if [ -z "$1" ]; then
         echo 'usage: unmod <twitchid>'
         return 1
     fi
-    slash unmod "$1"
+    
+		local user_id="$1"
+    local json='{"user_id":"'$user_id'"}'
+    
+		_send_to_twitch "DELETE" "moderation/moderators" "$json"
+#    slash unmod "$1"
 
 }
 
 raid () {
-    if [ -z "$1" ]; then
+    
+		if [ -z "$1" ]; then
         echo 'usage: raid <twitchid>'
         return 1
     fi
-    slash raid $1
+    
+		local user_id="$1"
+    local json='{"to_broadcaster_id":"'$user_id'", "from_broadcaster_id":"'$currentstreamer'" 	}'
+
+    _send_to_twitch "POST" "raids" "$json"
+
+		#slash raid $1
 }
 
 unraid() {
@@ -86,15 +122,26 @@ unraid() {
 }
 
 slow() {
-    if [ -z "$1" ]; then
-        echo 'usage: slowmod <seconds>'
+    
+		if [ -z "$1" ]; then
+        echo 'usage: <seconds>'
         return 1
     fi
-    slash slow "$1"
+
+		local waitime="${1:-5}"
+    
+		local json='{"slow_mode":"true", "slow_mode_wait_time":"'$waittime'" 	}'
+    _send_to_twitch "PATCH" "chat/settings" "$json"
+    
+		#slash slow "$1"
 }
 
 slowoff() {
-    slash slowoff
+		
+		local json='{"slow_mode":"false"}'
+    
+		_send_to_twitch "PATCH" "chat/settings" "$json"
+    #slash slowoff
 }
 
 vip () {
@@ -102,39 +149,13 @@ vip () {
         echo 'usage: vip <twitchid>'
         return 1
     fi
-    slash vip $1
-}
 
-ban () {
-    if [ -z "$1" ]; then
-        echo 'usage: ban <twitchid>'
-        return 1
-    fi
-    slash ban $1
-}
+    local user_id="$1"
 
-unban () {
-    if [ -z "$1" ]; then
-        echo 'usage: unban <twitchid>'
-        return 1
-      fi
-    slash unban $1
-}
-
-timeout () {
-    if [ -z "$1" ]; then
-        echo 'usage: timeout <twitchid>'
-        return 1
-    fi
-    slash timeout $1
-}
-
-untimeout () {
-    if [ -z "$1" ]; then
-        echo 'usage: untimeout <twitchid>'
-        return 1
-    fi
-    slash untimeout $1
+		local json='{"user_id"="'$user_id'"}'
+		_send_to_twitch "POST" "channels/vip" "$json"
+    
+		#slash vip $1
 }
 
 unvip () {
@@ -142,36 +163,147 @@ unvip () {
         echo 'usage: unvip <twitchid>'
         return 1
     fi
-    slash unvip $1
+
+    local user_id="$1"
+
+		local json='{"user_id"="'$user_id'"}'
+		_send_to_twitch "DELETE" "channels/vip" "$json"
+    
+		#slash vip $1
 }
 
-host () {
+ban () {
     if [ -z "$1" ]; then
-        echo 'usage: host <twitchid>'
+        echo 'usage: ban <twitchid>'
         return 1
     fi
-    slash host $1
+		
+		local json='{"data":{"user_id"="'$user_id'"}'
+		_send_to_twitch "POST" "moderation/ban" "$json"
+#    slash ban $1
 }
 
-unhost () {
-    slash unhost
+timeout () {
+    if [ -z "$1" ]; then
+        echo 'usage: timeout <twitchid> <days>'
+        return 1
+    fi
+
+		local days="${2:-1}"
+
+		duration="$(( $2 * 86400 ))"
+		
+		local json='{"data":{"user_id"="'$user_id'", "duration"="'$duration'", "reason": "stupidity"}}'
+		_send_to_twitch "POST" "moderation/ban" "$json"
+#    slash ban $1 $2
+}
+
+unban () {
+    if [ -z "$1" ]; then
+        echo 'usage: ban <twitchid>'
+        return 1
+    fi
+
+		local user_id="$1"
+		
+		local json='{"data":{"user_id"="'$user_id'"}'
+		_send_to_twitch "DELETE" "moderation/ban" "$json"
+    #slash ban $1
+
+}
+
+untimeout () {
+    if [ -z "$1" ]; then
+        echo 'usage: untimeout <twitchid>'
+        return 1
+    fi
+
+		local user_id="$1"
+		unban "$userid"
+    #slash slash untimeout $user_id
+
+}
+
+event-subscriptions () {
+
+#  echo event subs
+
+  local session_id="$1"
+  #local subscription_types=("channel.follow" "channel.subscribe" "channel.raid" "channel.cheer")
+  local subscription_types=("channel.follow" "channel.subscribe") # "channel.subscribe" "channel.raid" "channel.cheer")
+	#local versions=(2 1 1 1)
+	local versions=(2 1)
+
+  for i in "${!subscription_types[@]}";do
+    #echo "${version[@]}"
+    local json='{"type":"'${subscription_types[i]}'", "version":"'${versions[i]}'","condition":{"broadcaster_user_id":"'$twitchid'", "moderator_user_id": "'$twitchid'"},"transport":{"method":"websocket","session_id":"'$session_id'"}}'
+		#echo "$json"
+		_send_to_twitch "POST" "eventsub/subscriptions" "$json" > /dev/null
+    
+  done
+
+}
+
+read-websocket () {
+
+  local server="wss://eventsub.wss.twitch.tv/ws"
+  if [[ $1 == test ]];then
+    server="ws://127.0.0.1:8080/ws"
+  fi
+
+  while IFS=  read -r line; do
+    #echo "$line"
+    #echo "$line"|jq -r .metadata.message_type
+		local message_type="$(echo "$line"|jq -r .metadata.message_type)"
+    
+		case "$message_type" in
+  
+      session_welcome)
+        local session_id="$(echo $line|jq -r .payload.session.id)"
+        event-subscriptions "$session_id"
+      
+  		;;
+  
+      notification)
+        local type="$(echo $line|jq -r .metadata.subscription_type)"
+  			case $type in
+  
+          channel.follow)
+  			  local userid="$(echo $line|jq -r .payload.event.broadcaster_user_name)" 
+  				event follower "$userid"
+  				;;
+  			
+  			  channel.subscribe)
+  				local userid="$(echo $line|jq -r .payload.event.broadcaster_user_name)"
+  				event subscription "$userid"
+  			  ;;
+  			  
+  				channel.raid)
+  			  ;;
+          
+  				channel.cheer)
+  				;;
+  				
+  				*)
+  				;;
+        
+  			esac
+      ;;
+
+  		*)
+  		;;
+    
+  	esac
+        
+  done < <(websocat $server)
+
 }
 
 #####################################################
 
-##############twitch other info######################
-
-#TODO
-
-#get from rwxrob - urls, lasturl, top, subs (use this for events somehow), mods, banned
-
-#####################################################
 
 ###########twitch settings##########################
 
-#TODO
-
-#get from rwxrob - description, mark
 
 updategame () {
 
@@ -179,28 +311,26 @@ updategame () {
 
   local json='{"game_id":"'$game'"}'
 
-  curl -X PATCH "https://api.twitch.tv/helix/channels?broadcaster_id=$twitchid" \
-    -H "Authorization: Bearer $useraccesstoken" \
-    -H "Client-Id: $clientid" \
-    -H 'Content-Type: application/json' \
-    --data-raw "$json"
+  _send_to_twitch "POST" "channels" "$json"
+  
+#curl -X PATCH "https://api.twitch.tv/helix/channels?broadcaster_id=$twitchid" \
+#    -H "Authorization: Bearer $useraccesstoken" \
+#    -H "Client-Id: $clientid" \
+#    -H 'Content-Type: application/json' \
+#    --data-raw "$json"
 
 }
 
 updatetitle () {
 
-
   local title="$*"
-
   local json='{"title":"'$title'"}'
 
-  curl -X PATCH "https://api.twitch.tv/helix/channels?broadcaster_id=$twitchid" \
-    -H "Authorization: Bearer $useraccesstoken" \
-    -H "Client-Id: $clientid" \
-    -H 'Content-Type: application/json' \
-    --data-raw "$json"
+
+ _send_to_twitch channels "$json"
 
 }
+
 
 updatechannel () {
 
@@ -210,11 +340,13 @@ updatechannel () {
 
   local json='{"game_id":"'$game'", "title":"'$title'", "broadcaster_language":"'$lang'"}'
 
-  curl -X PATCH "https://api.twitch.tv/helix/channels?broadcaster_id=$twitchid" \
-    -H "Authorization: Bearer $useraccesstoken" \
-    -H "Client-Id: $clientid" \
-    -H 'Content-Type: application/json' \
-    --data-raw "$json"
+  _send_to_twitch channels "$json"
+
+#  curl -X PATCH "https://api.twitch.tv/helix/channels?broadcaster_id=$twitchid" \
+#    -H "Authorization: Bearer $useraccesstoken" \
+#    -H "Client-Id: $clientid" \
+#    -H 'Content-Type: application/json' \
+#    --data-raw "$json"
 
 }
 ####################################################
@@ -406,14 +538,12 @@ event () {
 #TODO output this to a new window in in the twitch tmux
 #TODO work out how to get this to work with aosd_cat to overlay events when gaming full screen
 
-  echo here1
   local eventtype="$1"
   local username="$2"
   local usernamelen=${#username}
 
   case "$eventtype" in 
     follower)
-		  echo here2
       local eventstr="New Follower"
       ;;
     subscription)
@@ -427,9 +557,6 @@ event () {
       local eventstr="Bits Sent From"
       ;;
     raid)
-      #TODO
-      ;;
-    host)
       #TODO
       ;;
     *)
@@ -679,6 +806,9 @@ marker () {
 #echo To set a twitch marker
   
   local what="$*"
+  if (( ${#what} > 140 )); then
+    what="$(what:0:140)" # marker text limited to 140 chars
+  fi
 
   curl -X POST "https://api.twitch.tv/helix/streams/markers" \
        -H "Authorization: Bearer $useraccesstoken" \
@@ -721,7 +851,7 @@ commands () {
     echo ${commands[@]}
 }
 
-declare -a commands=(foo commands tmux overlay timeoverlay chatoverlay sensoroverlay killoverlay event eventosd getfollowers getsubscribers events ban vip raid mod slow slash slowoff host unban unhost unmod unraid unvip timeout untimeout marker gameid updatechannel updatetitle updategame)
+declare -a commands=(foo commands read-websocket tmux overlay timeoverlay chatoverlay sensoroverlay killoverlay event eventosd getfollowers getsubscribers events ban vip raid mod slow slash slowoff host unban unhost unmod unraid unvip timeout untimeout marker gameid updatechannel updatetitle updatetitle1  updategame)
 
 for i in ${commands[@]}; do
     if [[ "$i" == "$subcommand" ]]; then
