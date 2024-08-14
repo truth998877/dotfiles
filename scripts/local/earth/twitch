@@ -259,23 +259,27 @@ read-websocket () {
 		case "$message_type" in
   
       session_welcome)
-        local session_id="$(echo $line|jq -r .payload.session.id)"
+        
+				local session_id="$(echo $line|jq -r .payload.session.id)"
         event-subscriptions "$session_id"
-      
+        echo up > ~/twitch-websocket-status
   		;;
   
       notification)
-        local type="$(echo $line|jq -r .metadata.subscription_type)"
+        
+				local type="$(echo $line|jq -r .metadata.subscription_type)"
   			case $type in
   
           channel.follow)
-  			  local userid="$(echo $line|jq -r .payload.event.broadcaster_user_name)" 
-  				event follower "$userid"
+  			    
+						local userid="$(echo $line|jq -r .payload.event.broadcaster_user_name)" 
+  				  event follower "$userid"
   				;;
   			
   			  channel.subscribe)
-  				local userid="$(echo $line|jq -r .payload.event.broadcaster_user_name)"
-  				event subscription "$userid"
+  				  
+						local userid="$(echo $line|jq -r .payload.event.broadcaster_user_name)"
+  				  event subscription "$userid"
   			  ;;
   			  
   				channel.raid)
@@ -290,8 +294,15 @@ read-websocket () {
   			esac
       ;;
 
-  		*)
-  		;;
+      session_keepalive)
+
+			  echo up > ~/twitch-websocket-status
+			;;
+  		
+      *)
+
+			  echo down > ~/twitch-websocket-status
+			;;
     
   	esac
         
