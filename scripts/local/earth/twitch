@@ -741,6 +741,9 @@ events () {
 
 #echo "To check for new followers"
 
+echo twitch events function retired, exiting...
+exit 0
+
 local period=20
 
   while true;do
