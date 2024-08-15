@@ -50,10 +50,6 @@ Host gamma
      Hostname 192.168.0.12
     Protocol 2
 
-Host eris
-     Hostname 192.168.0.40
-    Protocol 2
-
 Host moon
      Hostname 192.168.0.13
     Protocol 2
@@ -66,10 +62,6 @@ Host macbook
      Hostname 192.168.0.15
     Protocol 2
 
-Host minecraftpi
-     Hostname 192.168.0.99
-    Protocol 2
-
 Host work
      Hostname 192.168.0.32
     Protocol 2
@@ -77,6 +69,20 @@ Host work
 Host debiantesting
      Hostname 192.168.0.33
     Protocol 2
+
 Host openmc-testing
      Hostname 192.168.0.36
     Protocol 2
+
+Host eris
+     Hostname 192.168.0.40
+    Protocol 2
+
+Host kali
+     Hostname 192.168.0.80
+    Protocol 2
+
+Host minecraftpi
+     Hostname 192.168.0.99
+    Protocol 2
+
