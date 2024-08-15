@@ -1,6 +1,6 @@
 case $HOSTNAME in
 
-   earth|jupiter|saturn|alpha|beta|gamma|oldvenus)
+   earth|jupiter|saturn|alpha|beta|gamma|oldvenus|kali)
    PLATFORM=debian
    ;;
 
@@ -28,7 +28,7 @@ esac
 case $HOSTNAME in
 
   #set a virtual debian system's hostname to "frontendtest" to test frontend setup
-  earth|saturn|moon|moonbaby|macbook.local|frontendtest)
+  earth|saturn|moon|moonbaby|macbook.local|frontendtest|kali)
   END=front
   ;;
 
