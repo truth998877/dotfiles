@@ -2,8 +2,6 @@
 
 buff="${@:-"$(</dev/stdin)"}"
 
-
-
-echo -e "\n$(hnow-l)\n\n$buff" >> "$(clb-loc)"
+echo -e "\n$buff" >> "$(clb-loc)"
 
 #TODO for logbooks which are located on github, then push the new entry automatically
