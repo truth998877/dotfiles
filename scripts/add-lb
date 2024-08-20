@@ -28,12 +28,12 @@ number="${number:-$nextlbnumber}"
 
 cp "$LOGBOOKSINDEX" "$LOGBOOKSINDEX.tmp"
 
-jq -r --arg jq_shorttitle "$shorttitle" --arg jq_longtitle "$longtitle" --arg jq_location "$location" --arg jq_status "$status" --arg jq_number "$number" '.logbooks += [{"logbooknumber":$jq_number, "shorttitle":$jq_shorttitle, "longtitle":$jq_longtitle, "location":$jq_location, "status":$jq_status, "todos":[]}]' "$LOGBOOKSINDEX.tmp" > "$LOGBOOKSINDEX"
+jq -r --arg jq_shorttitle "$shorttitle" --arg jq_longtitle "$longtitle" --arg jq_location "${location##*/}" --arg jq_status "$status" --arg jq_number "$number" '.logbooks += [{"logbooknumber":$jq_number, "shorttitle":$jq_shorttitle, "longtitle":$jq_longtitle, "location":$jq_location, "status":$jq_status, "todos":[]}]' "$LOGBOOKSINDEX.tmp" > "$LOGBOOKSINDEX"
 
 rm "$LOGBOOKSINDEX.tmp"
 
-mkdir -p "$LOGBOOKS/$location"
-touch "$LOGBOOKS/$location/README.md"
+mkdir -p "$location"
+touch "$location/README.md"
 
 echo "To set the current logbook to this logbook issue \"set-clb "$number"\""
 add-ql "$longtitle"
