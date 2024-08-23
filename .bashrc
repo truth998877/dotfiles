@@ -258,6 +258,7 @@ esac
 
 #-----MACHINE SPECIFIC BASHRC-----
 _source_if "$HOME/.bashrc.d/.bashrc_$HOSTNAME"
+_source_if "$HOME/.bashrc_kali"
 #-----
 
 
