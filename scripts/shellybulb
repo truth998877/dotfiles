@@ -53,7 +53,7 @@ _device_num () {
  case "$location" in
 
    office)
-     echo 53
+    echo 53
    ;;
 
    *)
@@ -72,7 +72,7 @@ _payload () {
 
   case "$action" in
 
-    off)
+		off)
       echo turn=off
     ;;
 
@@ -95,7 +95,15 @@ _payload () {
     green)
       echo "red=0&green=255&blue=0&gain=$gainlevel"
     ;;
-
+    yellow)
+      echo "red=255&green=255&blue=0&gain=$gainlevel"
+    ;;
+	  magenta)
+      echo "red=255&green=0&blue=255&gain=$gainlevel"
+    ;;
+	  cyan)
+      echo "red=0&green=255&blue=255&gain=$gainlevel"
+    ;;
     gain)
       echo "gain=$gainlevel"
     ;;
@@ -142,8 +150,19 @@ _endpoint () {
 
 }
 
+#shellybulb office effect off
+
 devicenum=$(_device_num "$1")
-payload=$(_payload "$2" "$3")
+
+if [[ $2 == alert ]];then
+				_sendpayload "$devicenum" "light/0" "effect=3"
+				sleep 6.5
+				_sendpayload "$devicenum" "light/0" "effect=off"
+        exit 0
+fi
+
 endpoint=$(_endpoint "$2")
+payload=$(_payload "$2" "$3")
+
 
 _sendpayload "$devicenum" "$endpoint" "$payload"
