@@ -41,25 +41,25 @@ fixcd () {
 
 }
 
-read -p "Location of audio files?" dir
-
-mkdir "$dir"-original
-
-cd "$dir"
-
-cp * "$dir"-original 
-
-for f in *;do
-  removespacesfromfilenames
-  converttowav
-done
-
-#remove all files bar the wavs
-rm "$(ls -I "*.wav")"
-
-#TODO order the wavs into track order on cd
-
 burn_audio_cd () {
+  read -p "Location of audio files?" dir
+
+  mkdir "$dir"-original
+
+  cd "$dir"
+
+  cp * "$dir"-original 
+
+  for f in *;do
+    removespacesfromfilenames
+    converttowav
+  done
+
+  #remove all files bar the wavs
+  rm "$(ls -I "*.wav")"
+
+  #TODO order the wavs into track order on cd
+
 
   normaliseaudio
   burncd
@@ -70,4 +70,44 @@ burn_audio_cd () {
 burn_iso () {
 
   local isofile="$1"
+	_burn_iso "$isofile"
 
+}
+
+
+
+############################## Main Command  #############################
+
+subcommand="${1-usage}"
+shift 2>/dev/null
+
+if [ -z "$subcommand" ]; then
+    usage
+    exit 1
+fi
+
+commands () {
+    echo ${commands[@]}
+}
+
+declare -a commands=(burn_iso burn_audio_cd)
+
+for i in ${commands[@]}; do
+    if [[ "$i" == "$subcommand" ]]; then
+        "$subcommand" "$@"
+        exit 0
+    fi
+done
+
+######################### Tab Completion Context ########################
+
+# remember COMP_LINE is changed by shift
+if [ -n "$COMP_LINE" ]; then
+    for cmd in ${commands[@]}; do 
+        [[ "${cmd:0:${#1}}" == "$1" ]] && echo $cmd
+    done
+    exit 0
+fi
+
+
+## set up auto complate by running 'complete -C ./example ./example'
