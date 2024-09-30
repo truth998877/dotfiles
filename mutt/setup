@@ -1,0 +1,40 @@
+#!/bin/bash
+
+echo "Setting up mutt..."
+
+if [ -z "$(which mutt)" ]; then
+  echo "Warning, doesn't look like you have mutt, installing..."
+  case $PLATFORM in
+    debian)
+      sudo apt-get update
+      sudo apt-get upgrade
+      sudo apt-get install mutt
+      ;;
+
+    darwin)
+      brew update
+      brew upgrade
+      brew install mutt
+      ;;
+
+    manjaro)
+      sudo pacman -Syu mutt
+      ;;
+
+    postmarketos)
+      echo apk update
+      echo apk upgrade
+      echo apk add mutt
+      ;;
+  esac
+fi
+
+if [[ $END != work ]]; then
+  if [[ -f "$HOME/.muttrc" ]]; then
+    cp -p "$HOME/.muttrc" "$HOME/.muttrc-orig"
+  fi
+
+  ln -sf "$PWD/.muttrc" "$HOME/.muttrc"
+fi
+
+
