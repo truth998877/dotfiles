@@ -4,9 +4,23 @@ set use_from = yes
 set envelope_from = yes
 
 set smtp_url = "smtps://tony.ruther@googlemail.com@smtp.gmail.com:465/"
-set smtp_pass = `pass show Email/gmail`
+set smtp_pass = "`pass show Email/gmail`"
 set imap_user = "tony.ruther@googlemail.com"
-set imap_pass = `pass show Email/gmail`
+set imap_pass = "`pass show Email/gmail`"
 set folder = "imaps://imap.gmail.com:993"
 set spoolfile = "+INBOX"
+set postponed = "+[Gmail]/Drafts"
+set record = "+[Gmail]/Sent Mail"
+set trash = "+[Gmail]/Trash"
+
+set mail_check = 30
+set move = no
+set imap_keepalive = 900
+set sort = threads
+set sort_browser=reverse-date
+set sort_aux=reverse-date-received
+set editor = "vim"
+set smtp_authenticators = 'gssapi:login'
+
 set ssl_force_tls = yes
+

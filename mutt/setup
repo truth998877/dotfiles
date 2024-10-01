@@ -33,8 +33,11 @@ if [[ $END != work ]]; then
   if [[ -f "$HOME/.muttrc" ]]; then
     cp -p "$HOME/.muttrc" "$HOME/.muttrc-orig"
   fi
+	if [[ -f "$HOME/colors.muttrc" ]]; then
+    cp -p "$HOME/colors.muttrc" "$HOME/colors.muttrc-orig"
 
   ln -sf "$PWD/.muttrc" "$HOME/.muttrc"
+	ln -sf "$PWD/colors.muttrc" "$HOME/colors.muttrc"
 fi
 
 
