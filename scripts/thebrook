@@ -1,0 +1,4 @@
+#!/bin/bash
+
+curl -s -X GET http://environment.data.gov.uk/flood-monitoring/id/stations/531192| \
+jq -r '"The Brook Levels: Current = " + (.items.measures.latestReading.value|tostring) +"m @ " + (.items.measures.latestReading.dateTime|tostring) +", Min =  "+ (.items.stageScale.minOnRecord.value|tostring) + "m, Max = "+ (.items.stageScale.maxOnRecord.value|tostring) +"m"'
