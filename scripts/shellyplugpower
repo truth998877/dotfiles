@@ -20,7 +20,7 @@ _device_num () {
   case "$location" in
 
     office)
-      echo 54
+      echo 70
       #echo 238
     ;;
 
