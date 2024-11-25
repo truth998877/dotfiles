@@ -79,7 +79,7 @@ Host eris
     Protocol 2
 
 Host kali
-     Hostname 192.168.0.80
+     Hostname 192.168.0.37
     Protocol 2
 
 Host minecraftpi
