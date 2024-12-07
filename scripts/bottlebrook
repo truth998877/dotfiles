@@ -1,4 +1,4 @@
 #!/bin/bash
 
-curl -s -X GET http://environment.data.gov.uk/flood-monitoring/id/stations/4190| \
+curl -s -X GET https://environment.data.gov.uk/flood-monitoring/id/stations/4190| \
 jq -r '"Bottle Brook Levels: Current = " + (.items.measures.latestReading.value|tostring) +"m @ " + (.items.measures.latestReading.dateTime|tostring) +", Min =  "+ (.items.stageScale.minOnRecord.value|tostring) + "m, Max = "+ (.items.stageScale.maxOnRecord.value|tostring) +"m"'
