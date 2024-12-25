@@ -55,6 +55,9 @@ _device_num () {
    office)
     echo 60
    ;;
+	 mainbedroom)
+    echo 61
+   ;;
 
    *)
     echo unknown
