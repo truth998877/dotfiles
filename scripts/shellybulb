@@ -61,7 +61,9 @@ _device_num () {
 	 smallbedroom)
     echo 62
    ;;
-
+   bedroom1)
+    echo 63
+   ;;
    *)
     echo unknown
    ;;
