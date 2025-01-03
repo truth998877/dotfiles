@@ -13,4 +13,4 @@ fi
 sleep 1
 
 s "/buffer #$1"
-clear
+#clear
