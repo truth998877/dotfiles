@@ -188,6 +188,7 @@ case "$END" in
 		alias openmc-testing='ssh tony@openmc-testing'
 		alias kali='ssh -Y tony@kali'
 		alias mail='neomutt'
+		alias dvwa='ssh tony@dvwa'
   ;;
 esac
 #-----

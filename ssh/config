@@ -82,6 +82,10 @@ Host kali
      Hostname 192.168.0.37
     Protocol 2
 
+Host dvwa
+     Hostname 192.168.0.38
+    Protocol 2
+
 Host minecraftpi
      Hostname 192.168.0.99
     Protocol 2
