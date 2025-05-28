@@ -189,6 +189,8 @@ case "$END" in
 		alias kali='ssh -Y tony@kali'
 		alias mail='neomutt'
 		alias dvwa='ssh tony@dvwa'
+		alias titan='ssh -Y tony@titan'
+		alias thinkpad='ssh -Y tony@thinkpad'
   ;;
 esac
 #-----

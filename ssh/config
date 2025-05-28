@@ -62,6 +62,14 @@ Host macbook
      Hostname 192.168.0.15
     Protocol 2
 
+Host thinkpad
+     Hostname 192.168.0.27
+    Protocol 2
+
+Host titan
+     Hostname 192.168.0.28
+    Protocol 2
+
 Host work
      Hostname 192.168.0.32
     Protocol 2
