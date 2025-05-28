@@ -28,11 +28,11 @@ esac
 case $HOSTNAME in
 
   #set a virtual debian system's hostname to "frontendtest" to test frontend setup
-  earth|saturn|moon|moonbaby|macbook.local|frontendtest|kali|titan|thinkpad)
+  earth|saturn|moon|moonbaby|macbook.local|frontendtest|kali|thinkpad)
   END=front
   ;;
 
-  venus|oldvenus|jupiter|pluto|alpha|beta|gamma|squid)
+  venus|oldvenus|jupiter|pluto|alpha|beta|gamma|squid|titan)
   END=back
   ;;
 
