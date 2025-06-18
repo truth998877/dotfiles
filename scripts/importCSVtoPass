@@ -1,0 +1,13 @@
+#!/bin/bash
+
+CSV_FILE="/Users/tony/Passwords.csv"
+while IFS=, read -r name website username password blah blah2; do
+    # Skip the header line
+    [[ "$name" == "Title" ]] && continue
+#    name=$(echo "$website" | sed 's|https\?://||; s|/.*||')
+    name="${name/ /}"
+		name="${name/\(/-}"
+		name="${name/\)/}"
+    echo -e "$password\nusername: $username\nurl: $website" | pass insert -m "fromApple/$name"
+done < "$CSV_FILE"
+
