@@ -9,7 +9,7 @@ play () {
 
 #mpv "$@" --no-border --geometry=50%+844+78 --ontop --really-quiet &
 #mpv "$@" --no-border --geometry=50%+2764+78 --ontop --really-quiet &
-mpv "$@" --no-border --geometry=50%+$MPVX+$MPVY --ontop --really-quiet &
+mpv "$@" --no-border --geometry=$MPVSCALE%+$MPVX+$MPVY --ontop --really-quiet &
 
 }
 

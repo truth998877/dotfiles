@@ -142,6 +142,7 @@ case "$END" in
     export NOTEBOOKS="$GHREPOS/notebooks"
 		export NOTEBOOKSINDEX="$HOME/notebooks.json"
     export CDPATH="$CDPATH:$FORTIESGAMER:$STUDYWITHTONY:$GHREPOS:$GLREPOS:$PGM:$LOGBOOKS:$NOTEBOOKS"
+		export MPVSCALE=50
     ;;
 esac
 #-----
