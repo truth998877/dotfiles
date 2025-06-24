@@ -1,0 +1,30 @@
+#!/bin/bash
+
+echo "Setting up mpv..."
+
+if [ -z "$(which mpv)" ]; then
+  echo "Warning, doesn't look like you have full Vim version, installing..."
+  case $PLATFORM in
+    debian)
+      sudo apt-get update
+      sudo apt-get upgrade
+      sudo apt-get install mpv
+      ;;
+
+    darwin)
+      brew update
+      brew upgrade
+      brew install mpv
+      ;;
+
+    manjaro)
+      sudo pacman -Syu mpv
+      ;;
+
+    postmarketos)
+      echo apk update
+      echo apk upgrade
+      echo apk add mpv
+      ;;
+  esac
+fi
