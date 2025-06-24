@@ -3,7 +3,7 @@
 for file in .bashrc*;do
 
   if [[ -f "$HOME/.bashrc.d/$file" ]]; then
-    cp -p "$HOME/$file" "$HOME/.bashrc.d/$file-orig"
+    cp -p "$HOME/.bashrc.d/$file" "$HOME/.bashrc.d/$file-orig"
   fi
   
   ln -sf "$PWD/$file" "$HOME/.bashrc.d/$file" 
