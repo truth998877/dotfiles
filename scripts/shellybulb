@@ -6,37 +6,46 @@ _sendpayload () {
   local endpoint="$2"
   local payload="$3"
 
-  local ison="$(curl -s -X GET http://192.168.0."$device"/status|jq .lights[].ison)"
 
-  case "$ison" in
-    
-    false)
-      if [[ $payload != *toggle* ]]; then
-        curl -s -X GET http://192.168.0."$device"\/light\/0\/?turn=on 2>&1 > /dev/null
-      fi
-    ;;
+  if [[ $device == *","* ]];then
+    device="${device//,/\ }" 
+  fi
+	
+	device=($device)
+
+  for d in ${device[@]};do
+    local ison="$(curl -s -X GET http://192.168.0."$d"/status|jq .lights[].ison)"
   
-    "")
-      echo "Device not connected"
-      exit 1
-    ;;
-
-    *)
-    ;;
-
-  esac
-
-  case $payload in
-
-    *red*|*blue*|*green*)
-      local mode=$(curl -s -X GET http://192.168.0."$device"/status|jq .lights[].mode)
-      if [[ $mode != color ]]; then
-        curl -s -X GET http://192.168.0."$device"/settings/?mode=color 2>&1 > /dev/null
-      fi
-    ;;
-  esac
-
-  curl -s -X GET http://192.168.0."$device"/"$endpoint"/?"$payload" 2>&1 > /dev/null
+    case "$ison" in
+      
+      false)
+        if [[ $payload != *toggle* ]]; then
+          curl -s -X GET http://192.168.0."$d"\/light\/0\/?turn=on 2>&1 > /dev/null
+        fi
+      ;;
+    
+      "")
+        echo "Device not connected"
+        exit 1
+      ;;
+  
+      *)
+      ;;
+  
+    esac
+  
+    case $payload in
+  
+      *red*|*blue*|*green*)
+        local mode=$(curl -s -X GET http://192.168.0."$d"/status|jq .lights[].mode)
+        if [[ $mode != color ]]; then
+          curl -s -X GET http://192.168.0."$d"/settings/?mode=color 2>&1 > /dev/null
+        fi
+      ;;
+    esac
+  
+    curl -s -X GET http://192.168.0."$d"/"$endpoint"/?"$payload" 2>&1 > /dev/null
+	done
   
   #examples
   #curl -s -X GET http://192.168.0.53/light/0/?turn=toggle
@@ -53,19 +62,31 @@ _device_num () {
  case "$location" in
 
    office)
-    echo 60
+     echo 60
    ;;
 	 mainbedroom)
-    echo 61
+     echo 61
    ;;
 	 smallbedroom)
-    echo 62
+     echo 62
    ;;
    bedroom1)
-    echo 63
+     echo 63
    ;;
 	 kitchen1)
-    echo 64
+     echo 64
+   ;;
+	 kitchen2)
+	   echo 65
+   ;;
+	 kitchen3)
+	   echo 66
+   ;;
+	 kitchen)
+	   echo 64,65,66
+   ;;
+	 loungelamp)
+	   echo 67
    ;;
    *)
     echo unknown
