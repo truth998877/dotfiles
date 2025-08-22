@@ -1,0 +1,60 @@
+#!/bin/bash
+
+#PROJECT_NUM=7
+
+PROJECT="$(gh project create --owner @me --title "GTDev-NG Plans" --format JSON)"
+PROJECT_NUM="$(echo $PROJECT|jq -r '.number')"
+PROJECT_ID="$(echo $PROJECT|jq -r '.id')"
+
+echo $PROJECT_NUM
+
+gh project link "$PROJECT_NUM" --owner "truth998877" -R truth998877/GTDev-NG
+
+PHASE_FIELD_ID="$(gh project field-create "$PROJECT_NUM" --owner truth998877 --name "Phase" --data-type SINGLE_SELECT --single-select-options "Phase 1,Phase 2,Phase 3,Phase 4,Phase 5,Phase 6,Phase 7,Phase 8" --format JSON| jq -r '.id')"
+CATEGORY_FIELD_ID="$(gh project field-create "$PROJECT_NUM" --owner truth998877 --name "Category" --data-type SINGLE_SELECT --single-select-options "Technical,Business" --format JSON|jq -r '.id')"
+PRIORITY_FIELD_ID="$(gh project field-create "$PROJECT_NUM" --owner truth998877 --name "Priority" --data-type SINGLE_SELECT --single-select-options "High,Medium,Low" --format JSON|jq -r '.id')"
+#STATUS_FIELD_ID="$(gh project field-create "$PROJECT_NUM" --owner truth998877 --name "Status" --data-type SINGLE_SELECT --single-select-options "Todo,In Progress,Done" --format JSON|jq -r '.id')"
+OWNER_FIELD_ID="$(gh project field-create "$PROJECT_NUM" --owner truth998877 --name "Owner" --data-type TEXT --format JSON|jq -r '.id')"
+DUEDATE_FIELD_ID="$(gh project field-create "$PROJECT_NUM" --owner truth998877 --name "DueDate" --data-type DATE --format JSON|jq -r '.id')"
+NOTES_FIELD_ID="$(gh project field-create "$PROJECT_NUM" --owner truth998877 --name "Notes" --data-type TEXT --format JSON|jq -r '.id')"
+
+while IFS=, read -r task phase category priority status owner due notes; do
+  body=$(printf "**Phase:** %s\n**Category:** %s\n**Priority:** %s\n**Status:** %s\n**Owner:** %s\n**Due:** %s\n\n%s" \
+    "$phase" "$category" "$priority" "$status" "$owner" "$due" "$notes")
+
+
+  ITEM_JSON=$(gh project item-create "$PROJECT_NUM" --owner "truth998877" --title "$task" --body "$body" --format JSON)
+  
+#	echo $ITEM_JSON
+
+	ITEM_ID=$(echo "$ITEM_JSON"|jq -r '.id')
+	PHASE_NUM="Phase $phase"
+	FIELD_LIST="$(gh project field-list "$PROJECT_NUM" --owner truth998877 --format JSON)"
+  PHASE_OPTION_ID="$(echo "$FIELD_LIST"|jq -r --arg PHASE_NUM "$PHASE_NUM" '.fields[]|select(.name=="Phase")|.options[]|select(.name==$PHASE_NUM)|.id')"
+	CAT_OPTION_ID="$(echo "$FIELD_LIST"|jq -r --arg category "$category" '.fields[]|select(.name=="Category")|.options[]|select(.name==$category)|.id')"
+	PRI_OPTION_ID="$(echo "$FIELD_LIST"|jq -r --arg priority "$priority" '.fields[]|select(.name=="Priority")|.options[]|select(.name==$priority)|.id')"
+	#ASSIGNEE_ID="$(echo "$FIELD_LIST"|jq -r '.fields[]|select(.name=="Assignees")|.id')"
+
+
+  STATUS_FIELD_ID="$(echo "$FIELD_LIST"|jq -r --arg status "$status" '.fields[]|select(.name=="Status")|.id')"
+	STATUS_OPTION_ID="$(echo "$FIELD_LIST"|jq -r --arg status "$status" '.fields[]|select(.name=="Status")|.options[]|select(.name==$status)|.id')"
+
+
+	echo "Phase $phase"
+  gh project item-edit --project-id "$PROJECT_ID"  --id "$ITEM_ID" --field-id "$PHASE_FIELD_ID"    --single-select-option-id "$PHASE_OPTION_ID" "$PHASE_NUM"
+	echo "Cat $category"
+  gh project item-edit --project-id "$PROJECT_ID" --id "$ITEM_ID" --field-id "$CATEGORY_FIELD_ID" --single-select-option-id "$CAT_OPTION_ID" "$category"
+  echo "pri $priority"
+	gh project item-edit --project-id "$PROJECT_ID" --id "$ITEM_ID" --field-id "$PRIORITY_FIELD_ID" --single-select-option-id "$PRI_OPTION_ID" "$priority"
+  echo "status $status"
+  gh project item-edit --project-id "$PROJECT_ID" --id "$ITEM_ID" --field-id "$STATUS_FIELD_ID"   --single-select-option-id "$STATUS_OPTION_ID" "$status"
+  #echo "owner $ASSIGNEE_ID $owner"
+	#gh project item-edit --project-id "$PROJECT_ID" --id "$ITEM_ID" --field-id "$ASSIGNEE_ID" --text "$owner"
+  echo "due $due"
+	gh project item-edit --project-id "$PROJECT_ID" --id "$ITEM_ID" --field-id "$DUEDATE_FIELD_ID"  --date "$due"
+  echo "notes"
+	gh project item-edit --project-id "$PROJECT_ID" --id "$ITEM_ID" --field-id "$NOTES_FIELD_ID"    --text "$notes"
+
+	sleep 10
+
+done < <(tail -n +2 ~/GTDev-NG/GTDev-NG_roadmap.csv)

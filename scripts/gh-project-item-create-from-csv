@@ -1,0 +1,21 @@
+#!/bin/bash
+
+PROJECT_NUM=6
+
+while IFS=, read -r task phase category priority status owner due notes; do
+  body=$(printf "**Phase:** %s\n**Category:** %s\n**Priority:** %s\n**Status:** %s\n**Owner:** %s\n**Due:** %s\n\n%s" \
+    "$phase" "$category" "$priority" "$status" "$owner" "$due" "$notes")
+
+
+  ITEM_JSON=$(gh project item-create "$PROJECT_NUM" --owner "truth998877" --title "$task" --body "$body" --format json)
+  ITEM_ID=$(echo "$ITEM_JSON"|jq -r '.id')
+
+  gh project "$PROJECT_NUM" item-edit --id "$ITEM_ID" --field-id "$PHASE_FIELD_ID"    --single-select "$PHASE"
+  gh project "$PROJECT_NUM" item-edit --id "$ITEM_ID" --field-id "$CATEGORY_FIELD_ID" --single-select "$CATEGORY"
+  gh project "$PROJECT_NUM" item-edit --id "$ITEM_ID" --field-id "$PRIORITY_FIELD_ID" --single-select "$PRIORITY"
+  gh project "$PROJECT_NUM" item-edit --id "$ITEM_ID" --field-id "$STATUS_FIELD_ID"   --single-select "$STATUS"
+  gh project "$PROJECT_NUM" item-edit --id "$ITEM_ID" --field-id "$OWNER_FIELD_ID"    --text "$OWNER_NAME"
+  gh project "$PROJECT_NUM" item-edit --id "$ITEM_ID" --field-id "$DUEDATE_FIELD_ID"  --date "$DUEDATE"
+  gh project "$PROJECT_NUM" item-edit --id "$ITEM_ID" --field-id "$NOTES_FIELD_ID"    --text "$NOTES"
+
+done < <(tail -n +2 ~/GTDev-NG/GTDev-NG_roadmap.csv)
