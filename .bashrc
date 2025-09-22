@@ -51,9 +51,9 @@ export DOTFILES="$REPOS/github.com/truth998877/dotfiles"
 export SCRIPTS="$DOTFILES/scripts"  
 export SNIPPETS="$DOTFILES/snippets"
 export LOCALSCRIPTS="$DOTFILES/scripts/local/$HOSTNAME"
+export GTDEV="$REPOS/github.com/truth998877/GTDev-NG"
 
-
-export CDPATH=".:$DOTFILES:$REPOS:$SCRIPTS:$SNIPPETS:$LOCALSCRIPTS"
+export CDPATH=".:$DOTFILES:$REPOS:$SCRIPTS:$SNIPPETS:$LOCALSCRIPTS:$GTDEV"
 #-----
 
 #----PROMPT----
@@ -192,6 +192,8 @@ case "$END" in
 		alias dvwa='ssh tony@dvwa'
 		alias titan='ssh -Y tony@titan'
 		alias thinkpad='ssh -Y tony@thinkpad'
+		alias pihole='ssh -Y tony@pihole'
+		alias squid='ssh -Y tony@squid'
   ;;
 esac
 #-----

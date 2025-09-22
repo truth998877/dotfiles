@@ -98,3 +98,11 @@ Host minecraftpi
      Hostname 192.168.0.99
     Protocol 2
 
+Host pihole
+     Hostname 192.168.0.199
+    Protocol 2
+
+Host squid
+     Hostname 192.168.0.198
+    Protocol 2
+
