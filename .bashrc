@@ -262,6 +262,10 @@ case "$END" in
 esac
 #-----
 
+if [ -f $HOME/bin/Write/Write ]; then
+    export PATH="$HOME/bin/Write:$PATH"
+fi
+
 
 #-----MACHINE SPECIFIC BASHRC-----
 _source_if "$HOME/.bashrc.d/.bashrc_$HOSTNAME"
