@@ -106,3 +106,14 @@ Host squid
      Hostname 192.168.0.198
     Protocol 2
 
+Host sedna
+     Hostname 192.168.0.18
+    Protocol 2
+
+Host gonggong
+     Hostname 192.168.0.19
+    Protocol 2
+
+Host makemake
+     Hostname 192.168.0.20
+    Protocol 2
