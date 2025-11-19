@@ -1,0 +1,226 @@
+#!/bin/bash
+
+set -euo pipefail
+
+TOOLS="/opt/tools/bin"
+PROXY_LIST="/opt/tools/proxies.txt"
+
+if [[ ! -f "$PROXY_LIST" ]]; then
+    echo "[!] No proxy list found at $PROXY_LIST"
+    echo "Create it with one proxy per line, e.g. http://user:pass@ip:port"
+    exit 1
+fi
+
+###############################################################################
+# Proxy Selection
+###############################################################################
+choose_proxy_mode() {
+    echo ""
+    echo "Proxy mode:"
+    echo " 1) No proxy"
+    echo " 2) Use one random proxy for entire workflow"
+    echo " 3) Rotate proxies for each tool"
+    read -rp "Choose: " choice
+    echo "$choice"
+}
+
+get_random_proxy() {
+    shuf -n 1 "$PROXY_LIST"
+}
+
+###############################################################################
+# Apply proxy to commands
+###############################################################################
+run_with_proxy() {
+    local proxy="$1"
+    shift
+
+    if [[ -z "$proxy" ]]; then
+        "$@"
+    else
+        http_proxy="$proxy" https_proxy="$proxy" "$@"
+    fi
+}
+
+###############################################################################
+# Workflow Steps
+###############################################################################
+subdomain_enum() {
+    local domain="$1"
+    local proxy="$2"
+
+    #run_with_proxy "$proxy" "$TOOLS/subfinder" -silent -d "$domain"
+    
+    if [ -z proxy ]; then
+		  subfinder -silent -d "$domain"
+    else
+      subfinder -silent -d "$domain" -proxy "$proxy"
+    if
+    
+		#run_with_proxy "$proxy" "$TOOLS/assetfinder" --subs-only "$domain"
+    
+		#run_with_proxy "$proxy" "$TOOLS/crtsh" "$domain"
+}
+
+resolve_alive() {
+    local proxy="$1"
+		local subs="$2"
+
+    # filter to resolvable domains
+    run_with_proxy "$proxy" xargs -I{} dig +short {} | sed 's/[[:space:]].*//g'
+}
+
+http_probe() {
+    local proxy="$1"
+		local subs="$2"
+    run_with_proxy "$proxy" "$TOOLS/httpx" -silent -follow-redirects -status-code -title -tech-detect
+}
+
+port_scan() {
+    local proxy="$1"
+		local subs="$2"
+    run_with_proxy "$proxy" "$TOOLS/naabu" -silent -top-ports 100
+}
+
+fetch_urls() {
+    local proxy="$1"
+		local DOMAIN="$2"
+    run_with_proxy "$proxy" "$TOOLS/gau"
+    run_with_proxy "$proxy" "$TOOLS/waybackurls"
+}
+
+crawl() {
+    local proxy="$1"
+		local subs="$2"
+    run_with_proxy "$proxy" "$TOOLS/katana" -silent -jc -kf
+}
+
+scan_vulns() {
+    local proxy="$1"
+		local subs="$2"
+    run_with_proxy "$proxy" "$TOOLS/nuclei" -silent -severity low,medium,high,critical
+}
+
+###############################################################################
+# Main Driver
+###############################################################################
+
+if [ -d $HOME/recon_output ]; then
+  mkdir -p $HOME/recon_output
+fi
+
+#parse domains list
+
+OLDIFS=$IFS
+IFS=$'/n'
+DOMAINS=($(<DOMAINS.LIST))
+IFS=$OLDIFS
+
+if [[ -z "$DOMAINS" ]]; then
+    echo "DOMAINS.LIST not found"
+    exit 1
+fi
+
+MODE="$1"
+
+case "$MODE" in
+    None)
+        PROXY=""
+        ;;
+    Fixed)
+        PROXY="$(get_random_proxy)"
+        echo "[*] Selected proxy: $PROXY"
+        ;;
+    Rotate)
+        PROXY="rotate"
+        ;;
+    *)
+        echo "Invalid selection"
+        exit 1
+esac
+
+rotate_or_fixed() {
+    if [[ "$PROXY" == "rotate" ]]; then
+        get_random_proxy
+    else
+        echo "$PROXY"
+    fi
+}
+
+for i in "${DOMAINS[@]}";do
+
+  DOMAIN="${DOMAINS[i]}"
+
+  echo "[*] Starting recon workflow on: $DOMAIN"
+  
+	###############################################################################
+  # 0. Set up Output directory
+  ###############################################################################
+  if [ -d $HOME/recon_output/$DOMAIN ]; then
+    mkdir -p $HOME/recon_output/$DOMAIN
+  fi
+
+  ###############################################################################
+  # 1. Subdomain enumeration
+  ###############################################################################
+  echo "[*] Subdomain enumeration..."
+  subdomain_enum "$DOMAIN" "$(rotate_or_fixed)" | sort -u > subs.txt
+  
+  ###############################################################################
+  # 2. Resolve alive domains
+  ###############################################################################
+  echo "[*] Resolving alive hosts..."
+  resolve_alive "$(rotate_or_fixed)" subs.txt > alive.txt
+  
+  ###############################################################################
+  # 3. HTTP probing
+  ###############################################################################
+  echo "[*] HTTP probing..."
+  http_probe "$(rotate_or_fixed)" alive.txt > http.txt
+  
+  ###############################################################################
+  # 4. Port scanning
+  ###############################################################################
+  echo "[*] Port scanning..."
+  port_scan "$(rotate_or_fixed)" alive.txt > ports.txt
+  
+  ###############################################################################
+  # 5. URL collection (gau + wayback)
+  ###############################################################################
+  echo "[*] Collecting URLs..."
+  fetch_urls "$(rotate_or_fixed)" $DOMAIN > urls.txt
+  
+  ###############################################################################
+  # 6. Crawling (katana)
+  ###############################################################################
+  echo "[*] Crawling with katana..."
+  crawl "$(rotate_or_fixed)" "$(<http.txt|awk '{print $1}')" > crawl.txt
+  
+  ###############################################################################
+  # 7. Nuclei scanning
+  ###############################################################################
+  echo "[*] Running nuclei..."
+  scan_vulns "$(rotate_or_fixed)" "$(<http.txt | awk '{print $1}')" > nuclei.txt
+ 
+  ###############################################################################
+  # 8. Notifications etc...
+  ###############################################################################
+  
+  ###############################################################################
+  # 9. Complete
+  ###############################################################################
+
+	echo ""
+  echo "[*] Workflow complete."
+  echo "Files generated:"
+  echo "  subs.txt"
+  echo "  alive.txt"
+  echo "  http.txt"
+  echo "  ports.txt"
+  echo "  urls.txt"
+  echo "  crawl.txt"
+  echo "  nuclei.txt"
+
+done
+
+echo "All Domains completed" 
