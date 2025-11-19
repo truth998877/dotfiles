@@ -1,0 +1,7 @@
+#!/bin/bash
+
+sudo apt-install golang
+#set golang PATH
+go install -v github.com/projectdiscovery/pdtm/cmd/pdtm@latest
+#set pdtm PATH
+pdtm -ia
