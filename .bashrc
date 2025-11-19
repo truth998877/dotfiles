@@ -251,10 +251,13 @@ export PATH=/opt/flex/bin:/home/tony/.local/bin:$PATH
 export PATH="$HOME/repos/github.com/truth998877/dotfiles/scripts:~/repos/github.com/truth998877/dotfiles/scripts/local/$HOSTNAME:$PATH"
 
 case "$END" in
-  front)
+  front|back)
     #go
-    export PATH="/usr/local/go/bin:$PATH"
-    
+    #export PATH="/usr/local/go/bin:$PATH"
+    if [ ! -z "$(which go)" ];then
+			export PATH="$HOME/go/bin:$PATH"
+    fi
+
     #Install Ruby Gems to ~/gems
     export GEM_HOME="$HOME/gems"
     export PATH="$HOME/gems/bin:$PATH"
@@ -281,3 +284,6 @@ if [[ $END == work ]]; then
   _source_if "$HOME/.bashrc.d/.bashrc_work"
 fi
 #-----
+
+
+
