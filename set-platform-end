@@ -1,6 +1,6 @@
 case $HOSTNAME in
 
-   earth|jupiter|saturn|alpha|beta|gamma|oldvenus|kali|titan|thinkpad|squid|sedna|makemake)
+   earth|jupiter|saturn|alpha|beta|gamma|oldvenus|titan|thinkpad|squid|sedna|makemake)
    PLATFORM=debian
    ;;
 
@@ -19,6 +19,9 @@ case $HOSTNAME in
    pluto)
    PLATFORM=freebsd
    ;;
+
+	 kali)
+	 PLATFORM=kali
 
    *)
    PLATFORM=debian
