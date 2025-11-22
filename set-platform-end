@@ -22,6 +22,7 @@ case $HOSTNAME in
 
 	 kali)
 	 PLATFORM=kali
+	 ;;
 
    *)
    PLATFORM=debian
