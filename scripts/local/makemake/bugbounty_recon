@@ -49,17 +49,31 @@ subdomain_enum() {
     local domain="$1"
     local proxy="$2"
 
-    #run_with_proxy "$proxy" "$TOOLS/subfinder" -silent -d "$domain"
-    
-    if [ -z proxy ]; then
-		  subfinder -silent -d "$domain"
-    else
-      subfinder -silent -d "$domain" -proxy "$proxy"
-    if
+    # subfinder
+    local subdomains="$(run_with_proxy "$proxy" subfinder -silent -d "$domain")"
+
+    # append results from shuffledns
+    local subdomains="$subdomains"\n"$(run_with_proxy "$proxy" shuffledns -d "$domain" -w worklist.txt -r resolvers.txt -mode bruteforce)"
+
+    # add alterx results
+		local subdomains="$subdomains"\n"$(run with proxy "$proxy" alterx -l "${subdomains/$'\n'/\,}" -enrich)"
+
+#    if [ -z proxy ]; then
+#		  subdomains="$(subfinder -silent -d "$domain)"
+#
+#    else
+#      subdomains="$(subfinder -silent -d "$domain" -proxy "$proxy)"
+#    fi
     
 		#run_with_proxy "$proxy" "$TOOLS/assetfinder" --subs-only "$domain"
     
 		#run_with_proxy "$proxy" "$TOOLS/crtsh" "$domain"
+
+    # retain unique subdomains only
+    subdomains="$(sort -u $subdomains)"
+		
+    # function output
+		echo "$subdomains"
 }
 
 resolve_alive() {
@@ -67,77 +81,110 @@ resolve_alive() {
 		local subs="$2"
 
     # filter to resolvable domains
-    run_with_proxy "$proxy" xargs -I{} dig +short {} | sed 's/[[:space:]].*//g'
+    #run_with_proxy "$proxy" xargs -I{} dig +short {} | sed 's/[[:space:]].*//g'
+ 
+    sub_domains_alive="$(run_with_proxy dnsx "${subs/$'\n'/\,}")"
+
+		echo "$sub_domains_alive"
 }
 
 http_probe() {
     local proxy="$1"
 		local subs="$2"
-    run_with_proxy "$proxy" "$TOOLS/httpx" -silent -follow-redirects -status-code -title -tech-detect
+    run_with_proxy "$proxy" httpx -silent -follow-redirects -status-code -title -tech-detect
 }
 
 port_scan() {
     local proxy="$1"
-		local subs="$2"
-    run_with_proxy "$proxy" "$TOOLS/naabu" -silent -top-ports 100
+		local subs_filename="$2"
+
+		local subs="$(<"$subs_filename")"
+
+    #scan the top 100 ports using naabu
+    run_with_proxy "$proxy" naabu -host ${subs/$'\n'/\,}-silent -top-ports 100 -ep 22
 }
 
 fetch_urls() {
     local proxy="$1"
 		local DOMAIN="$2"
-    run_with_proxy "$proxy" "$TOOLS/gau"
-    run_with_proxy "$proxy" "$TOOLS/waybackurls"
+    run_with_proxy "$proxy" gau
+    run_with_proxy "$proxy" waybackurls
 }
 
 crawl() {
     local proxy="$1"
 		local subs="$2"
-    run_with_proxy "$proxy" "$TOOLS/katana" -silent -jc -kf
+    run_with_proxy "$proxy" katana -silent -jc -kf
 }
 
 scan_vulns() {
     local proxy="$1"
 		local subs="$2"
-    run_with_proxy "$proxy" "$TOOLS/nuclei" -silent -severity low,medium,high,critical
+    run_with_proxy "$proxy" "nuclei" -silent -severity low,medium,high,critical
 }
 
 ###############################################################################
 # Main Driver
 ###############################################################################
 
+mode="$1"
+scantype_in="${2:-new}"
+
+case "$mode" in
+	none)
+    PROXY=""
+    ;;
+  
+	fixed)
+    # use one of the proxies
+    PROXY="$(get_random_proxy)"
+    echo "[*] Selected proxy: $PROXY"
+    ;;
+  
+	rotate)
+    # use a different proxy for each of the tools
+    PROXY="rotate"
+    ;;
+  *)
+	echo "Invalid proxy setting (arg 1) - [none|fixed|rotate]"
+  exit 1
+esac
+
+case "$scantype_in"
+	newonly)
+	  scantype="newonly"
+		;;
+  
+	full)
+	  scantpye="full"
+    rm "$recon_output_dir/$domain/http.txt"
+    rm "$recon_output_dir/$domain/ports.txt"
+    rm "$recon_output_dir/$domain/urls.txt"
+    rm "$recon_output_dir/$domain/crawl.txt"
+    rm "$recon_output_dir/$domain/nuclei.txt"
+		;;
+  
+	*)
+	  echo "invalid scan type (arg 3 - [newonly|full])"
+esac
+
+recon_output_dir=$HOME/recon_output
+
 if [ -d $HOME/recon_output ]; then
-  mkdir -p $HOME/recon_output
+  mkdir -p $recon_output_dir
 fi
 
 #parse domains list
 
-OLDIFS=$IFS
+OLDIFS="$IFS"
 IFS=$'/n'
-DOMAINS=($(<DOMAINS.LIST))
-IFS=$OLDIFS
+domains=($(<domains.list))
+IFS="$OLDIFS"
 
-if [[ -z "$DOMAINS" ]]; then
-    echo "DOMAINS.LIST not found"
+if [[ -z "$domains" ]]; then
+    echo "domains.list not found"
     exit 1
 fi
-
-MODE="$1"
-
-case "$MODE" in
-    None)
-        PROXY=""
-        ;;
-    Fixed)
-        PROXY="$(get_random_proxy)"
-        echo "[*] Selected proxy: $PROXY"
-        ;;
-    Rotate)
-        PROXY="rotate"
-        ;;
-    *)
-        echo "Invalid selection"
-        exit 1
-esac
 
 rotate_or_fixed() {
     if [[ "$PROXY" == "rotate" ]]; then
@@ -147,60 +194,93 @@ rotate_or_fixed() {
     fi
 }
 
-for i in "${DOMAINS[@]}";do
+#loop through each domain in domains.list
+for i in "${domains[@]}";do
 
-  DOMAIN="${DOMAINS[i]}"
+  domain="${domains[i]}"
 
-  echo "[*] Starting recon workflow on: $DOMAIN"
+  echo "[*] Starting recon workflow on: $domain"
   
 	###############################################################################
-  # 0. Set up Output directory
+  # 0. Set up Output directory for domain
   ###############################################################################
-  if [ -d $HOME/recon_output/$DOMAIN ]; then
-    mkdir -p $HOME/recon_output/$DOMAIN
+  
+	if [ -d $recon_output_dir/$domain ]; then
+    mkdir -p $recon_output_dir/$domain
   fi
 
   ###############################################################################
   # 1. Subdomain enumeration
   ###############################################################################
-  echo "[*] Subdomain enumeration..."
-  subdomain_enum "$DOMAIN" "$(rotate_or_fixed)" | sort -u > subs.txt
+  
+	echo "[*] Subdomain enumeration..."
+  sub_domains_found="$(subdomain_enum "$domain" "$(rotate_or_fixed)")"
   
   ###############################################################################
   # 2. Resolve alive domains
   ###############################################################################
-  echo "[*] Resolving alive hosts..."
-  resolve_alive "$(rotate_or_fixed)" subs.txt > alive.txt
+  
+	echo "[*] Resolving alive hosts..."
+  resolve_alive "$(rotate_or_fixed)" "$sub_domains_found" > $recon_output_dir/$domain/alive_now.txt
+
+  ###############################################################################
+  # 2.5 Only Continue with newly found subs if scan type is newonly
+  ###############################################################################
+
+  if [[ $scantype == newonly ]];then
+	  new_alive_sub_domains="$(comm -3 $recon_output_dir/$domain/alice_old.txt $recon_output_dir/$domain/alive_now.txt)"
+
+	  if [ -z $new_alive_sub_domains ];then
+      echo "No new alive subdomains found for $domain"
+      continue
+    else
+	    mv $recon_output_dir/$domain/alive_now.txt $recon_output_dir/$domain/alive_old.txt
+		  echo "$new_alive_sub_domains" > $recon_output_dir/$domain/alive.txt
+      
+      #
+			#TODO notify new subdomains have been found for $domain
+      #
+			
+    fi
+  
+  else #$scantype=full
+      mv $recon_output_dir/$domain/alive_now.txt $recon_output_dir/$domain/alive.txt
+	fi
   
   ###############################################################################
   # 3. HTTP probing
   ###############################################################################
-  echo "[*] HTTP probing..."
-  http_probe "$(rotate_or_fixed)" alive.txt > http.txt
+  
+	#echo "[*] HTTP probing..."
+  #http_probe "$(rotate_or_fixed)" $recon_output_dir/$domain/alive.txt > $recon_output_dir/$domain/http.txt
   
   ###############################################################################
   # 4. Port scanning
   ###############################################################################
-  echo "[*] Port scanning..."
-  port_scan "$(rotate_or_fixed)" alive.txt > ports.txt
+  
+	echo "[*] Port scanning..."
+  port_scan "$(rotate_or_fixed)" "$recon_output_dir/$domain/alive.txt" >> "$recon_output_dir/$domain/ports.txt"
   
   ###############################################################################
   # 5. URL collection (gau + wayback)
   ###############################################################################
-  echo "[*] Collecting URLs..."
-  fetch_urls "$(rotate_or_fixed)" $DOMAIN > urls.txt
+  
+	echo "[*] Collecting URLs..."
+  fetch_urls "$(rotate_or_fixed)" $domain >> urls.txt
   
   ###############################################################################
   # 6. Crawling (katana)
   ###############################################################################
-  echo "[*] Crawling with katana..."
-  crawl "$(rotate_or_fixed)" "$(<http.txt|awk '{print $1}')" > crawl.txt
+  
+	echo "[*] Crawling with katana..."
+  crawl "$(rotate_or_fixed)" "$(<http.txt|awk '{print $1}')" >> crawl.txt
   
   ###############################################################################
   # 7. Nuclei scanning
   ###############################################################################
-  echo "[*] Running nuclei..."
-  scan_vulns "$(rotate_or_fixed)" "$(<http.txt | awk '{print $1}')" > nuclei.txt
+  
+	echo "[*] Running nuclei..."
+  scan_vulns "$(rotate_or_fixed)" "$(<http.txt | awk '{print $1}')" >> nuclei.txt
  
   ###############################################################################
   # 8. Notifications etc...
@@ -211,16 +291,17 @@ for i in "${DOMAINS[@]}";do
   ###############################################################################
 
 	echo ""
-  echo "[*] Workflow complete."
-  echo "Files generated:"
-  echo "  subs.txt"
-  echo "  alive.txt"
-  echo "  http.txt"
-  echo "  ports.txt"
-  echo "  urls.txt"
-  echo "  crawl.txt"
-  echo "  nuclei.txt"
+  echo "[*] Workflow complete for $domain."
+  echo "Files generated/appended:"
+  echo "  $recon_output_dir/$domain/alive.txt"
+  echo "  $recon_output_dir/$domain/alive_old.txt"
+  echo "  $recon_output_dir/$domain/http.txt"
+  echo "  $recon_output_dir/$domain/ports.txt"
+  echo "  $recon_output_dir/$domain/urls.txt"
+  echo "  $recon_output_dir/$domain/crawl.txt"
+  echo "  $recon_output_dir/$domain/nuclei.txt"
 
 done
 
-echo "All Domains completed" 
+echo "All Domains completed"
+echo $domains" 
