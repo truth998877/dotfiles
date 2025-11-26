@@ -1,12 +1,15 @@
 #!/bin/bash
 
+if [[ ! -d "$HOME"/buglab/images ]]; then
+ echo mkdir -p "$HOME"/buglab/images
+fi
 
 echo -e "Getting images...\n"
 
-echo -e "curl -L -o ubuntu-24.04-server-cloudimg-amd64.img \
+echo -e "curl -L -o "$HOME"/buglab/images/ubuntu-24.04-server-cloudimg-amd64.img \
   https://cloud-images.ubuntu.com/releases/24.04/release/ubuntu-24.04-server-cloudimg-amd64.img\n"
 
-echo -e "curl -L -o kali-2024-cloudimg-amd64.img \
+echo -e "curl -L -o "$HOME"/buglab/images/kali-2024-cloudimg-amd64.img \
   https://images.kali.org/current/kali-linux-2024.1-cloud-amd64.qcow2\n"
 
 discsizes=(40 40 40 20 20 40 40 80 20 60 20)
@@ -38,51 +41,83 @@ declare -A yaml_files
 
 yaml_files["${machines[0]}"]=$(cat << EOF 
 #cloud-config
+hostname: kali-attacker
 users:
-  - name: $username
+  - name: USERNAME_PLACEHOLDER
     sudo: ALL=(ALL) NOPASSWD:ALL
     groups: sudo
+    shell: /bin/bash
     ssh_authorized_keys:
-      - $sshkey
+      - SSHKEY_PLACEHOLDER
 
 package_update: true
+package_upgrade: true
 packages:
-  - kali-linux-default
-  - nmap
-  - ffuf
-  - gobuster
-  - amass
-  - sqlmap
+  - wget
+  - curl
+  - git
+  - python3
+  - python3-pip
+  - net-tools
+
+write_files:
+  - path: /usr/local/bin/install-kali-tools.sh
+    permissions: '0755'
+    content: |
+      #!/usr/bin/env bash
+      set -euo pipefail
+      export DEBIAN_FRONTEND=noninteractive
+      apt-get update -y
+      apt-get install -y kali-linux-default nmap ffuf gobuster amass sqlmap
+      echo "Kali tools installed"
 
 runcmd:
-  - echo \"Provisioning kali-attacker\"
+  - [ sh, -c, "/usr/local/bin/install-kali-tools.sh >> /var/log/provision.log 2>&1 || true" ]
+  - [ sh, -c, "echo 'Provisioning complete for kali-attacker' >> /var/log/provision.log" ]
+
+
 EOF
 )
 
 
-#yaml_files["${machines[1]}"]=$(cat << EOF 
-#
-#
-#EOF
-#)
-
 yaml_files["${machines[1]}"]=$(cat << EOF 
-
 #cloud-config
+hostname: ansible
 users:
-  - name: $username
+  - name: USERNAME_PLACEHOLDER
     sudo: ALL=(ALL) NOPASSWD:ALL
     groups: sudo
+    shell: /bin/bash
     ssh_authorized_keys:
-      - $sshkey
+      - SSHKEY_PLACEHOLDER
 
 package_update: true
+package_upgrade: true
 packages:
-  - ansible
+  - python3
+  - python3-venv
+  - python3-pip
   - git
+  - curl
+
+write_files:
+  - path: /usr/local/bin/bootstrap-ansible.sh
+    permissions: '0755'
+    content: |
+      #!/usr/bin/env bash
+      set -euo pipefail
+      export DEBIAN_FRONTEND=noninteractive
+      apt-get update -y
+      apt-get install -y python3-venv python3-pip git
+      python3 -m venv /home/USERNAME_PLACEHOLDER/ansible-venv
+      /home/USERNAME_PLACEHOLDER/ansible-venv/bin/pip install --upgrade pip ansible
+      chown -R USERNAME_PLACEHOLDER:USERNAME_PLACEHOLDER /home/USERNAME_PLACEHOLDER
+      echo "Ansible bootstrapped"
 
 runcmd:
-  - echo "Provisioning ansible"
+  - [ sh, -c, "/usr/local/bin/bootstrap-ansible.sh >> /var/log/provision.log 2>&1 || true" ]
+  - [ sh, -c, "echo 'Provisioning complete for ansible' >> /var/log/provision.log" ]
+
 
 EOF
 )
@@ -90,44 +125,108 @@ EOF
 
 yaml_files["${machines[2]}"]=$(cat << EOF 
 #cloud-config
+hostname: web-vuln-php
 users:
-  - name: $username
+  - name: USERNAME_PLACEHOLDER
     sudo: ALL=(ALL) NOPASSWD:ALL
     groups: sudo
+    shell: /bin/bash
     ssh_authorized_keys:
-      - $sshkey
+      - SSHKEY_PLACEHOLDER
 
 package_update: true
+package_upgrade: true
 packages:
-  - apache2
-  - php
-  - php-mysqli
-  - mariadb-server
-  - git
+  - apt-transport-https
+  - ca-certificates
+  - curl
+  - gnupg
+  - lsb-release
+  - docker.io
+  - docker-compose
+
+write_files:
+  - path: /opt/vuln/docker-compose.yml
+    permissions: '0644'
+    content: |
+      version: '3'
+      services:
+        dvwa:
+          image: vulnerables/web-dvwa:latest
+          ports:
+            - "80:80"
+          restart: always
+        bwapp:
+          image: raesene/bwapp
+          ports:
+            - "8080:80"
+          restart: always
+
+  - path: /usr/local/bin/provision-web-vuln.sh
+    permissions: '0755'
+    content: |
+      #!/usr/bin/env bash
+      set -euo pipefail
+      systemctl enable --now docker || true
+      mkdir -p /opt/vuln
+      cd /opt/vuln
+      cat > docker-compose.yml <<'EOF'
+      version: '3'
+      services:
+        dvwa:
+          image: vulnerables/web-dvwa
+          ports:
+            - "80:80"
+          restart: always
+        bwapp:
+          image: raesene/bwapp
+          ports:
+            - "8080:80"
+          restart: always
+      EOF
+      docker-compose up -d || true
+      echo "DVWA and bWAPP started"
 
 runcmd:
-  - echo "Provisioning web-vuln-php"
+  - [ sh, -c, "/usr/local/bin/provision-web-vuln.sh >> /var/log/provision.log 2>&1 || true" ]
+  - [ sh, -c, "echo 'Provisioning complete for web-vuln-php' >> /var/log/provision.log" ]
+
+
 EOF
 )
 
 
 yaml_files["${machines[3]}"]=$(cat << EOF 
 #cloud-config
+hostname: juice-shop
 users:
-  - name: $username
+  - name: USERNAME_PLACEHOLDER
     sudo: ALL=(ALL) NOPASSWD:ALL
     groups: sudo
+    shell: /bin/bash
     ssh_authorized_keys:
-      - $sshkey
+      - SSHKEY_PLACEHOLDER
 
 package_update: true
+package_upgrade: true
 packages:
-  - nodejs
-  - npm
-  - git
+  - curl
+  - docker.io
+
+write_files:
+  - path: /usr/local/bin/provision-juice.sh
+    permissions: '0755'
+    content: |
+      #!/usr/bin/env bash
+      set -euo pipefail
+      systemctl enable --now docker || true
+      docker pull bkimminich/juice-shop:latest || true
+      docker run -d --name juice-shop -p 3000:3000 bkimminich/juice-shop || true
+      echo "Juice Shop running on port 3000"
 
 runcmd:
-  - echo "Provisioning juice-shop"
+  - [ sh, -c, "/usr/local/bin/provision-juice.sh >> /var/log/provision.log 2>&1 || true" ]
+  - [ sh, -c, "echo 'Provisioning complete for juice-shop' >> /var/log/provision.log" ]
 
 
 EOF
@@ -136,20 +235,35 @@ EOF
 
 yaml_files["${machines[4]}"]=$(cat << EOF 
 #cloud-config
+hostname: webgoat
 users:
-  - name: $username
+  - name: USERNAME_PLACEHOLDER
     sudo: ALL=(ALL) NOPASSWD:ALL
     groups: sudo
+    shell: /bin/bash
     ssh_authorized_keys:
-      - $sshkey
+      - SSHKEY_PLACEHOLDER
 
 package_update: true
+package_upgrade: true
 packages:
   - default-jre
-  - wget
+  - docker.io
+
+write_files:
+  - path: /usr/local/bin/provision-webgoat.sh
+    permissions: '0755'
+    content: |
+      #!/usr/bin/env bash
+      set -euo pipefail
+      systemctl enable --now docker || true
+      docker pull webgoat/webgoat-8.0 || true
+      docker run -d --name webgoat -p 8080:8080 webgoat/webgoat-8.0 || true
+      echo "WebGoat running on port 8080"
 
 runcmd:
-  - echo "Provisioning webgoat"
+  - [ sh, -c, "/usr/local/bin/provision-webgoat.sh >> /var/log/provision.log 2>&1 || true" ]
+  - [ sh, -c, "echo 'Provisioning complete for webgoat' >> /var/log/provision.log" ]
 
 
 EOF
@@ -158,19 +272,36 @@ EOF
 
 yaml_files["${machines[5]}"]=$(cat << EOF 
 #cloud-config
+hostname: minio
 users:
-  - name: $username
+  - name: USERNAME_PLACEHOLDER
     sudo: ALL=(ALL) NOPASSWD:ALL
     groups: sudo
+    shell: /bin/bash
     ssh_authorized_keys:
-      - $sshkey
+      - SSHKEY_PLACEHOLDER
 
 package_update: true
 packages:
-  - wget
+  - docker.io
+
+write_files:
+  - path: /usr/local/bin/provision-minio.sh
+    permissions: '0755'
+    content: |
+      #!/usr/bin/env bash
+      set -euo pipefail
+      systemctl enable --now docker || true
+      docker pull minio/minio:latest || true
+      mkdir -p /data/minio
+      docker run -d --name minio -p 9000:9000 -p 9001:9001 \
+        -e MINIO_ROOT_USER=minioadmin -e MINIO_ROOT_PASSWORD=minioadmin \
+        -v /data/minio:/data minio/minio:latest server /data --console-address ":9001" || true
+      echo "MinIO running on ports 9000 (API) and 9001 (console)"
 
 runcmd:
-  - echo "Provisioning minio"
+  - [ sh, -c, "/usr/local/bin/provision-minio.sh >> /var/log/provision.log 2>&1 || true" ]
+  - [ sh, -c, "echo 'Provisioning complete for minio' >> /var/log/provision.log" ]
 
 
 EOF
@@ -179,20 +310,34 @@ EOF
 
 yaml_files["${machines[6]}"]=$(cat << EOF 
 #cloud-config
+hostname: localstack
 users:
-  - name: $username
+  - name: USERNAME_PLACEHOLDER
     sudo: ALL=(ALL) NOPASSWD:ALL
     groups: sudo
+    shell: /bin/bash
     ssh_authorized_keys:
-      - $sshkey
+      - SSHKEY_PLACEHOLDER
 
 package_update: true
 packages:
   - docker.io
   - python3-pip
 
+write_files:
+  - path: /usr/local/bin/provision-localstack.sh
+    permissions: '0755'
+    content: |
+      #!/usr/bin/env bash
+      set -euo pipefail
+      systemctl enable --now docker || true
+      docker pull localstack/localstack:latest || true
+      docker run -d --name localstack -p 4566:4566 -p 4571:4571 localstack/localstack || true
+      echo "LocalStack running on port 4566 (edge)"
+
 runcmd:
-  - echo "Provisioning localstack"
+  - [ sh, -c, "/usr/local/bin/provision-localstack.sh >> /var/log/provision.log 2>&1 || true" ]
+  - [ sh, -c, "echo 'Provisioning complete for localstack' >> /var/log/provision.log" ]
 
 
 EOF
@@ -201,18 +346,32 @@ EOF
 
 yaml_files["${machines[7]}"]=$(cat << EOF 
 #cloud-config
+hostname: k3s
 users:
-  - name: $username
+  - name: USERNAME_PLACEHOLDER
     sudo: ALL=(ALL) NOPASSWD:ALL
     groups: sudo
+    shell: /bin/bash
     ssh_authorized_keys:
-      - $sshkey
+      - SSHKEY_PLACEHOLDER
 
 package_update: true
-packages: []
+packages:
+  - curl
+
+write_files:
+  - path: /usr/local/bin/provision-k3s.sh
+    permissions: '0755'
+    content: |
+      #!/usr/bin/env bash
+      set -euo pipefail
+      curl -sfL https://get.k3s.io | sh -s - --write-kubeconfig-mode 644 || true
+      # kubectl available at /usr/local/bin/kubectl
+      echo "k3s installed (single-node)."
 
 runcmd:
-  - echo "Provisioning k3s"
+  - [ sh, -c, "/usr/local/bin/provision-k3s.sh >> /var/log/provision.log 2>&1 || true" ]
+  - [ sh, -c, "echo 'Provisioning complete for k3s' >> /var/log/provision.log" ]
 
 
 EOF
@@ -221,19 +380,32 @@ EOF
 
 yaml_files["${machines[8]}"]=$(cat << EOF 
 #cloud-config
+hostname: legacy
 users:
-  - name: $username
+  - name: USERNAME_PLACEHOLDER
     sudo: ALL=(ALL) NOPASSWD:ALL
     groups: sudo
+    shell: /bin/bash
     ssh_authorized_keys:
-      - $sshkey
+      - SSHKEY_PLACEHOLDER
 
 package_update: true
-packages: []
+package_upgrade: true
+packages:
+  - net-tools
+  - wget
+  - curl
 
+write_files:
+  - path: /usr/local/bin/provision-legacy-note.sh
+    permissions: '0755'
+    content: |
+      #!/usr/bin/env bash
+      echo "This VM is prepared as a legacy target. For an authentically vulnerable system consider importing Metasploitable2 or installing old packages manually." > /var/log/legacy-note.txt
 
 runcmd:
-  - echo "Provisioning legacy"
+  - [ sh, -c, "/usr/local/bin/provision-legacy-note.sh >> /var/log/provision.log 2>&1 || true" ]
+  - [ sh, -c, "echo 'Provisioning complete for legacy (note only)' >> /var/log/provision.log" ]
 
 
 EOF
@@ -242,19 +414,78 @@ EOF
 
 yaml_files["${machines[9]}"]=$(cat << EOF 
 #cloud-config
+hostname: opensearch
 users:
-  - name: $username
+  - name: USERNAME_PLACEHOLDER
     sudo: ALL=(ALL) NOPASSWD:ALL
     groups: sudo
+    shell: /bin/bash
     ssh_authorized_keys:
-      - $sshkey
+      - SSHKEY_PLACEHOLDER
 
 package_update: true
 packages:
   - docker.io
+  - docker-compose
+
+write_files:
+  - path: /opt/opensearch/docker-compose.yml
+    permissions: '0644'
+    content: |
+      version: '3'
+      services:
+        opensearch:
+          image: opensearchproject/opensearch:2.10.0
+          environment:
+            - "discovery.type=single-node"
+            - "plugins.security.disabled=true"
+          ulimits:
+            memlock:
+              soft: -1
+              hard: -1
+          ports:
+            - "9200:9200"
+            - "9600:9600"
+          volumes:
+            - opensearch-data:/usr/share/opensearch/data
+      volumes:
+        opensearch-data:
+
+  - path: /usr/local/bin/provision-opensearch.sh
+    permissions: '0755'
+    content: |
+      #!/usr/bin/env bash
+      set -euo pipefail
+      systemctl enable --now docker || true
+      mkdir -p /opt/opensearch
+      cat > /opt/opensearch/docker-compose.yml <<'EOF'
+      version: '3'
+      services:
+        opensearch:
+          image: opensearchproject/opensearch:2.10.0
+          environment:
+            - "discovery.type=single-node"
+            - "plugins.security.disabled=true"
+          ulimits:
+            memlock:
+              soft: -1
+              hard: -1
+          ports:
+            - "9200:9200"
+            - "9600:9600"
+          volumes:
+            - opensearch-data:/usr/share/opensearch/data
+      volumes:
+        opensearch-data:
+      EOF
+      apt-get update -y || true
+      apt-get install -y docker-compose || true
+      docker-compose -f /opt/opensearch/docker-compose.yml up -d || true
+      echo "OpenSearch started"
 
 runcmd:
-  - echo "Provisioning opensearch"
+  - [ sh, -c, "/usr/local/bin/provision-opensearch.sh >> /var/log/provision.log 2>&1 || true" ]
+  - [ sh, -c, "echo 'Provisioning complete for opensearch' >> /var/log/provision.log" ]
 
 
 EOF
@@ -263,20 +494,33 @@ EOF
 
 yaml_files["${machines[10]}"]=$(cat << EOF 
 #cloud-config
+hostname: mail
 users:
-  - name: $username
+  - name: USERNAME_PLACEHOLDER
     sudo: ALL=(ALL) NOPASSWD:ALL
     groups: sudo
+    shell: /bin/bash
     ssh_authorized_keys:
-      - $sshkey
+      - SSHKEY_PLACEHOLDER
 
 package_update: true
 packages:
-  - postfix
-  - dovecot-core
+  - docker.io
+
+write_files:
+  - path: /usr/local/bin/provision-mailhog.sh
+    permissions: '0755'
+    content: |
+      #!/usr/bin/env bash
+      set -euo pipefail
+      systemctl enable --now docker || true
+      docker pull mailhog/mailhog:latest || true
+      docker run -d --name mailhog -p 1025:1025 -p 8025:8025 mailhog/mailhog || true
+      echo "MailHog running: SMTP 1025, Web UI 8025"
 
 runcmd:
-  - echo "Provisioning mail"
+  - [ sh, -c, "/usr/local/bin/provision-mailhog.sh >> /var/log/provision.log 2>&1 || true" ]
+  - [ sh, -c, "echo 'Provisioning complete for mail (MailHog)' >> /var/log/provision.log" ]
 
 
 EOF
@@ -285,7 +529,7 @@ EOF
 
 img_dir="/var/lib/libvirt/images"
 index=0
-if [ -d $HOME/buglab/cloudinit ]; then
+if [ ! -d $HOME/buglab/cloudinit ]; then
   echo mkdir -p $HOME/buglab/cloudinit
 fi
 
