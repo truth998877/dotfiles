@@ -1,0 +1,327 @@
+#!/bin/bash
+
+
+echo -e "Getting images...\n"
+
+echo -e "curl -L -o ubuntu-24.04-server-cloudimg-amd64.img \
+  https://cloud-images.ubuntu.com/releases/24.04/release/ubuntu-24.04-server-cloudimg-amd64.img\n"
+
+echo -e "curl -L -o kali-2024-cloudimg-amd64.img \
+  https://images.kali.org/current/kali-linux-2024.1-cloud-amd64.qcow2\n"
+
+discsizes=(40 40 40 20 20 40 40 80 20 60 20)
+ramsizes=(8 4 3 2 2 1 2 4 2 4 1)
+numcpus=(4 2 2 1 1 1 2 2 1 2 1)
+
+
+username=tony
+sshkey=$(<~/.ssh/id_ed25519.pub)
+
+machines=( \
+"kaliattacker"  \
+"ansible"  \
+"webvulnphp"  \
+"juiceshop"  \
+"webgoat"  \
+"minio"  \
+"localstack"  \
+"k3s"  \
+"legacy"  \
+"opensearch"  \
+"mail"  \
+)
+
+
+declare -A yaml_files
+
+
+
+yaml_files["${machines[0]}"]=$(cat << EOF 
+#cloud-config
+users:
+  - name: $username
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    groups: sudo
+    ssh_authorized_keys:
+      - $sshkey
+
+package_update: true
+packages:
+  - kali-linux-default
+  - nmap
+  - ffuf
+  - gobuster
+  - amass
+  - sqlmap
+
+runcmd:
+  - echo \"Provisioning kali-attacker\"
+EOF
+)
+
+
+#yaml_files["${machines[1]}"]=$(cat << EOF 
+#
+#
+#EOF
+#)
+
+yaml_files["${machines[1]}"]=$(cat << EOF 
+
+#cloud-config
+users:
+  - name: $username
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    groups: sudo
+    ssh_authorized_keys:
+      - $sshkey
+
+package_update: true
+packages:
+  - ansible
+  - git
+
+runcmd:
+  - echo "Provisioning ansible"
+
+EOF
+)
+
+
+yaml_files["${machines[2]}"]=$(cat << EOF 
+#cloud-config
+users:
+  - name: $username
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    groups: sudo
+    ssh_authorized_keys:
+      - $sshkey
+
+package_update: true
+packages:
+  - apache2
+  - php
+  - php-mysqli
+  - mariadb-server
+  - git
+
+runcmd:
+  - echo "Provisioning web-vuln-php"
+EOF
+)
+
+
+yaml_files["${machines[3]}"]=$(cat << EOF 
+#cloud-config
+users:
+  - name: $username
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    groups: sudo
+    ssh_authorized_keys:
+      - $sshkey
+
+package_update: true
+packages:
+  - nodejs
+  - npm
+  - git
+
+runcmd:
+  - echo "Provisioning juice-shop"
+
+
+EOF
+)
+
+
+yaml_files["${machines[4]}"]=$(cat << EOF 
+#cloud-config
+users:
+  - name: $username
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    groups: sudo
+    ssh_authorized_keys:
+      - $sshkey
+
+package_update: true
+packages:
+  - default-jre
+  - wget
+
+runcmd:
+  - echo "Provisioning webgoat"
+
+
+EOF
+)
+
+
+yaml_files["${machines[5]}"]=$(cat << EOF 
+#cloud-config
+users:
+  - name: $username
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    groups: sudo
+    ssh_authorized_keys:
+      - $sshkey
+
+package_update: true
+packages:
+  - wget
+
+runcmd:
+  - echo "Provisioning minio"
+
+
+EOF
+)
+
+
+yaml_files["${machines[6]}"]=$(cat << EOF 
+#cloud-config
+users:
+  - name: $username
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    groups: sudo
+    ssh_authorized_keys:
+      - $sshkey
+
+package_update: true
+packages:
+  - docker.io
+  - python3-pip
+
+runcmd:
+  - echo "Provisioning localstack"
+
+
+EOF
+)
+
+
+yaml_files["${machines[7]}"]=$(cat << EOF 
+#cloud-config
+users:
+  - name: $username
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    groups: sudo
+    ssh_authorized_keys:
+      - $sshkey
+
+package_update: true
+packages: []
+
+runcmd:
+  - echo "Provisioning k3s"
+
+
+EOF
+)
+
+
+yaml_files["${machines[8]}"]=$(cat << EOF 
+#cloud-config
+users:
+  - name: $username
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    groups: sudo
+    ssh_authorized_keys:
+      - $sshkey
+
+package_update: true
+packages: []
+
+
+runcmd:
+  - echo "Provisioning legacy"
+
+
+EOF
+)
+
+
+yaml_files["${machines[9]}"]=$(cat << EOF 
+#cloud-config
+users:
+  - name: $username
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    groups: sudo
+    ssh_authorized_keys:
+      - $sshkey
+
+package_update: true
+packages:
+  - docker.io
+
+runcmd:
+  - echo "Provisioning opensearch"
+
+
+EOF
+)
+
+
+yaml_files["${machines[10]}"]=$(cat << EOF 
+#cloud-config
+users:
+  - name: $username
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    groups: sudo
+    ssh_authorized_keys:
+      - $sshkey
+
+package_update: true
+packages:
+  - postfix
+  - dovecot-core
+
+runcmd:
+  - echo "Provisioning mail"
+
+
+EOF
+)
+
+
+img_dir="/var/lib/libvirt/images"
+index=0
+if [ -d $HOME/buglab/cloudinit ]; then
+  echo mkdir -p $HOME/buglab/cloudinit
+fi
+
+for machine in "${machines[@]}";do
+echo here
+
+  echo cd $HOME/buglab/cloudinit
+
+# echo "${yaml_files["$machine"]}"
+	echo "${yaml_files["$machine"]}" > "$machine.yml"
+  echo cloud-localds "$machine"-seed.iso "$machine.yml"
+	rm "$machine.yml"
+
+	echo cd -
+
+	if [[ "$index" == 0 ]]; then
+    image="$HOME/buglab/images/kali-2024-cloudimg-amd64.img"
+	else
+    image="$HOME/buglab/images/ubuntu-24.04-server-cloudimg-amd64.img"
+	fi
+	
+  echo "sudo qemu-img create -f qcow2 -b "$image" \
+          "$img_dir"/"$machine".qcow2 "${discsizes[$index]}"G"
+
+  echo sudo virt-install \
+  --name $machine \
+  --memory "${ramsizes[$index]}" \
+  --vcpus "${numcpus[$index]}" \
+  --disk path="$img_dir"/"$machine".qcow2,format=qcow2 \
+  --disk path="$HOME"/buglab/cloudinit/"$machine"-seed.iso,device=cdrom \
+  --os-variant debian12 \
+  --network network=lab-net,mac=52:54:00:ab:cd:"$((index+10))" \
+  --import \
+  --graphics none \
+  --noautoconsole
+	
+	((index++))
+
+done
