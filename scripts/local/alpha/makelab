@@ -1,16 +1,19 @@
 #!/bin/bash
 
 if [[ ! -d "$HOME"/buglab/images ]]; then
- echo mkdir -p "$HOME"/buglab/images
-fi
+  mkdir -p "$HOME"/buglab/images
+
 
 echo -e "Getting images...\n"
 
-echo -e "curl -L -o "$HOME"/buglab/images/ubuntu-24.04-server-cloudimg-amd64.img \
-  https://cloud-images.ubuntu.com/releases/24.04/release/ubuntu-24.04-server-cloudimg-amd64.img\n"
+ curl -L -o "$HOME"/buglab/images/ubuntu-24.04-server-cloudimg-amd64.img \
+  https://cloud-images.ubuntu.com/releases/24.04/release/ubuntu-24.04-server-cloudimg-amd64.img
 
-echo -e "curl -L -o "$HOME"/buglab/images/kali-2024-cloudimg-amd64.img \
-  https://images.kali.org/current/kali-linux-2024.1-cloud-amd64.qcow2\n"
+ curl -L -o "$HOME"/buglab/images/kali-2024-cloudimg-amd64.img \
+  https://images.kali.org/current/kali-linux-2024.1-cloud-amd64.qcow2
+
+
+fi
 
 discsizes=(40 40 40 20 20 40 40 80 20 60 20)
 ramsizes=(8 4 3 2 2 1 2 4 2 4 1)
@@ -36,8 +39,6 @@ machines=( \
 
 
 declare -A yaml_files
-
-
 
 yaml_files["${machines[0]}"]=$(cat << EOF 
 #cloud-config
@@ -530,20 +531,19 @@ EOF
 img_dir="/var/lib/libvirt/images"
 index=0
 if [ ! -d $HOME/buglab/cloudinit ]; then
-  echo mkdir -p $HOME/buglab/cloudinit
+  mkdir -p $HOME/buglab/cloudinit
 fi
 
 for machine in "${machines[@]}";do
-echo here
 
-  echo cd $HOME/buglab/cloudinit
+  cd $HOME/buglab/cloudinit
 
 # echo "${yaml_files["$machine"]}"
 	echo "${yaml_files["$machine"]}" > "$machine.yml"
-  echo cloud-localds "$machine"-seed.iso "$machine.yml"
+  cloud-localds "$machine"-seed.iso "$machine.yml"
 	rm "$machine.yml"
 
-	echo cd -
+	cd -
 
 	if [[ "$index" == 0 ]]; then
     image="$HOME/buglab/images/kali-2024-cloudimg-amd64.img"
@@ -551,10 +551,10 @@ echo here
     image="$HOME/buglab/images/ubuntu-24.04-server-cloudimg-amd64.img"
 	fi
 	
-  echo "sudo qemu-img create -f qcow2 -b "$image" \
-          "$img_dir"/"$machine".qcow2 "${discsizes[$index]}"G"
+  sudo qemu-img create -f qcow2 -b "$image" \
+          "$img_dir"/"$machine".qcow2 "${discsizes[$index]}"G
 
-  echo sudo virt-install \
+  sudo virt-install \
   --name $machine \
   --memory "${ramsizes[$index]}" \
   --vcpus "${numcpus[$index]}" \
