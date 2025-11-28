@@ -1,0 +1,12 @@
+#!/bin/bash
+
+#clean up networks
+sudo virsh net-destroy labnet
+sudo virsh net-destroy attackernet
+
+sudo virsh net-undefine labnet
+sudo virsh net-undefine attackernet
+
+rm *.xml
+
+rm ~/buglab/cloudinit/*.iso

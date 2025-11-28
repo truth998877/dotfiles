@@ -1,8 +1,58 @@
 #!/bin/bash
 
+#labnet details
+declare -A networks
+
+networks["labnet"]=$(cat << EOF
+<network>
+  <name>labnet</name>
+
+  <!-- No <forward> block → fully isolated, no host access -->
+  <bridge name="virbr-lab" stp="on" delay="0"/>
+
+  <!-- Internal addressing for lab VMs -->
+  <ip address="192.168.60.1" netmask="255.255.255.0">
+    <dhcp>
+      <range start="192.168.60.2" end="192.168.60.254"/>
+    </dhcp>
+  </ip>
+</network>
+EOF
+)
+
+#attacker net details
+networks["attackernet"]=$(cat << EOF
+<network>
+  <name>attackernet</name>
+  <bridge name="virbr-att" stp="on" delay="0"/>
+  <forward mode="nat"/>
+  <ip address="192.168.50.1" netmask="255.255.255.0">
+    <dhcp>
+      <range start="192.168.50.2" end="192.168.50.254"/>
+    </dhcp>
+  </ip>
+</network>
+EOF
+)
+
+
+
+#create networks
+index=0
+networknames=("${!networks[@]}")
+for network in "${networks[@]}";do
+	networkname="${networknames["$index"]}"
+  echo $network > "$networkname".xml  #get file name from networkname
+	sudo virsh net-define "$networkname".xml
+  sudo virsh net-start "$networkname"
+  sudo virsh net-autostart "$networkname"
+	((index++))
+done
+
+#create machines
+echo "creating machines..."
 if [[ ! -d "$HOME"/buglab/images ]]; then
   mkdir -p "$HOME"/buglab/images
-
 
 echo -e "Getting images...\n"
 
@@ -12,17 +62,17 @@ echo -e "Getting images...\n"
  curl -L -o "$HOME"/buglab/images/kali-2024-cloudimg-amd64.img \
   https://images.kali.org/current/kali-linux-2024.1-cloud-amd64.qcow2
 
-
 fi
 
 discsizes=(40 40 40 20 20 40 40 80 20 60 20)
-ramsizes=(8 4 3 2 2 1 2 4 2 4 1)
+ramsizes=(8192 4096 3072 2048 2048 1024 2048 4096 2048 4096 1024)
 numcpus=(4 2 2 1 1 1 2 2 1 2 1)
 
-
+#username and ssh key
 username=tony
 sshkey=$(<~/.ssh/id_ed25519.pub)
 
+#machine list
 machines=( \
 "kaliattacker"  \
 "ansible"  \
@@ -38,6 +88,7 @@ machines=( \
 )
 
 
+#machine details
 declare -A yaml_files
 
 yaml_files["${machines[0]}"]=$(cat << EOF 
@@ -530,42 +581,80 @@ EOF
 
 img_dir="/var/lib/libvirt/images"
 index=0
+
+#if $HOME/buglab/cloudinit does not exist create it
 if [ ! -d $HOME/buglab/cloudinit ]; then
   mkdir -p $HOME/buglab/cloudinit
 fi
 
+#for each machine in the list of machines
 for machine in "${machines[@]}";do
 
-  cd $HOME/buglab/cloudinit
+  #create seed iso
+	cd $HOME/buglab/cloudinit
 
-# echo "${yaml_files["$machine"]}"
+  #write and delete yml files
+	#echo "${yaml_files["$machine"]}"
 	echo "${yaml_files["$machine"]}" > "$machine.yml"
-  cloud-localds "$machine"-seed.iso "$machine.yml"
+  cloud-localds -d qcow2 "$machine"-seed.iso "$machine.yml"
 	rm "$machine.yml"
 
 	cd -
 
+  #set appropriate options for each machine, TODO - remove the else
 	if [[ "$index" == 0 ]]; then
-    image="$HOME/buglab/images/kali-2024-cloudimg-amd64.img"
+    #if kali machine use these options
+    image="$HOME/buglab/images/disk.raw"
+		variant="debianwheezy"
+		format=raw
 	else
     image="$HOME/buglab/images/ubuntu-24.04-server-cloudimg-amd64.img"
+		variant="ubuntuquantal"
+		format=qcow2
 	fi
 	
-  sudo qemu-img create -f qcow2 -b "$image" \
+  #create backing file
+  sudo qemu-img create -f qcow2 -b "$image" -F "$format" \
           "$img_dir"/"$machine".qcow2 "${discsizes[$index]}"G
-
+  
+  ip=$(($index+10))
+	
+	#create machine
   sudo virt-install \
   --name $machine \
   --memory "${ramsizes[$index]}" \
   --vcpus "${numcpus[$index]}" \
   --disk path="$img_dir"/"$machine".qcow2,format=qcow2 \
   --disk path="$HOME"/buglab/cloudinit/"$machine"-seed.iso,device=cdrom \
-  --os-variant debian12 \
-  --network network=lab-net,mac=52:54:00:ab:cd:"$((index+10))" \
+	--os-type linux \
+  --os-variant "$variant" \
+  --network network=labnet,mac=52:54:00:ab:cd:"$ip" \
   --import \
   --graphics none \
   --noautoconsole
+
+	 
+  if [[ $index == 0 ]]; then
+    # if kali machine add second nic and attach to attacker net
+    sudo virsh attach-interface \
+    --domain "$machine" \
+    --type network \
+    --source attackernet \
+		--mac 52:54:00:aa:bb:"$ip" \
+    --model virtio \
+    --config --live
+    
+    #add reserved ip address for kali machine to attackernet
+		sudo virsh net-update attackernet add ip-dhcp-host \
+    "<host mac='52:54:00:aa:bb:"$ip"' name='juice-shop' ip='192.168.50."$ip"'/>" \
+    --live --config
+	 fi
 	
+  #add reserved ip address to labnet for machine
+  sudo virsh net-update labnet add ip-dhcp-host \
+  "<host mac='52:54:00:ab:cd:"$ip"' name='"$machine"' ip='192.168.60.$ip'/>" \
+  --live --config
+  #--network network=labnet,mac=52:54:00:ab:cd:"$ip" \
 	((index++))
 
 done
