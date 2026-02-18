@@ -10,6 +10,12 @@ inkscape () {
 
 }
 
+resize-tmux-pane () {
+
+ local y="$1"
+ tmux resize-pane -y "$y"
+
+}
 
 path () {
 
@@ -396,19 +402,27 @@ help () {
 
   #while true
     #if running in tmux
-      tmux resize-pane -y 45
+  if [[ $TMUX == 1 ]]; then
+	  resize-tmux-pane 45
+		activate-inkscape
+		xdotool windowminimize $(xdotool getactivewindow)
+
+  fi
+						
   #fi
   
-  #minimise inkscape
-      functions=$(declare -F)
-      functionsarray=(${functions//declare -f/})
-      select function in "${functionsarray[@]}";do
-        "$function"  #echo the correct element in the 'help' associative array
-        break
-      done
+  functions=$(declare -F)
+  functionsarray=(${functions//declare -f/})
+  select function in "${functionsarray[@]}";do
+    "$function"  #echo the correct element in the 'help' associative array
+    break
+  done
 
-      clear
-      tmux resize-pane -y 6
+  clear
+  if [[ $TMUX == 1 ]]; then
+    resize-tmux-pane 6
+		activate-inkscape
+  fi
 }
 
 #TODO objects to add - square, rectangle, eclipse, triangles, polygons, arcs, up down left right diagonal arched single and double ended arrows, xy graph no grid, xy graph with grid, xyz graph, 
@@ -423,7 +437,7 @@ help () {
 
 . snipsubdir
 echo "inkscape-shell"
-while read -p "['save->quit' 2 quit]> " line;do
+while read -p "['help 4 help, save->quit' 2 quit]> " line;do
   #if line is a single character
  "$line"
   #if line is more than one character
