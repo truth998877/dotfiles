@@ -1,6 +1,7 @@
 William's bedroom
 Finish office rebuild
 Finish build virtual hacking lab script and understand why vm's are not booting
+Finish auto recon script
 Build nas
 Recommission jupiter
 10-gigabit network
