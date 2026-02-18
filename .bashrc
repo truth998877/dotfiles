@@ -197,6 +197,7 @@ case "$END" in
 		alias sedna='ssh -Y tony@sedna'
 		alias gonggong='ssh -Y tony@gonggong'
 		alias makemake='ssh -Y tony@makemake'
+		alias boilerpi='ssh tony@boilerpi'
   ;;
 esac
 #-----
