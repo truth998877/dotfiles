@@ -117,3 +117,7 @@ Host gonggong
 Host makemake
      Hostname 192.168.0.20
     Protocol 2
+
+Host boilerpi
+     Hostname 192.168.0.130
+    Protocol 2
