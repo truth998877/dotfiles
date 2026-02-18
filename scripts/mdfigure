@@ -17,8 +17,8 @@ figuresnip_ () {
   local filename="${str//\ /-}"
  
   #does the figures directory exist for this note? if not create it, as it's needed
-  if [[ ! -d "$dir"./figures ]]; then
-    mkdir -p  "$dir"./figures
+  if [[ ! -d "$dir"/figures ]]; then
+    mkdir -p  "$dir"/figures
   fi
 
   #is there a file of the same input title already in the figures directory for this note? If yes, do nothing
