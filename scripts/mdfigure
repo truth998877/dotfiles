@@ -10,18 +10,19 @@ echo !["$@"]\(.\/figures\/"${str//\ /-}".svg\)
 
 figuresnip_ () {
 
-  local str="$@"
+  local str="$1"
+	local dir="$2"
   
   local caption="$str"
   local filename="${str//\ /-}"
  
   #does the figures directory exist for this note? if not create it, as it's needed
-  if [[ ! -d ./figures ]]; then
-    mkdir -p  ./figures
+  if [[ ! -d "$dir"./figures ]]; then
+    mkdir -p  "$dir"./figures
   fi
 
   #is there a file of the same input title already in the figures directory for this note? If yes, do nothing
-  if [[ -f ./figures/$filename.svg ]]; then
+  if [[ -f "$dir"/figures/$filename.svg ]]; then
     exit
   fi
  
@@ -29,20 +30,36 @@ figuresnip_ () {
   echo "$(snip mdfigure.snip mdfigure "$filename" "$caption")"
   
   #copy the template for the note to the figure directory of the note
-  cp ~/templates/figures/figure-template.svg ./figures/$filename.svg
+  cp ~/templates/figures/figure-template.svg "$dir"/figures/$filename.svg
   
-  inkscape ./figures/"$filename".svg &
+  inkscape "$dir"/figures/"$filename".svg &
   sleep 3
   wmctrl -r "inkscape" -b add,above
   #
 
   #tmux \split-window -v 'inkscape-shell' \; \resize-pane -y 6
-  tmux \split-window -v 'inkscape-shell' \; \resize-pane -y $INKSCAPESHELLY
+  if [[ $TMUX == 1 ]]; then
+	  tmux \split-window -v 'inkscape-shell' \; \resize-pane -y $INKSCAPESHELLY
+  fi
 
 }
 
+#needs to exit if not a note
+if [[ -z $CURRENTNOTEBOOK ]] && [[ -z $CURRENTLOGBOOK ]]; then
+  echo 'no noteboot set, mdfigure only to be used in a notebook - use "u" to undo changes...'
+	echo "$@"
+	exit 0
+fi
+
+loc="$(clb-loc)"
+if [[ ! -z $CURRENTNOTEBOOK ]]; then
+  loc="$(cnb-loc)"
+fi
+
+loc="${loc%\/*}"
+
 while IFS="\n" read -r args;do
-  figuresnip_ "$args"
+  figuresnip_ "$args" "$loc"
   break  
 done
 
