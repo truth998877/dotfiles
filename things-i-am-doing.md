@@ -1,5 +1,9 @@
 William's bedroom
-finish office rebuild
+Finish office rebuild
+Finish build virtual hacking lab script and understand why vm's are not booting
+Build nas
+Recommission jupiter
+10-gigabit network
 logbook and notebook scripts
 inkscape shell
 twitch scripts
