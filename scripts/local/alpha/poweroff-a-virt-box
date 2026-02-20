@@ -1,0 +1,20 @@
+#!/bin/bash
+
+machines="$(virsh -c qemu:///system list |grep running|tr -s " "|cut -d " " -f 3)"
+OLD_IFS=${IFS};IFS=$'\n'
+
+machines=($machines)
+
+#machines=("${machines[@]% \{*}")
+#machines=("${machines[@]//\"/}")
+select machine in ${machines[@]} all;do
+  if [[ $machine == all ]]; then
+    for imachine in ${machines[@]};do
+      virsh -c qemu:///system shutdown "$imachine"
+    done
+  else
+    virsh -c qemu:///system shutdown "$machine" 
+  fi
+  IFS="${OLD_IFS}"
+  break
+done
