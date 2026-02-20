@@ -25,7 +25,7 @@ networks["attackernet"]=$(cat << EOF
 <network>
   <name>attackernet</name>
   <bridge name="virbr-att" stp="on" delay="0"/>
-  <forward mode="nat"/>
+  <!-- <forward mode="nat"/> -->
   <ip address="192.168.50.1" netmask="255.255.255.0">
     <dhcp>
       <range start="192.168.50.2" end="192.168.50.254"/>
@@ -51,22 +51,35 @@ done
 
 #create machines
 echo "creating machines..."
+
 if [[ ! -d "$HOME"/buglab/images ]]; then
   mkdir -p "$HOME"/buglab/images
+fi
+
 
 echo -e "Getting images...\n"
 
- curl -L -o "$HOME"/buglab/images/ubuntu-24.04-server-cloudimg-amd64.img \
-  https://cloud-images.ubuntu.com/releases/24.04/release/ubuntu-24.04-server-cloudimg-amd64.img
+#if [[ ! -f "$HOME"/buglab/images/ubuntu-24.04-server-cloudimg-amd64.img ]]; then
+#
+#  curl -L -o "$HOME"/buglab/images/ubuntu-24.04-server-cloudimg-amd64.img \
+#   https://cloud-images.ubuntu.com/releases/24.04/release/ubuntu-24.04-server-cloudimg-amd64.img
+#
+#fi
+#
+#if [[ ! -f "$HOME"/buglab/images/kali-2025.4-cloud-amd64.tar.xz ]]; then
+# 
+#  curl -L -o "$HOME"/buglab/images/kali-2025.4-cloud-amd64.tar.xz \
+#   https://kali.download/cloud-images/kali-2025.4/kali-linux-2025.4-cloud-genericcloud-amd64.tar.xz
+#
+#  tar -xJf "$HOME"/buglab/images/kali-2025.4-cloud-amd64.tar.xz
+#
+#
+#fi
 
- curl -L -o "$HOME"/buglab/images/kali-2024-cloudimg-amd64.img \
-  https://images.kali.org/current/kali-linux-2024.1-cloud-amd64.qcow2
-
-fi
-
-discsizes=(40 40 40 20 20 40 40 80 20 60 20)
-ramsizes=(8192 4096 3072 2048 2048 1024 2048 4096 2048 4096 1024)
-numcpus=(4 2 2 1 1 1 2 2 1 2 1)
+discsizes=(40 40 40 20 20 40 40 80 20 60 20 40)
+ramsizes=(8192 4096 3072 2048 2048 1024 2048 4096 2048 4096 1024 4096)
+numcpus=(4 2 2 1 1 1 2 2 1 2 1 2)
+boottype=("uefi" "" "" "" "" "" "" "" "" "" "" "")
 
 #username and ssh key
 username=tony
@@ -85,6 +98,7 @@ machines=( \
 "legacy"  \
 "opensearch"  \
 "mail"  \
+"tri-nic" \
 )
 
 
@@ -95,12 +109,12 @@ yaml_files["${machines[0]}"]=$(cat << EOF
 #cloud-config
 hostname: kali-attacker
 users:
-  - name: USERNAME_PLACEHOLDER
+  - name: "$username"
     sudo: ALL=(ALL) NOPASSWD:ALL
     groups: sudo
     shell: /bin/bash
     ssh_authorized_keys:
-      - SSHKEY_PLACEHOLDER
+      - "$sshkey"
 
 package_update: true
 package_upgrade: true
@@ -136,12 +150,18 @@ yaml_files["${machines[1]}"]=$(cat << EOF
 #cloud-config
 hostname: ansible
 users:
-  - name: USERNAME_PLACEHOLDER
+  - name: "$username"
     sudo: ALL=(ALL) NOPASSWD:ALL
     groups: sudo
     shell: /bin/bash
     ssh_authorized_keys:
-      - SSHKEY_PLACEHOLDER
+      - "$sshkey"
+
+ssh_pwauth: True
+chpasswd:
+  list: |
+    tony:password
+  expire: False
 
 package_update: true
 package_upgrade: true
@@ -161,9 +181,9 @@ write_files:
       export DEBIAN_FRONTEND=noninteractive
       apt-get update -y
       apt-get install -y python3-venv python3-pip git
-      python3 -m venv /home/USERNAME_PLACEHOLDER/ansible-venv
-      /home/USERNAME_PLACEHOLDER/ansible-venv/bin/pip install --upgrade pip ansible
-      chown -R USERNAME_PLACEHOLDER:USERNAME_PLACEHOLDER /home/USERNAME_PLACEHOLDER
+      python3 -m venv /home/"$username"/ansible-venv
+      /home/"$username"/ansible-venv/bin/pip install --upgrade pip ansible
+      chown -R "$username":USERNAME_PLACEHOLDER /home/USERNAME_PLACEHOLDER
       echo "Ansible bootstrapped"
 
 runcmd:
@@ -179,12 +199,12 @@ yaml_files["${machines[2]}"]=$(cat << EOF
 #cloud-config
 hostname: web-vuln-php
 users:
-  - name: USERNAME_PLACEHOLDER
+  - name: "$username"
     sudo: ALL=(ALL) NOPASSWD:ALL
     groups: sudo
     shell: /bin/bash
     ssh_authorized_keys:
-      - SSHKEY_PLACEHOLDER
+      - "$sshkey"
 
 package_update: true
 package_upgrade: true
@@ -252,12 +272,12 @@ yaml_files["${machines[3]}"]=$(cat << EOF
 #cloud-config
 hostname: juice-shop
 users:
-  - name: USERNAME_PLACEHOLDER
+  - name: "$username"
     sudo: ALL=(ALL) NOPASSWD:ALL
     groups: sudo
     shell: /bin/bash
     ssh_authorized_keys:
-      - SSHKEY_PLACEHOLDER
+      - "$sshkey"
 
 package_update: true
 package_upgrade: true
@@ -289,12 +309,12 @@ yaml_files["${machines[4]}"]=$(cat << EOF
 #cloud-config
 hostname: webgoat
 users:
-  - name: USERNAME_PLACEHOLDER
+  - name: "$username"
     sudo: ALL=(ALL) NOPASSWD:ALL
     groups: sudo
     shell: /bin/bash
     ssh_authorized_keys:
-      - SSHKEY_PLACEHOLDER
+      - "$sshkey"
 
 package_update: true
 package_upgrade: true
@@ -326,12 +346,12 @@ yaml_files["${machines[5]}"]=$(cat << EOF
 #cloud-config
 hostname: minio
 users:
-  - name: USERNAME_PLACEHOLDER
+  - name: "$username"
     sudo: ALL=(ALL) NOPASSWD:ALL
     groups: sudo
     shell: /bin/bash
     ssh_authorized_keys:
-      - SSHKEY_PLACEHOLDER
+      - "$sshkey"
 
 package_update: true
 packages:
@@ -364,12 +384,12 @@ yaml_files["${machines[6]}"]=$(cat << EOF
 #cloud-config
 hostname: localstack
 users:
-  - name: USERNAME_PLACEHOLDER
+  - name: "$username"
     sudo: ALL=(ALL) NOPASSWD:ALL
     groups: sudo
     shell: /bin/bash
     ssh_authorized_keys:
-      - SSHKEY_PLACEHOLDER
+      - "$sshkey"
 
 package_update: true
 packages:
@@ -400,12 +420,12 @@ yaml_files["${machines[7]}"]=$(cat << EOF
 #cloud-config
 hostname: k3s
 users:
-  - name: USERNAME_PLACEHOLDER
+  - name: "$username"
     sudo: ALL=(ALL) NOPASSWD:ALL
     groups: sudo
     shell: /bin/bash
     ssh_authorized_keys:
-      - SSHKEY_PLACEHOLDER
+      - "$sshkey"
 
 package_update: true
 packages:
@@ -434,12 +454,12 @@ yaml_files["${machines[8]}"]=$(cat << EOF
 #cloud-config
 hostname: legacy
 users:
-  - name: USERNAME_PLACEHOLDER
+  - name: "$username"
     sudo: ALL=(ALL) NOPASSWD:ALL
     groups: sudo
     shell: /bin/bash
     ssh_authorized_keys:
-      - SSHKEY_PLACEHOLDER
+      - "$sshkey"
 
 package_update: true
 package_upgrade: true
@@ -468,12 +488,12 @@ yaml_files["${machines[9]}"]=$(cat << EOF
 #cloud-config
 hostname: opensearch
 users:
-  - name: USERNAME_PLACEHOLDER
+  - name: "$username"
     sudo: ALL=(ALL) NOPASSWD:ALL
     groups: sudo
     shell: /bin/bash
     ssh_authorized_keys:
-      - SSHKEY_PLACEHOLDER
+      - "$sshkey"
 
 package_update: true
 packages:
@@ -548,12 +568,12 @@ yaml_files["${machines[10]}"]=$(cat << EOF
 #cloud-config
 hostname: mail
 users:
-  - name: USERNAME_PLACEHOLDER
+  - name: "$username"
     sudo: ALL=(ALL) NOPASSWD:ALL
     groups: sudo
     shell: /bin/bash
     ssh_authorized_keys:
-      - SSHKEY_PLACEHOLDER
+      - "$sshkey"
 
 package_update: true
 packages:
@@ -578,9 +598,30 @@ runcmd:
 EOF
 )
 
+yaml_files["${machines[11]}"]=$(cat << EOF 
+#cloud-config
+hostname: tri-nic
+ssh_pwauth: True
+users:
+  - name: "$username"
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    groups: sudo
+    shell: /bin/bash
+    lock_passwd: locked
+    passwd: $6$MNmwwbta3cIHy23B$mZ.iRwDt5gFPeKjW4Pypjis8RfO/TBRVGXgLnETN.KGY4g2lkxaqcENESWFyUEBT9iCuemr38qlGBZkjo1U21/
+    ssh_authorized_keys:
+      - "$sshkey"
+
+runcmd:
+  - passwd -u "$username"              # unlock the account
+  - echo "tony:MyConsolePass" | chpasswd
+
+
+EOF
+)
 
 img_dir="/var/lib/libvirt/images"
-index=0
+index=11
 
 #if $HOME/buglab/cloudinit does not exist create it
 if [ ! -d $HOME/buglab/cloudinit ]; then
@@ -588,7 +629,8 @@ if [ ! -d $HOME/buglab/cloudinit ]; then
 fi
 
 #for each machine in the list of machines
-for machine in "${machines[@]}";do
+#for machine in "${machines[@]}";do
+for machine in "${machines[11]}";do
 
   #create seed iso
 	cd $HOME/buglab/cloudinit
@@ -628,13 +670,15 @@ for machine in "${machines[@]}";do
   --disk path="$HOME"/buglab/cloudinit/"$machine"-seed.iso,device=cdrom \
 	--os-type linux \
   --os-variant "$variant" \
+	--boot "${boottype[$index]}" \
   --network network=labnet,mac=52:54:00:ab:cd:"$ip" \
   --import \
   --graphics none \
   --noautoconsole
 
 	 
-  if [[ $index == 0 ]]; then
+  if [[ $index == 0 ]] || [[ $index == 11 ]]; then
+    echo here 0
     # if kali machine add second nic and attach to attacker net
     sudo virsh attach-interface \
     --domain "$machine" \
@@ -643,12 +687,25 @@ for machine in "${machines[@]}";do
 		--mac 52:54:00:aa:bb:"$ip" \
     --model virtio \
     --config --live
+		echo here 1
     
     #add reserved ip address for kali machine to attackernet
 		sudo virsh net-update attackernet add ip-dhcp-host \
-    "<host mac='52:54:00:aa:bb:"$ip"' name='juice-shop' ip='192.168.50."$ip"'/>" \
+    "<host mac='52:54:00:aa:bb:"$ip"' name='"$machine"' ip='192.168.50."$ip"'/>" \
     --live --config
+		echo here 2
 	 fi
+
+	 if [[ $index == 11 ]]; then
+    echo here b
+    sudo virsh attach-interface \
+    --domain "$machine" \
+    --type bridge \
+		--source br0 \
+		--mac 52:54:00:aa:cc:"$ip" \
+    --model virtio \
+    --config --live
+  fi	
 	
   #add reserved ip address to labnet for machine
   sudo virsh net-update labnet add ip-dhcp-host \
