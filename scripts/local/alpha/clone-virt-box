@@ -1,0 +1,28 @@
+#!/bin/bash
+
+# * Function: clone-box *
+clone-box ()  {
+
+# * Arguments: *
+#local var="$n"
+ 
+  local machine="$1"
+
+#*Code:
+
+  echo "Cloning \"${machine}\" into \"$machine-clone\"..."
+  echo "This may take some time..."
+	mac="$(virsh domiflist "${machine}"|tail +3|tr -s " "|cut -d " " -f 6)"
+   virt-clone --original ${machine} --auto-clone --mac "$mac" --check mac_in_use=off 
+}
+
+machines=$(virsh list --all|tail +3|tr -s " "|cut -d " " -f 3)
+OLD_IFS=${IFS};IFS=$'\n'
+machines=($machines)
+
+select machine in "${machines[@]}";do
+
+  clone-box "$machine"
+	break
+
+done
